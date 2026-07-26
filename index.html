@@ -6,6 +6,10 @@
 <title>খুকির বাগান</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <style>
   :root{
     --cream:#FFFBF0;
@@ -157,6 +161,58 @@
   .video-card iframe{width:100%; aspect-ratio:16/9; border:none; border-radius:14px;}
   .video-note{font-size:12.5px; opacity:.55; text-align:center; margin-top:6px;}
 
+  /* ---------- Auth / setup screens ---------- */
+  .center-screen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
+  .auth-card{background:#fff; border-radius:28px; padding:32px 26px; max-width:380px; width:100%;
+    box-shadow:0 12px 30px rgba(58,46,68,.12); text-align:center;}
+  .auth-card h2{font-family:'Baloo Da 2', sans-serif; color:var(--leaf-dark); margin:0 0 6px;}
+  .auth-card p.tag{opacity:.6; font-size:13.5px; margin:0 0 18px;}
+  .field{width:100%; padding:13px 16px; border-radius:14px; border:2px solid #eee; font-size:15px;
+    font-family:'Hind Siliguri',sans-serif; margin-bottom:12px; box-sizing:border-box;}
+  .field:focus{outline:none; border-color:var(--leaf);}
+  .primary-btn{width:100%; padding:14px; border:none; border-radius:16px; background:var(--leaf); color:#fff;
+    font-family:'Baloo Da 2', sans-serif; font-size:17px; cursor:pointer; box-shadow:0 5px 0 var(--leaf-dark); margin-top:4px;}
+  .primary-btn:active{transform:translateY(4px); box-shadow:none;}
+  .switch-link{margin-top:14px; font-size:13.5px; color:var(--sky); cursor:pointer; text-decoration:underline;}
+  .auth-error{color:#c0392b; font-size:13px; margin-top:8px; min-height:16px;}
+  .select-row{display:flex; gap:8px; margin-bottom:12px;}
+  .select-row .field{flex:1; margin-bottom:0;}
+
+  /* ---------- Topbar on home ---------- */
+  .home-topbar{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:6px; position:relative; z-index:2;}
+  .pill-btn{background:#fff; border:none; padding:9px 16px; border-radius:20px; font-family:'Baloo Da 2', sans-serif;
+    font-size:13.5px; color:var(--plum); cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.08);}
+
+  /* ---------- Parent dashboard ---------- */
+  #dashboard{position:fixed; inset:0; background:var(--cream); z-index:10; display:none; flex-direction:column;}
+  #dashboard.open{display:flex;}
+  .dash-body{flex:1; overflow-y:auto; padding:18px; max-width:520px; margin:0 auto; width:100%;}
+  .dash-card{background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:14px; box-shadow:0 5px 14px rgba(0,0,0,.06);}
+  .dash-card h3{font-family:'Baloo Da 2', sans-serif; margin:0 0 10px; font-size:16px; color:var(--leaf-dark);}
+  .stat-row{display:flex; justify-content:space-between; padding:6px 0; font-size:14px; border-bottom:1px solid #f2f2f2;}
+  .stat-row:last-child{border-bottom:none;}
+  .mini-gallery{display:grid; grid-template-columns:repeat(auto-fill,minmax(70px,1fr)); gap:8px;}
+  .mini-gallery img{width:100%; border-radius:10px;}
+
+  /* ---------- AI bot ---------- */
+  .bot-fab{position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%; background:var(--lilac);
+    color:#fff; font-size:28px; border:none; box-shadow:0 6px 16px rgba(0,0,0,.2); cursor:pointer; z-index:40;
+    display:flex; align-items:center; justify-content:center;}
+  #botModal{position:fixed; inset:0; background:rgba(58,46,68,.4); z-index:60; display:none; align-items:flex-end; justify-content:center;}
+  #botModal.open{display:flex;}
+  .bot-sheet{background:#fff; width:100%; max-width:480px; border-radius:24px 24px 0 0; max-height:80vh;
+    display:flex; flex-direction:column; box-shadow:0 -8px 24px rgba(0,0,0,.2);}
+  .bot-head{display:flex; align-items:center; padding:14px 18px; border-bottom:1px solid #eee;}
+  .bot-head h3{font-family:'Baloo Da 2', sans-serif; margin:0; font-size:17px; color:var(--plum);}
+  .bot-head button{margin-left:auto; background:none; border:none; font-size:20px; cursor:pointer;}
+  .bot-msgs{flex:1; overflow-y:auto; padding:14px 18px; display:flex; flex-direction:column; gap:10px; min-height:180px;}
+  .bot-msg{max-width:80%; padding:10px 14px; border-radius:16px; font-size:14px; line-height:1.4;}
+  .bot-msg.bot{background:#F0EAF8; align-self:flex-start;}
+  .bot-msg.me{background:var(--sky); color:#fff; align-self:flex-end;}
+  .bot-input-row{display:flex; gap:8px; padding:12px 14px; border-top:1px solid #eee;}
+  .bot-input-row input{flex:1; border:2px solid #eee; border-radius:20px; padding:10px 16px; font-family:'Hind Siliguri',sans-serif;}
+  .bot-input-row button{background:var(--lilac); color:#fff; border:none; width:42px; height:42px; border-radius:50%; cursor:pointer;}
+
   .praise{
     position:fixed; top:20px; left:50%; transform:translateX(-50%) scale(.8); background:var(--sun); color:var(--plum);
     font-family:'Baloo Da 2', sans-serif; font-weight:700; padding:10px 22px; border-radius:30px; z-index:50; opacity:0;
@@ -171,43 +227,97 @@
   <div class="sun"></div>
 </div>
 
-<header>
+<!-- ---------- Auth screen ---------- -->
+<div id="authScreen" class="center-screen">
+  <div class="auth-card">
+    <h2 class="display">খুকির বাগান 🌷</h2>
+    <p class="tag">প্যারেন্ট লগইন করুন</p>
+    <input class="field" id="authEmail" type="email" placeholder="ইমেইল">
+    <input class="field" id="authPass" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
+    <button class="primary-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">লগইন করুন</button>
+    <div class="auth-error" id="authError"></div>
+    <div class="switch-link" id="authSwitchLink" onclick="toggleAuthMode()">নতুন এখানে? অ্যাকাউন্ট বানান</div>
+  </div>
+</div>
+
+<!-- ---------- Child profile setup (first time) ---------- -->
+<div id="setupScreen" class="center-screen" style="display:none;">
+  <div class="auth-card">
+    <h2 class="display">তোমার ছোট্ট বন্ধুর কথা বলো</h2>
+    <p class="tag">এই তথ্য দিয়ে অ্যাপটা তার উপযোগী করে সাজাবো</p>
+    <input class="field" id="setupName" placeholder="বাচ্চার নাম">
+    <div class="select-row">
+      <input class="field" id="setupAge" type="number" placeholder="বয়স" min="2" max="10">
+      <select class="field" id="setupStream">
+        <option value="bangla">বাংলা মিডিয়াম</option>
+        <option value="english_version">ইংলিশ ভার্সন</option>
+        <option value="english_medium">ইংলিশ মিডিয়াম</option>
+      </select>
+    </div>
+    <select class="field" id="setupLevel">
+      <option value="playgroup">প্লে-গ্রুপ</option>
+      <option value="nursery">নার্সারি</option>
+      <option value="kg">কেজি (KG)</option>
+      <option value="class1">ক্লাস ১ (Standard 1)</option>
+    </select>
+    <button class="primary-btn" onclick="handleSetupSubmit()">শুরু করি!</button>
+    <div class="auth-error" id="setupError"></div>
+  </div>
+</div>
+
+<header id="appHeader" style="display:none;">
   <h1>খুকির বাগান 🌷</h1>
   <div class="sub">খেলো, আঁকো, শেখো — নিজের মতো করে</div>
+  <div class="home-topbar">
+    <button class="pill-btn" onclick="openDashboard()">📊 প্যারেন্ট ড্যাশবোর্ড</button>
+    <button class="pill-btn" onclick="handleLogout()">🚪 লগআউট</button>
+  </div>
 </header>
 
-<div id="home">
+<div id="home" style="display:none;">
   <div class="path">
-    <div class="flower-stop" onclick="openActivity('letters')">
+    <div class="flower-stop" data-module="letters" onclick="openActivity('letters')">
       <div class="flower-icon c1">🔤</div>
       <div><h2>বর্ণ বাগান</h2><p>বাংলা অক্ষর চেনো ও শোনো</p></div>
     </div>
-    <div class="flower-stop" onclick="openActivity('numbers')">
+    <div class="flower-stop" data-module="numbers" onclick="openActivity('numbers')">
       <div class="flower-icon c2">🐝</div>
-      <div><h2>সংখ্যা মৌমাছি</h2><p>গুনে গুনে ১ থেকে ২০</p></div>
+      <div><h2>সংখ্যা মৌমাছি</h2><p>গুনে গুনে শিখি</p></div>
     </div>
-    <div class="flower-stop" onclick="openActivity('match')">
+    <div class="flower-stop" data-module="match" onclick="openActivity('match')">
       <div class="flower-icon c3">🍎</div>
       <div><h2>মিলাও তো!</h2><p>একই জোড়া খুঁজে বের করো</p></div>
     </div>
-    <div class="flower-stop" onclick="openActivity('draw')">
+    <div class="flower-stop" data-module="draw" onclick="openActivity('draw')">
       <div class="flower-icon c4">🎨</div>
       <div><h2>আঁকার খাতা</h2><p>নিজের ছবি নিজে আঁকো, সেভ করো</p></div>
     </div>
-    <div class="flower-stop" onclick="openActivity('animals')">
+    <div class="flower-stop" data-module="animals" onclick="openActivity('animals')">
       <div class="flower-icon c5">🦁</div>
       <div><h2>প্রাণী জগৎ</h2><p>প্রাণীর নাম ও ডাক শোনো</p></div>
     </div>
-    <div class="flower-stop" onclick="openActivity('words')">
+    <div class="flower-stop" data-module="words" onclick="openActivity('words')">
       <div class="flower-icon c1">📖</div>
       <div><h2>শব্দ পড়ি</h2><p>ছোট ছোট শব্দ পড়তে শেখো</p></div>
     </div>
-    <div class="flower-stop" onclick="openActivity('mathgame')">
+    <div class="flower-stop" data-module="mathgame" onclick="openActivity('mathgame')">
       <div class="flower-icon c2">➕</div>
       <div><h2>যোগ-বিয়োগ</h2><p>গুনে গুনে যোগ আর বিয়োগ</p></div>
     </div>
-    <div class="flower-stop" onclick="openActivity('videos')">
-      <div class="flower-icon c3">📺</div>
+    <div class="flower-stop" data-module="english" onclick="openActivity('english')">
+      <div class="flower-icon c3">🅰️</div>
+      <div><h2>ABC গার্ডেন</h2><p>ইংরেজি অক্ষর চেনো ও শোনো</p></div>
+    </div>
+    <div class="flower-stop" data-module="multiplication" onclick="openActivity('multiplication')">
+      <div class="flower-icon c4">✖️</div>
+      <div><h2>নামতা শিখি</h2><p>২ থেকে ১০ পর্যন্ত নামতা</p></div>
+    </div>
+    <div class="flower-stop" data-module="sentences" onclick="openActivity('sentences')">
+      <div class="flower-icon c5">📝</div>
+      <div><h2>বাক্য পড়ি</h2><p>ছোট ছোট বাক্য পড়তে শেখো</p></div>
+    </div>
+    <div class="flower-stop" data-module="videos" onclick="openActivity('videos')">
+      <div class="flower-icon c1">📺</div>
       <div><h2>ভিডিও কর্নার</h2><p>পছন্দের ছড়া ও গল্প দেখো</p></div>
     </div>
   </div>
@@ -222,11 +332,293 @@
   <div class="activity-body" id="actBody"></div>
 </div>
 
+<!-- ---------- Parent dashboard ---------- -->
+<div id="dashboard">
+  <div class="topbar">
+    <button class="backBtn" onclick="closeDashboard()">←</button>
+    <h2 class="display" style="margin:0; font-size:20px;">প্যারেন্ট ড্যাশবোর্ড</h2>
+  </div>
+  <div class="dash-body">
+    <div class="dash-card">
+      <h3 id="dashChildName">—</h3>
+      <div class="stat-row"><span>বয়স</span><span id="dashAge">—</span></div>
+      <div class="stat-row"><span>স্ট্রিম</span><span id="dashStream">—</span></div>
+      <div class="stat-row"><span>মোট স্টার</span><span id="dashTotalStars">⭐ 0</span></div>
+    </div>
+    <div class="dash-card">
+      <h3>ক্লাস / লেভেল</h3>
+      <p style="font-size:13px; opacity:.6; margin:0 0 10px;">লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে</p>
+      <select class="field" id="dashLevelSelect" style="margin-bottom:0;" onchange="handleLevelChange(this.value)">
+        <option value="playgroup">প্লে-গ্রুপ</option>
+        <option value="nursery">নার্সারি</option>
+        <option value="kg">কেজি (KG)</option>
+        <option value="class1">ক্লাস ১ (Standard 1)</option>
+      </select>
+    </div>
+    <div class="dash-card">
+      <h3>বিষয়ভিত্তিক অগ্রগতি</h3>
+      <div id="dashModuleStats"></div>
+    </div>
+    <div class="dash-card">
+      <h3>আঁকা ছবির গ্যালারি</h3>
+      <div class="mini-gallery" id="dashGallery"></div>
+      <div class="empty-note" id="dashGalleryEmpty" style="display:none;">এখনো কোনো ছবি নেই</div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- AI bot ---------- -->
+<button class="bot-fab" id="botFab" onclick="openBot()" style="display:none;">💬</button>
+<div id="botModal">
+  <div class="bot-sheet">
+    <div class="bot-head">
+      <h3 id="botTitle">🌷 বাগান বন্ধু</h3>
+      <button onclick="closeBot()">✕</button>
+    </div>
+    <div class="bot-msgs" id="botMsgs"></div>
+    <div class="bot-input-row">
+      <input id="botInput" placeholder="কিছু জিজ্ঞেস করো..." onkeydown="if(event.key==='Enter') sendBotMessage()">
+      <button onclick="sendBotMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
 <div class="praise" id="praise">দারুণ হয়েছে! 🎉</div>
 
 <script>
+// ================= Firebase setup =================
+// নিচের কনফিগ Firebase Console থেকে কপি করে বসান (SETUP_GUIDE.md দেখুন)
+const firebaseConfig = {
+  apiKey: "AIzaSyA9kOUaQK0V4s9ZNV1ezgYQnq_OBFpVoSo",
+  authDomain: "hiya-2cd78.firebaseapp.com",
+  projectId: "hiya-2cd78",
+  storageBucket: "hiya-2cd78.firebasestorage.app",
+  messagingSenderId: "473906193558",
+  appId: "1:473906193558:web:304cde07e050faaa308eb7"
+};
+// Cloud Function ডিপ্লয় করার পর এখানে তার URL বসান (SETUP_GUIDE.md ধাপ ৭)
+const BOT_FUNCTION_URL = "PASTE_YOUR_CLOUD_FUNCTION_URL_HERE";
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+let currentUser = null;
+let childData = null; // { name, age, stream, stars:{}, totalStars, galleryUrls:[] }
+let isSignupMode = false;
+let botMode = 'child';
+
+const STREAM_LABELS = {bangla:'বাংলা মিডিয়াম', english_version:'ইংলিশ ভার্সন', english_medium:'ইংলিশ মিডিয়াম'};
+const LEVEL_LABELS = {playgroup:'প্লে-গ্রুপ', nursery:'নার্সারি', kg:'কেজি (KG)', class1:'ক্লাস ১'};
+const LEVEL_ORDER = ['playgroup','nursery','kg','class1'];
+const MODULE_LABELS = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো', draw:'আঁকার খাতা',
+  animals:'প্রাণী জগৎ', words:'শব্দ পড়ি', mathgame:'যোগ-বিয়োগ', english:'ABC গার্ডেন',
+  multiplication:'নামতা শিখি', sentences:'বাক্য পড়ি'};
+// প্রতিটা মডিউল কোন কোন লেভেলে দেখানো হবে
+const MODULE_LEVELS = {
+  letters:['playgroup','nursery','kg','class1'],
+  numbers:['playgroup','nursery','kg','class1'],
+  match:['playgroup','nursery'],
+  draw:['playgroup','nursery','kg','class1'],
+  animals:['playgroup','nursery','kg'],
+  words:['nursery','kg','class1'],
+  mathgame:['kg','class1'],
+  english:['kg','class1'],
+  multiplication:['class1'],
+  sentences:['class1'],
+  videos:['playgroup','nursery','kg','class1']
+};
+function filterHomeByLevel(){
+  const level = (childData && childData.level) || 'playgroup';
+  document.querySelectorAll('.flower-stop').forEach(el=>{
+    const mod = el.dataset.module;
+    const allowed = MODULE_LEVELS[mod] ? MODULE_LEVELS[mod].includes(level) : true;
+    el.style.display = allowed ? 'flex' : 'none';
+  });
+}
+function bnDigitsOf(num){
+  const map = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+  return String(num).split('').map(ch=>map[ch]!==undefined?map[ch]:ch).join('');
+}
+
+// ================= Auth flow =================
+function toggleAuthMode(){
+  isSignupMode = !isSignupMode;
+  document.getElementById('authSubmitBtn').textContent = isSignupMode ? 'অ্যাকাউন্ট বানান' : 'লগইন করুন';
+  document.getElementById('authSwitchLink').textContent = isSignupMode ? 'আগে থেকে অ্যাকাউন্ট আছে? লগইন করুন' : 'নতুন এখানে? অ্যাকাউন্ট বানান';
+  document.getElementById('authError').textContent = '';
+}
+function handleAuthSubmit(){
+  const email = document.getElementById('authEmail').value.trim();
+  const pass = document.getElementById('authPass').value;
+  const errEl = document.getElementById('authError');
+  errEl.textContent = '';
+  if(!email || pass.length<6){ errEl.textContent = 'সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন'; return; }
+  const action = isSignupMode
+    ? auth.createUserWithEmailAndPassword(email, pass)
+    : auth.signInWithEmailAndPassword(email, pass);
+  action.catch(e => { errEl.textContent = translateAuthError(e.code); });
+}
+function translateAuthError(code){
+  const map = {
+    'auth/email-already-in-use':'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন',
+    'auth/invalid-email':'ইমেইলটা ঠিক নেই',
+    'auth/wrong-password':'পাসওয়ার্ড ভুল হয়েছে',
+    'auth/user-not-found':'এই ইমেইলে কোনো অ্যাকাউন্ট নেই, নতুন বানান',
+    'auth/weak-password':'পাসওয়ার্ড আরেকটু শক্তিশালী দিন'
+  };
+  return map[code] || 'কিছু একটা সমস্যা হয়েছে, আবার চেষ্টা করুন';
+}
+function handleLogout(){ auth.signOut(); }
+
+auth.onAuthStateChanged(async (user)=>{
+  currentUser = user;
+  if(!user){
+    document.getElementById('authScreen').style.display='flex';
+    document.getElementById('setupScreen').style.display='none';
+    document.getElementById('appHeader').style.display='none';
+    document.getElementById('home').style.display='none';
+    document.getElementById('botFab').style.display='none';
+    return;
+  }
+  document.getElementById('authScreen').style.display='none';
+  const doc = await db.collection('users').doc(user.uid).get();
+  if(doc.exists && doc.data().childName){
+    childData = doc.data();
+    showHome();
+  } else {
+    document.getElementById('setupScreen').style.display='flex';
+  }
+});
+
+function handleSetupSubmit(){
+  const name = document.getElementById('setupName').value.trim();
+  const age = document.getElementById('setupAge').value;
+  const stream = document.getElementById('setupStream').value;
+  const level = document.getElementById('setupLevel').value;
+  const errEl = document.getElementById('setupError');
+  if(!name || !age){ errEl.textContent = 'নাম আর বয়স দুটোই দিন'; return; }
+  childData = { childName:name, childAge:Number(age), stream, level, stars:{}, totalStars:0, galleryUrls:[] };
+  db.collection('users').doc(currentUser.uid).set(childData)
+    .then(()=>{ document.getElementById('setupScreen').style.display='none'; showHome(); })
+    .catch(()=>{ errEl.textContent = 'সেভ করতে সমস্যা হয়েছে, আবার চেষ্টা করুন'; });
+}
+
+function showHome(){
+  document.getElementById('appHeader').style.display='block';
+  document.getElementById('home').style.display='block';
+  document.getElementById('botFab').style.display='flex';
+  filterHomeByLevel();
+  bump.__loaded = true;
+}
+
+// ================= Progress sync (per-module stars) =================
+let saveTimer = null;
+function persistProgress(){
+  if(!currentUser || !childData) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    db.collection('users').doc(currentUser.uid).update({
+      stars: childData.stars, totalStars: childData.totalStars
+    }).catch(e=>console.error('progress save failed', e));
+  }, 800);
+}
+
+// ================= Parent dashboard =================
+function openDashboard(){
+  if(!childData) return;
+  document.getElementById('dashChildName').textContent = childData.childName;
+  document.getElementById('dashAge').textContent = childData.childAge;
+  document.getElementById('dashStream').textContent = STREAM_LABELS[childData.stream] || childData.stream;
+  document.getElementById('dashTotalStars').textContent = '⭐ ' + (childData.totalStars||0);
+  document.getElementById('dashLevelSelect').value = childData.level || 'playgroup';
+  const modBox = document.getElementById('dashModuleStats');
+  modBox.innerHTML = '';
+  const stars = childData.stars || {};
+  Object.keys(MODULE_LABELS).forEach(key=>{
+    const row = document.createElement('div');
+    row.className = 'stat-row';
+    row.innerHTML = `<span>${MODULE_LABELS[key]}</span><span>⭐ ${stars[key]||0}</span>`;
+    modBox.appendChild(row);
+  });
+  const gal = document.getElementById('dashGallery');
+  gal.innerHTML = '';
+  const urls = childData.galleryUrls || [];
+  document.getElementById('dashGalleryEmpty').style.display = urls.length ? 'none' : 'block';
+  urls.forEach(u=>{ const img = document.createElement('img'); img.src = u; gal.appendChild(img); });
+  document.getElementById('dashboard').classList.add('open');
+}
+function closeDashboard(){ document.getElementById('dashboard').classList.remove('open'); }
+function handleLevelChange(newLevel){
+  if(!childData) return;
+  childData.level = newLevel;
+  if(currentUser) db.collection('users').doc(currentUser.uid).update({level:newLevel}).catch(e=>console.error('level save failed', e));
+  filterHomeByLevel();
+}
+
+// ================= AI bot =================
+function openBot(){
+  botMode = document.getElementById('dashboard').classList.contains('open') ? 'parent' : 'child';
+  document.getElementById('botTitle').textContent = botMode==='parent' ? '🤖 সহায়ক সহকারী' : '🌷 বাগান বন্ধু';
+  document.getElementById('botModal').classList.add('open');
+  const msgs = document.getElementById('botMsgs');
+  if(!msgs.dataset.greeted){
+    addBotMsg(botMode==='parent' ? 'নমস্কার! বাচ্চার অগ্রগতি নিয়ে কিছু জিজ্ঞেস করতে চান?' : 'হাই! আমি তোমার বাগান বন্ধু! কী জানতে চাও?', 'bot');
+    msgs.dataset.greeted = '1';
+  }
+}
+function closeBot(){ document.getElementById('botModal').classList.remove('open'); }
+function addBotMsg(text, who){
+  const div = document.createElement('div');
+  div.className = 'bot-msg ' + who;
+  div.textContent = text;
+  const msgs = document.getElementById('botMsgs');
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+async function sendBotMessage(){
+  const input = document.getElementById('botInput');
+  const text = input.value.trim();
+  if(!text) return;
+  addBotMsg(text, 'me');
+  input.value = '';
+  addBotMsg('...', 'bot');
+  const msgs = document.getElementById('botMsgs');
+  const thinkingEl = msgs.lastChild;
+  try{
+    const token = await currentUser.getIdToken();
+    const body = { message: text, mode: botMode };
+    if(botMode==='parent'){
+      body.childContext = { name: childData.childName, age: childData.childAge,
+        stream: childData.stream, stars: childData.stars, totalStars: childData.totalStars };
+    }
+    const resp = await fetch(BOT_FUNCTION_URL, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+      body: JSON.stringify(body)
+    });
+    const data = await resp.json();
+    thinkingEl.textContent = data.reply || data.error || 'উত্তর পাওয়া যায়নি';
+    if(botMode==='child' && data.reply) speak(data.reply);
+  }catch(e){
+    thinkingEl.textContent = 'সংযোগে সমস্যা হয়েছে — BOT_FUNCTION_URL ঠিকভাবে বসানো হয়েছে কিনা দেখুন';
+  }
+}
+
 let stars = 0;
-function bump(n){ stars += n; document.getElementById('starCount').textContent = stars; }
+function bump(n, moduleKey){
+  stars += n;
+  document.getElementById('starCount').textContent = stars;
+  if(childData){
+    childData.totalStars = (childData.totalStars||0) + n;
+    if(moduleKey){
+      childData.stars = childData.stars || {};
+      childData.stars[moduleKey] = (childData.stars[moduleKey]||0) + n;
+    }
+    persistProgress();
+  }
+}
 function praise(msg){
   const p = document.getElementById('praise');
   p.textContent = msg || 'দারুণ হয়েছে! 🎉';
@@ -245,10 +637,17 @@ function speak(text){
 const COLORS = ['#FF7A68','#3FAE7C','#6FC6E8','#FFCF56','#B98CE0','#FF9F43','#4FC3D9'];
 
 const letters = [
+  // স্বরবর্ণ (১১টি)
   ['অ','অজগর'],['আ','আম'],['ই','ইলিশ'],['ঈ','ঈগল'],['উ','উট'],['ঊ','ঊষা'],
-  ['ঋ','ঋষি'],['এ','একতারা'],['ঐ','ঐরাবত'],['ও','ওল'],['ক','কলম'],['খ','খরগোশ'],
-  ['গ','গরু'],['ঘ','ঘড়ি'],['চ','চাঁদ'],['ছ','ছাতা'],['জ','জাহাজ'],['ঝ','ঝুড়ি'],
-  ['ট','টমেটো'],['ঠ','ঠোঁট']
+  ['ঋ','ঋষি'],['এ','একতারা'],['ঐ','ঐরাবত'],['ও','ওল'],['ঔ','ঔষধ'],
+  // ব্যঞ্জনবর্ণ (৩৯টি)
+  ['ক','কলম'],['খ','খরগোশ'],['গ','গরু'],['ঘ','ঘড়ি'],['ঙ','কাঙারু'],
+  ['চ','চাঁদ'],['ছ','ছাতা'],['জ','জাহাজ'],['ঝ','ঝুড়ি'],['ঞ','বিজ্ঞান'],
+  ['ট','টমেটো'],['ঠ','ঠোঁট'],['ড','ডাব'],['ঢ','ঢোল'],['ণ','বাণ'],
+  ['ত','তাল'],['থ','থালা'],['দ','দই'],['ধ','ধান'],['ন','নদী'],
+  ['প','পাখি'],['ফ','ফুল'],['ব','বই'],['ভ','ভালুক'],['ম','মাছ'],
+  ['য','যমুনা'],['র','রথ'],['ল','লাল'],['শ','শাক'],['ষ','ষাঁড়'],
+  ['স','সাপ'],['হ','হাতি'],['ড়','বড়ই'],['ঢ়','আষাঢ়'],['য়','নয়'],['ৎ','সৎ']
 ];
 
 const wordList = [
@@ -262,6 +661,25 @@ const wordList = [
   {word:'হাত', syll:['হা','ত'], emoji:'✋'},
   {word:'বই', syll:['ব','ই'], emoji:'📚'},
   {word:'টমেটো', syll:['ট','মে','টো'], emoji:'🍅'}
+];
+
+const englishLetters = [
+  ['A','Apple','🍎'],['B','Ball','⚽'],['C','Cat','🐱'],['D','Dog','🐶'],['E','Elephant','🐘'],
+  ['F','Fish','🐟'],['G','Goat','🐐'],['H','Hat','🎩'],['I','Ice cream','🍦'],['J','Jug','🫙'],
+  ['K','Kite','🪁'],['L','Lion','🦁'],['M','Moon','🌙'],['N','Nest','🪺'],['O','Orange','🍊'],
+  ['P','Parrot','🦜'],['Q','Queen','👑'],['R','Rabbit','🐇'],['S','Sun','☀️'],['T','Tiger','🐯'],
+  ['U','Umbrella','☂️'],['V','Van','🚐'],['W','Watch','⌚'],['X','Xylophone','🎼'],['Y','Yak','🐂'],['Z','Zebra','🦓']
+];
+
+const sentenceList = [
+  {text:'মা আমাকে ভালোবাসে', emoji:'❤️'},
+  {text:'আমি স্কুলে যাই', emoji:'🎒'},
+  {text:'সূর্য পূর্ব দিকে ওঠে', emoji:'🌅'},
+  {text:'আমরা বই পড়ি', emoji:'📖'},
+  {text:'বাবা অফিসে যান', emoji:'💼'},
+  {text:'পাখিরা আকাশে ওড়ে', emoji:'🐦'},
+  {text:'আমার একটা লাল বল আছে', emoji:'🔴'},
+  {text:'আমরা একসাথে খেলি', emoji:'🤝'}
 ];
 
 /* Parent tip: add more curated videos here — {title, id} where id is the YouTube video ID.
@@ -282,7 +700,7 @@ const animalList = [
 
 function openActivity(name){
   document.getElementById('activity').classList.add('open');
-  const title = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো!', draw:'আঁকার খাতা', animals:'প্রাণী জগৎ', words:'শব্দ পড়ি', mathgame:'যোগ-বিয়োগ', videos:'ভিডিও কর্নার'}[name];
+  const title = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো!', draw:'আঁকার খাতা', animals:'প্রাণী জগৎ', words:'শব্দ পড়ি', mathgame:'যোগ-বিয়োগ', english:'ABC গার্ডেন', multiplication:'নামতা শিখি', sentences:'বাক্য পড়ি', videos:'ভিডিও কর্নার'}[name];
   document.getElementById('actTitle').textContent = title;
   const body = document.getElementById('actBody');
   body.innerHTML = '';
@@ -293,6 +711,9 @@ function openActivity(name){
   if(name==='animals') buildAnimals(body);
   if(name==='words') buildWords(body);
   if(name==='mathgame') buildMath(body);
+  if(name==='english') buildEnglish(body);
+  if(name==='multiplication') buildMultiplication(body);
+  if(name==='sentences') buildSentences(body);
   if(name==='videos') buildVideos(body);
 }
 function closeActivity(){
@@ -325,7 +746,7 @@ function buildLetters(body){
     stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
     document.getElementById('letterWord').textContent = letters[i][1];
     speak(letters[i][0] + ', ' + letters[i][1]);
-    bump(1);
+    bump(1, 'letters');
   };
   window.sayLetter = function(){ speak(letters[idx][0] + ', ' + letters[idx][1]); };
 }
@@ -333,32 +754,35 @@ function buildLetters(body){
 /* ---------- Numbers ---------- */
 function buildNumbers(body){
   let n = 1;
+  const level = (childData && childData.level) || 'playgroup';
+  const maxNum = {playgroup:10, nursery:20, kg:50, class1:100}[level] || 20;
   body.innerHTML = `
     <div class="stage" id="numStage" style="background:${COLORS[0]}">১</div>
-    <div id="beeRow" style="font-size:30px; letter-spacing:4px; margin:8px 0 4px; min-height:40px;"></div>
-    <div class="word-sub">১টা মৌমাছি গুনো!</div>
+    <div id="beeRow" style="font-size:26px; letter-spacing:3px; margin:8px 0 4px; min-height:40px; max-width:280px; text-align:center;"></div>
+    <div class="word-sub" id="numSub">১টা মৌমাছি গুনো!</div>
     <button class="say-btn" onclick="sayNum()">🔊 শোনো</button>
     <div class="grid-nav" id="numGrid"></div>
   `;
   const grid = document.getElementById('numGrid');
-  const bnDigits = ['','১','২','৩','৪','৫','৬','৭','৮','৯','১০','১১','১২','১৩','১৪','১৫','১৬','১৭','১৮','১৯','২০'];
-  for(let i=1;i<=20;i++){
+  for(let i=1;i<=maxNum;i++){
     const b = document.createElement('button');
-    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = bnDigits[i];
+    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = bnDigitsOf(i);
     b.onclick = ()=>showNum(i);
     grid.appendChild(b);
   }
   window.showNum = function(i){
     n = i;
     const stage = document.getElementById('numStage');
-    stage.textContent = bnDigits[i];
+    stage.textContent = bnDigitsOf(i);
     stage.style.background = COLORS[i%COLORS.length];
     stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
-    document.getElementById('beeRow').textContent = '🐝'.repeat(i);
-    speak(bnDigits[i] + 'টা মৌমাছি');
-    bump(1);
+    // ২০ এর বেশি হলে মৌমাছির বদলে সংখ্যাটাই ইঙ্গিত হিসেবে দেখানো হয়, বেশি ভিড় এড়াতে
+    document.getElementById('beeRow').textContent = i<=20 ? '🐝'.repeat(i) : '';
+    document.getElementById('numSub').textContent = bnDigitsOf(i) + ' সংখ্যাটা মনে রাখো!';
+    speak(bnDigitsOf(i));
+    bump(1, 'numbers');
   };
-  window.sayNum = function(){ speak(bnDigits[n] + 'টা মৌমাছি'); };
+  window.sayNum = function(){ speak(bnDigitsOf(n)); };
 }
 
 /* ---------- Animals ---------- */
@@ -387,7 +811,7 @@ function buildAnimals(body){
     document.getElementById('aniWord').textContent = animalList[i][1];
     document.getElementById('aniSub').textContent = animalList[i][2];
     speak(animalList[i][1] + ' ' + animalList[i][2]);
-    bump(1);
+    bump(1, 'animals');
   };
   window.sayAni = function(){ speak(animalList[idx][1] + ' ' + animalList[idx][2]); };
 }
@@ -425,7 +849,7 @@ function buildWords(body){
       row.appendChild(b);
     });
     speak(wordList[i].word);
-    bump(1);
+    bump(1, 'words');
   };
   window.sayWholeWord = function(){ speak(wordList[idx].word); };
 }
@@ -475,7 +899,7 @@ function buildMath(body){
       btn.className='ans-btn'; btn.textContent = v;
       btn.onclick = ()=>{
         if(v===correct){
-          btn.classList.add('correct'); bump(2); praise();
+          btn.classList.add('correct'); bump(2, 'mathgame'); praise();
           setTimeout(newProblem, 700);
         } else {
           btn.classList.add('wrong');
@@ -492,6 +916,108 @@ function buildMath(body){
     newProblem();
   };
   newProblem();
+}
+
+/* ---------- English alphabet (ABC গার্ডেন) ---------- */
+function buildEnglish(body){
+  let idx = 0;
+  body.innerHTML = `
+    <div class="stage" id="engStage" style="background:${COLORS[0]}; font-size:clamp(60px,18vw,110px);">${englishLetters[0][2]}</div>
+    <div class="word-label" id="engLetter">A</div>
+    <div class="word-sub" id="engWord">Apple</div>
+    <button class="say-btn" onclick="sayEng()">🔊 শোনো</button>
+    <div class="grid-nav" id="engGrid"></div>
+  `;
+  const grid = document.getElementById('engGrid');
+  englishLetters.forEach((l,i)=>{
+    const b = document.createElement('button');
+    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = l[0];
+    b.onclick = ()=>showEng(i);
+    grid.appendChild(b);
+  });
+  window.showEng = function(i){
+    idx = i;
+    const stage = document.getElementById('engStage');
+    stage.textContent = englishLetters[i][2];
+    stage.style.background = COLORS[i%COLORS.length];
+    stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+    document.getElementById('engLetter').textContent = englishLetters[i][0];
+    document.getElementById('engWord').textContent = englishLetters[i][1];
+    speakEn(englishLetters[i][0] + ', for ' + englishLetters[i][1]);
+    bump(1, 'english');
+  };
+  window.sayEng = function(){ speakEn(englishLetters[idx][0] + ', for ' + englishLetters[idx][1]); };
+}
+function speakEn(text){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.85;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- নামতা (multiplication tables, ২-১০) ---------- */
+function buildMultiplication(body){
+  let table = 2;
+  body.innerHTML = `
+    <div class="mode-toggle" id="tableTabs" style="flex-wrap:wrap; justify-content:center;"></div>
+    <div id="tableList" style="width:100%; max-width:360px;"></div>
+  `;
+  const tabs = document.getElementById('tableTabs');
+  for(let t=2;t<=10;t++){
+    const btn = document.createElement('button');
+    btn.className = 'mode-btn' + (t===2?' active':'');
+    btn.textContent = bnDigitsOf(t);
+    btn.onclick = ()=>{ table=t; [...tabs.children].forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderTable(); };
+    tabs.appendChild(btn);
+  }
+  function renderTable(){
+    const list = document.getElementById('tableList');
+    list.innerHTML = '';
+    for(let i=1;i<=10;i++){
+      const row = document.createElement('div');
+      row.className = 'flower-stop';
+      row.style.margin = '8px 0';
+      row.style.cursor = 'pointer';
+      row.innerHTML = `<div class="flower-icon c2" style="font-size:20px;">${bnDigitsOf(table)}×${bnDigitsOf(i)}</div>
+        <div><h2 style="font-size:20px;">= ${bnDigitsOf(table*i)}</h2></div>`;
+      row.onclick = ()=>{ speak(bnDigitsOf(table)+' গুণ '+bnDigitsOf(i)+' সমান '+bnDigitsOf(table*i)); bump(1,'multiplication'); };
+      list.appendChild(row);
+    }
+  }
+  renderTable();
+}
+
+/* ---------- বাক্য পড়ি (sentence reading, Class 1) ---------- */
+function buildSentences(body){
+  let idx = 0;
+  body.innerHTML = `
+    <div class="stage" id="sentStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${sentenceList[0].emoji}</div>
+    <div class="word-label" id="sentText" style="font-size:20px; max-width:320px; text-align:center;">${sentenceList[0].text}</div>
+    <button class="say-btn" onclick="saySentence()">🔊 বাক্যটা শোনো</button>
+    <div class="word-card-list" id="sentCardList"></div>
+  `;
+  const list = document.getElementById('sentCardList');
+  sentenceList.forEach((s,i)=>{
+    const c = document.createElement('div');
+    c.className = 'word-card' + (i===0?' active':'');
+    c.innerHTML = `<div class="emo">${s.emoji}</div><div class="txt" style="font-size:12px;">${s.text.split(' ')[0]}…</div>`;
+    c.onclick = ()=>showSentence(i);
+    list.appendChild(c);
+  });
+  window.showSentence = function(i){
+    idx = i;
+    [...list.children].forEach((c,ci)=>c.classList.toggle('active', ci===i));
+    const stage = document.getElementById('sentStage');
+    stage.textContent = sentenceList[i].emoji;
+    stage.style.background = COLORS[i%COLORS.length];
+    stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+    document.getElementById('sentText').textContent = sentenceList[i].text;
+    speak(sentenceList[i].text);
+    bump(1, 'sentences');
+  };
+  window.saySentence = function(){ speak(sentenceList[idx].text); };
 }
 
 /* ---------- Video corner ---------- */
@@ -535,7 +1061,7 @@ function buildMatch(body){
           if(flipped[0].dataset.emoji === flipped[1].dataset.emoji){
             flipped.forEach(f=>f.classList.add('matched'));
             matchedCount++;
-            bump(2);
+            bump(2, 'match');
             praise();
             if(matchedCount===emojiSet.length){
               setTimeout(()=>praise('সব মিলিয়ে ফেলেছ! তুমি সেরা! 🏆'), 300);
@@ -597,7 +1123,7 @@ function buildDraw(body){
     ctx.lineTo(p.x,p.y); ctx.strokeStyle = color; ctx.lineWidth = 10; ctx.lineCap='round'; ctx.lineJoin='round';
     ctx.stroke(); e.preventDefault();
   }
-  function end(){ if(drawing){ drawing=false; bump(1); } }
+  function end(){ if(drawing){ drawing=false; bump(1, 'draw'); } }
   canvas.addEventListener('mousedown', start);
   canvas.addEventListener('mousemove', move);
   window.addEventListener('mouseup', end);
@@ -607,16 +1133,32 @@ function buildDraw(body){
   window.clearCanvas = function(){ ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height); };
   window.saveToGallery = function(){
     const dataUrl = canvas.toDataURL('image/png');
-    const stamp = new Date().toLocaleTimeString('bn-BD', {hour:'2-digit', minute:'2-digit'});
-    drawGallery.push({dataUrl, stamp});
-    bump(3); praise('ছবিটা সেভ হয়েছে! 🖼️');
+    // সবসময় লোকাল ডাউনলোড লিংক হিসেবে রাখা হয় — সাথে সাথে সেভ হয়, কোনো ইন্টারনেট লাগে না
+    drawGallery.push({dataUrl});
     renderGallery();
+    bump(3, 'draw');
+    praise('ছবিটা সেভ হয়েছে! 🖼️');
+    // Firebase Storage-এ আপলোড করে স্থায়ীভাবে গ্যালারিতে রাখা হয় (লগইন করা থাকলে)
+    if(currentUser){
+      canvas.toBlob(async (blob)=>{
+        try{
+          const path = `users/${currentUser.uid}/gallery/${Date.now()}.png`;
+          const ref = storage.ref(path);
+          await ref.put(blob);
+          const url = await ref.getDownloadURL();
+          childData.galleryUrls = childData.galleryUrls || [];
+          childData.galleryUrls.push(url);
+          await db.collection('users').doc(currentUser.uid).update({ galleryUrls: childData.galleryUrls });
+        }catch(e){ console.error('gallery upload failed', e); }
+      }, 'image/png');
+    }
   };
   function renderGallery(){
     const grid = document.getElementById('galleryGrid');
     const empty = document.getElementById('galleryEmpty');
+    const persisted = (childData && childData.galleryUrls) || [];
     grid.innerHTML = '';
-    empty.style.display = drawGallery.length ? 'none' : 'block';
+    empty.style.display = (drawGallery.length || persisted.length) ? 'none' : 'block';
     drawGallery.forEach((item, i)=>{
       const div = document.createElement('div');
       div.className = 'gallery-item';
@@ -624,9 +1166,16 @@ function buildDraw(body){
         <a href="${item.dataUrl}" download="amar-chobi-${i+1}.png">⬇️</a>`;
       grid.appendChild(div);
     });
+    persisted.forEach((url, i)=>{
+      const div = document.createElement('div');
+      div.className = 'gallery-item';
+      div.innerHTML = `<img src="${url}" alt="সেভ করা ছবি ${i+1}">`;
+      grid.appendChild(div);
+    });
   }
   renderGallery();
 }
+
 </script>
 </body>
 </html>
