@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title> Hiya'r বাগান</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFFBF0;
+    --sun:#FFCF56;
+    --leaf:#3FAE7C;
+    --leaf-dark:#2C8B60;
+    --sky:#6FC6E8;
+    --coral:#FF7A68;
+    --plum:#3A2E44;
+    --lilac:#B98CE0;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
+  html,body{margin:0; padding:0; width:100%; height:100%; overflow-x:hidden;}
+  body{
+    font-family:'Hind Siliguri', sans-serif;
+    background: linear-gradient(180deg, #CDEFFB 0%, #E9F8E3 55%, #FFFBF0 100%);
+    min-height:100vh;
+    color:var(--plum);
+  }
+  .display{font-family:'Baloo Da 2', sans-serif;}
+
+  /* ---------- Sky decorations ---------- */
+  .sky-deco{position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden;}
+  .cloud{position:absolute; opacity:.9; animation: drift 60s linear infinite;}
+  .sun{position:absolute; top:18px; right:24px; width:64px; height:64px; border-radius:50%;
+    background: radial-gradient(circle at 35% 35%, #FFE38A, var(--sun));
+    box-shadow:0 0 40px 12px rgba(255,207,86,.55);
+    animation: pulse 4s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+  @keyframes drift{from{transform:translateX(-10%);}to{transform:translateX(110%);}}
+
+  /* ---------- Header ---------- */
+  header{position:relative; z-index:2; text-align:center; padding:22px 16px 8px;}
+  h1{font-family:'Baloo Da 2', sans-serif; font-weight:800; font-size:clamp(28px,7vw,44px);
+    color:var(--leaf-dark); margin:0; text-shadow: 2px 3px 0 rgba(255,255,255,.7);}
+  .sub{font-size:15px; color:var(--plum); opacity:.75; margin-top:4px;}
+
+  /* ---------- Garden path (home) ---------- */
+  #home{position:relative; z-index:1; max-width:640px; margin:0 auto; padding:10px 18px 60px;}
+  .path{position:relative;}
+  .flower-stop{
+    display:flex; align-items:center; gap:16px; background:var(--card); border-radius:28px;
+    padding:16px 20px; margin:22px 0; box-shadow:0 8px 0 rgba(0,0,0,.06), 0 10px 20px rgba(58,46,68,.08);
+    border:3px solid transparent; cursor:pointer; transition:transform .15s ease, border-color .15s ease;
+  }
+  .flower-stop:active{transform:scale(.96);}
+  .flower-stop:nth-child(odd){margin-left:0;}
+  .flower-stop:nth-child(even){margin-left:auto; flex-direction:row-reverse; text-align:right;}
+  .flower-icon{
+    font-size:44px; width:76px; height:76px; min-width:76px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    animation: sway 3s ease-in-out infinite;
+  }
+  @keyframes sway{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
+  .flower-stop h2{font-family:'Baloo Da 2', sans-serif; font-size:21px; margin:0 0 3px; color:var(--plum);}
+  .flower-stop p{margin:0; font-size:13.5px; color:var(--plum); opacity:.65;}
+  .c1{background:#FFE9CE;} .c2{background:#DDF3E4;} .c3{background:#E1F0FB;}
+  .c4{background:#F5E7FB;} .c5{background:#FFE3DE;}
+
+  /* ---------- Activity screen ---------- */
+  #activity{position:fixed; inset:0; background:var(--cream); z-index:10; display:none; flex-direction:column;}
+  #activity.open{display:flex;}
+  .topbar{display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--leaf); color:#fff;}
+  .backBtn{background:rgba(255,255,255,.25); border:none; color:#fff; font-size:22px; width:42px; height:42px;
+    border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  .topbar h2{font-family:'Baloo Da 2', sans-serif; margin:0; font-size:20px;}
+  .stars{margin-left:auto; font-size:16px; font-weight:700; background:rgba(255,255,255,.25); padding:6px 12px; border-radius:20px;}
+  .activity-body{flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; align-items:center;}
+
+  /* Big letter/number stage */
+  .stage{
+    width:min(78vw, 260px); height:min(78vw,260px); border-radius:36px; display:flex; align-items:center; justify-content:center;
+    font-size:clamp(80px,26vw,140px); font-family:'Baloo Da 2', sans-serif; font-weight:800; color:#fff;
+    box-shadow:0 10px 0 rgba(0,0,0,.1); margin:10px 0 6px; transition: transform .12s ease;
+  }
+  .stage.pop{animation: pop .4s ease;}
+  @keyframes pop{0%{transform:scale(.7) rotate(-4deg);}60%{transform:scale(1.12) rotate(3deg);}100%{transform:scale(1) rotate(0);}}
+  .word-label{font-family:'Baloo Da 2', sans-serif; font-size:22px; margin-top:4px; color:var(--plum);}
+  .word-sub{font-size:14px; opacity:.6; margin-top:2px;}
+
+  .grid-nav{display:grid; grid-template-columns:repeat(auto-fill,minmax(64px,1fr)); gap:10px; width:100%; max-width:480px; margin-top:18px;}
+  .mini-btn{
+    aspect-ratio:1; border-radius:16px; border:none; font-family:'Baloo Da 2', sans-serif; font-size:26px; font-weight:700;
+    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 0 rgba(0,0,0,.12);
+  }
+  .mini-btn:active{transform:translateY(3px); box-shadow:none;}
+
+  .say-btn{margin-top:16px; background:var(--coral); color:#fff; border:none; padding:14px 26px; border-radius:30px;
+    font-family:'Baloo Da 2', sans-serif; font-size:18px; box-shadow:0 5px 0 #d9583f; cursor:pointer;}
+  .say-btn:active{transform:translateY(4px); box-shadow:none;}
+
+  /* Matching game */
+  .memo-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; width:100%; max-width:420px; margin-top:8px;}
+  .memo-card{aspect-ratio:1; border-radius:16px; background:var(--leaf); display:flex; align-items:center; justify-content:center;
+    font-size:34px; cursor:pointer; box-shadow:0 5px 0 var(--leaf-dark); transition:transform .15s;}
+  .memo-card.flipped, .memo-card.matched{background:#fff; box-shadow:0 5px 0 #ddd;}
+  .memo-card.matched{opacity:.55;}
+  .memo-card:active{transform:scale(.94);}
+
+  /* Drawing */
+  .draw-wrap{width:100%; max-width:460px;}
+  canvas{width:100%; aspect-ratio:4/3; background:#fff; border-radius:20px; box-shadow:0 6px 20px rgba(0,0,0,.1); touch-action:none;}
+  .palette{display:flex; gap:10px; justify-content:center; margin:14px 0; flex-wrap:wrap;}
+  .swatch{width:38px; height:38px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 2px rgba(0,0,0,.1); cursor:pointer;}
+  .swatch.active{box-shadow:0 0 0 3px var(--plum);}
+  .draw-tools{display:flex; gap:10px; justify-content:center;}
+  .tool-btn{background:var(--sky); border:none; padding:10px 18px; border-radius:20px; font-family:'Baloo Da 2',sans-serif;
+    color:#fff; font-size:14px; cursor:pointer; box-shadow:0 4px 0 #4a9fbf;}
+  .tool-btn:active{transform:translateY(3px); box-shadow:none;}
+
+  .praise{
+    position:fixed; top:20px; left:50%; transform:translateX(-50%) scale(.8); background:var(--sun); color:var(--plum);
+    font-family:'Baloo Da 2', sans-serif; font-weight:700; padding:10px 22px; border-radius:30px; z-index:50; opacity:0;
+    transition:all .25s ease; box-shadow:0 6px 16px rgba(0,0,0,.15); font-size:16px;
+  }
+  .praise.show{opacity:1; transform:translateX(-50%) scale(1);}
+</style>
+</head>
+<body>
+
+<div class="sky-deco">
+  <div class="sun"></div>
+</div>
+
+<header>
+  <h1>খুকির বাগান 🌷</h1>
+  <div class="sub">খেলো, আঁকো, শেখো — নিজের মতো করে</div>
+</header>
+
+<div id="home">
+  <div class="path">
+    <div class="flower-stop" onclick="openActivity('letters')">
+      <div class="flower-icon c1">🔤</div>
+      <div><h2>বর্ণ বাগান</h2><p>বাংলা অক্ষর চেনো ও শোনো</p></div>
+    </div>
+    <div class="flower-stop" onclick="openActivity('numbers')">
+      <div class="flower-icon c2">🐝</div>
+      <div><h2>সংখ্যা মৌমাছি</h2><p>গুনে গুনে ১ থেকে ২০</p></div>
+    </div>
+    <div class="flower-stop" onclick="openActivity('match')">
+      <div class="flower-icon c3">🍎</div>
+      <div><h2>মিলাও তো!</h2><p>একই জোড়া খুঁজে বের করো</p></div>
+    </div>
+    <div class="flower-stop" onclick="openActivity('draw')">
+      <div class="flower-icon c4">🎨</div>
+      <div><h2>আঁকার খাতা</h2><p>নিজের ছবি নিজে আঁকো</p></div>
+    </div>
+    <div class="flower-stop" onclick="openActivity('animals')">
+      <div class="flower-icon c5">🦁</div>
+      <div><h2>প্রাণী জগৎ</h2><p>প্রাণীর নাম ও ডাক শোনো</p></div>
+    </div>
+  </div>
+</div>
+
+<div id="activity">
+  <div class="topbar">
+    <button class="backBtn" onclick="closeActivity()">←</button>
+    <h2 id="actTitle">শিরোনাম</h2>
+    <div class="stars">⭐ <span id="starCount">0</span></div>
+  </div>
+  <div class="activity-body" id="actBody"></div>
+</div>
+
+<div class="praise" id="praise">দারুণ হয়েছে! 🎉</div>
+
+<script>
+let stars = 0;
+function bump(n){ stars += n; document.getElementById('starCount').textContent = stars; }
+function praise(msg){
+  const p = document.getElementById('praise');
+  p.textContent = msg || 'দারুণ হয়েছে! 🎉';
+  p.classList.add('show');
+  setTimeout(()=>p.classList.remove('show'), 1100);
+}
+function speak(text){
+  try{
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'bn-BD'; u.rate = 0.85;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+const COLORS = ['#FF7A68','#3FAE7C','#6FC6E8','#FFCF56','#B98CE0','#FF9F43','#4FC3D9'];
+
+const letters = [
+  ['অ','অজগর'],['আ','আম'],['ই','ইলিশ'],['ঈ','ঈগল'],['উ','উট'],['ঊ','ঊষা'],
+  ['ঋ','ঋষি'],['এ','একতারা'],['ঐ','ঐরাবত'],['ও','ওল'],['ক','কলম'],['খ','খরগোশ'],
+  ['গ','গরু'],['ঘ','ঘড়ি'],['চ','চাঁদ'],['ছ','ছাতা'],['জ','জাহাজ'],['ঝ','ঝুড়ি'],
+  ['ট','টমেটো'],['ঠ','ঠোঁট']
+];
+
+const animalList = [
+  ['🦁','সিংহ','গর্জন করে'],['🐄','গরু','হাম্বা ডাকে'],['🐘','হাতি','বড় শুঁড় আছে'],
+  ['🐦','পাখি','কিচিরমিচির করে'],['🐸','ব্যাঙ','ঘ্যাঙঘ্যাঙ ডাকে'],['🐕','কুকুর','ঘেউঘেউ করে'],
+  ['🐱','বিড়াল','মিঁয়াও করে'],['🐝','মৌমাছি','ভনভন করে']
+];
+
+function openActivity(name){
+  document.getElementById('activity').classList.add('open');
+  const title = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো!', draw:'আঁকার খাতা', animals:'প্রাণী জগৎ'}[name];
+  document.getElementById('actTitle').textContent = title;
+  const body = document.getElementById('actBody');
+  body.innerHTML = '';
+  if(name==='letters') buildLetters(body);
+  if(name==='numbers') buildNumbers(body);
+  if(name==='match') buildMatch(body);
+  if(name==='draw') buildDraw(body);
+  if(name==='animals') buildAnimals(body);
+}
+function closeActivity(){
+  document.getElementById('activity').classList.remove('open');
+  window.speechSynthesis && window.speechSynthesis.cancel();
+}
+
+/* ---------- Letters ---------- */
+function buildLetters(body){
+  let idx = 0;
+  body.innerHTML = `
+    <div class="stage" id="letterStage" style="background:${COLORS[0]}">${letters[0][0]}</div>
+    <div class="word-label" id="letterWord">${letters[0][1]}</div>
+    <div class="word-sub">তে ${letters[0][1]}</div>
+    <button class="say-btn" onclick="sayLetter()">🔊 শোনো</button>
+    <div class="grid-nav" id="letterGrid"></div>
+  `;
+  const grid = document.getElementById('letterGrid');
+  letters.forEach((l,i)=>{
+    const b = document.createElement('button');
+    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = l[0];
+    b.onclick = ()=>showLetter(i);
+    grid.appendChild(b);
+  });
+  window.showLetter = function(i){
+    idx = i;
+    const stage = document.getElementById('letterStage');
+    stage.textContent = letters[i][0];
+    stage.style.background = COLORS[i%COLORS.length];
+    stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+    document.getElementById('letterWord').textContent = letters[i][1];
+    speak(letters[i][0] + ', ' + letters[i][1]);
+    bump(1);
+  };
+  window.sayLetter = function(){ speak(letters[idx][0] + ', ' + letters[idx][1]); };
+}
+
+/* ---------- Numbers ---------- */
+function buildNumbers(body){
+  let n = 1;
+  body.innerHTML = `
+    <div class="stage" id="numStage" style="background:${COLORS[0]}">১</div>
+    <div id="beeRow" style="font-size:30px; letter-spacing:4px; margin:8px 0 4px; min-height:40px;"></div>
+    <div class="word-sub">১টা মৌমাছি গুনো!</div>
+    <button class="say-btn" onclick="sayNum()">🔊 শোনো</button>
+    <div class="grid-nav" id="numGrid"></div>
+  `;
+  const grid = document.getElementById('numGrid');
+  const bnDigits = ['','১','২','৩','৪','৫','৬','৭','৮','৯','১০','১১','১২','১৩','১৪','১৫','১৬','১৭','১৮','১৯','২০'];
+  for(let i=1;i<=20;i++){
+    const b = document.createElement('button');
+    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = bnDigits[i];
+    b.onclick = ()=>showNum(i);
+    grid.appendChild(b);
+  }
+  window.showNum = function(i){
+    n = i;
+    const stage = document.getElementById('numStage');
+    stage.textContent = bnDigits[i];
+    stage.style.background = COLORS[i%COLORS.length];
+    stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+    document.getElementById('beeRow').textContent = '🐝'.repeat(i);
+    speak(bnDigits[i] + 'টা মৌমাছি');
+    bump(1);
+  };
+  window.sayNum = function(){ speak(bnDigits[n] + 'টা মৌমাছি'); };
+}
+
+/* ---------- Animals ---------- */
+function buildAnimals(body){
+  let idx = 0;
+  body.innerHTML = `
+    <div class="stage" id="aniStage" style="background:${COLORS[0]}">${animalList[0][0]}</div>
+    <div class="word-label" id="aniWord">${animalList[0][1]}</div>
+    <div class="word-sub" id="aniSub">${animalList[0][2]}</div>
+    <button class="say-btn" onclick="sayAni()">🔊 শোনো</button>
+    <div class="grid-nav" id="aniGrid"></div>
+  `;
+  const grid = document.getElementById('aniGrid');
+  animalList.forEach((a,i)=>{
+    const b = document.createElement('button');
+    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = a[0];
+    b.onclick = ()=>showAni(i);
+    grid.appendChild(b);
+  });
+  window.showAni = function(i){
+    idx=i;
+    const stage = document.getElementById('aniStage');
+    stage.textContent = animalList[i][0];
+    stage.style.background = COLORS[i%COLORS.length];
+    stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+    document.getElementById('aniWord').textContent = animalList[i][1];
+    document.getElementById('aniSub').textContent = animalList[i][2];
+    speak(animalList[i][1] + ' ' + animalList[i][2]);
+    bump(1);
+  };
+  window.sayAni = function(){ speak(animalList[idx][1] + ' ' + animalList[idx][2]); };
+}
+
+/* ---------- Matching memory game ---------- */
+function buildMatch(body){
+  const emojiSet = ['🍎','🍌','🍇','🍉','🥕','🌽','🍓','🍍'];
+  let cards = [...emojiSet, ...emojiSet];
+  cards.sort(()=>Math.random()-0.5);
+  body.innerHTML = `<div class="word-sub" style="margin-bottom:8px;">দুটো একই ছবি খুঁজে বের করো</div><div class="memo-grid" id="memoGrid"></div>`;
+  const grid = document.getElementById('memoGrid');
+  let flipped = [];
+  let lock = false;
+  let matchedCount = 0;
+  cards.forEach((emoji, i)=>{
+    const c = document.createElement('div');
+    c.className='memo-card';
+    c.dataset.emoji = emoji;
+    c.dataset.i = i;
+    c.textContent = '❓';
+    c.onclick = ()=>{
+      if(lock || c.classList.contains('flipped') || c.classList.contains('matched')) return;
+      c.textContent = emoji;
+      c.classList.add('flipped');
+      flipped.push(c);
+      if(flipped.length===2){
+        lock = true;
+        setTimeout(()=>{
+          if(flipped[0].dataset.emoji === flipped[1].dataset.emoji){
+            flipped.forEach(f=>f.classList.add('matched'));
+            matchedCount++;
+            bump(2);
+            praise();
+            if(matchedCount===emojiSet.length){
+              setTimeout(()=>praise('সব মিলিয়ে ফেলেছ! তুমি সেরা! 🏆'), 300);
+            }
+          } else {
+            flipped.forEach(f=>{ f.classList.remove('flipped'); f.textContent='❓'; });
+          }
+          flipped = [];
+          lock = false;
+        }, 700);
+      }
+    };
+    grid.appendChild(c);
+  });
+}
+
+/* ---------- Drawing pad ---------- */
+function buildDraw(body){
+  body.innerHTML = `
+    <div class="draw-wrap">
+      <canvas id="canvas"></canvas>
+      <div class="palette" id="palette"></div>
+      <div class="draw-tools">
+        <button class="tool-btn" onclick="clearCanvas()">🧹 মুছে ফেলো</button>
+      </div>
+    </div>
+  `;
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width; canvas.height = rect.height;
+    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+  resize();
+  window.addEventListener('resize', resize, {once:false});
+  let drawing = false, color = COLORS[0];
+  const pal = document.getElementById('palette');
+  COLORS.concat(['#3A2E44']).forEach((c,i)=>{
+    const s = document.createElement('div');
+    s.className='swatch' + (i===0?' active':'');
+    s.style.background = c;
+    s.onclick = ()=>{ color = c; [...pal.children].forEach(x=>x.classList.remove('active')); s.classList.add('active'); };
+    pal.appendChild(s);
+  });
+  function pos(e){
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return {x: t.clientX - rect.left, y: t.clientY - rect.top};
+  }
+  function start(e){ drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); }
+  function move(e){
+    if(!drawing) return;
+    const p = pos(e);
+    ctx.lineTo(p.x,p.y); ctx.strokeStyle = color; ctx.lineWidth = 10; ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.stroke(); e.preventDefault();
+  }
+  function end(){ if(drawing){ drawing=false; bump(1); } }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+  window.clearCanvas = function(){ ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height); };
+}
+</script>
+</body>
+</html>
