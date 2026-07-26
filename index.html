@@ -178,6 +178,13 @@
   .select-row{display:flex; gap:8px; margin-bottom:12px;}
   .select-row .field{flex:1; margin-bottom:0;}
 
+  .or-divider{display:flex; align-items:center; gap:10px; margin:16px 0 12px; font-size:12.5px; opacity:.5;}
+  .or-divider::before, .or-divider::after{content:''; flex:1; height:1px; background:#e5e5e5;}
+  .google-btn{width:100%; padding:12px; border:2px solid #eee; border-radius:16px; background:#fff; color:var(--plum);
+    font-family:'Hind Siliguri', sans-serif; font-size:14.5px; font-weight:600; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:10px;}
+  .google-btn:active{background:#f7f7f7;}
+
   /* ---------- Topbar on home ---------- */
   .home-topbar{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:6px; position:relative; z-index:2;}
   .pill-btn{background:#fff; border:none; padding:9px 16px; border-radius:20px; font-family:'Baloo Da 2', sans-serif;
@@ -270,8 +277,6 @@
   <div class="drawer-item" onclick="drawerGo('videos')"><span class="di-icon">📺</span><span data-i18n="m_videos">ভিডিও কর্নার</span></div>
 
   <div class="drawer-section-title" data-i18n="drawerSoon">শীঘ্রই আসছে</div>
-  <div class="drawer-item soon"><span class="di-icon">🌐</span><span data-i18n="soon_engui">সম্পূর্ণ ইংরেজি UI (স্ট্রিম অনুযায়ী)</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
-  <div class="drawer-item soon"><span class="di-icon">🔑</span><span data-i18n="soon_social">গুগল / সোশ্যাল লগইন</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
   <div class="drawer-item soon"><span class="di-icon">🤖</span><span data-i18n="soon_bot">চ্যাট বন্ধুর সাথে child/parent মোড</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
   <div class="drawer-item soon"><span class="di-icon">🏆</span><span data-i18n="soon_badges">ব্যাজ ও অ্যাচিভমেন্ট</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
   <div class="drawer-item soon"><span class="di-icon">👨‍👩‍👧</span><span data-i18n="soon_multi">একাধিক বাচ্চা প্রোফাইল</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
@@ -287,6 +292,11 @@
     <button class="primary-btn" id="authSubmitBtn" onclick="handleAuthSubmit()" data-i18n="btnLogin">লগইন করুন</button>
     <div class="auth-error" id="authError"></div>
     <div class="switch-link" id="authSwitchLink" onclick="toggleAuthMode()" data-i18n="switchToSignup">নতুন এখানে? অ্যাকাউন্ট বানান</div>
+    <div class="or-divider"><span data-i18n="orDivider">অথবা</span></div>
+    <button class="google-btn" onclick="handleGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.85 2.09-1.8 2.73v2.27h2.92c1.71-1.57 2.68-3.88 2.68-6.64z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.17l-2.92-2.27c-.81.54-1.85.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34C2.44 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.72c-.18-.54-.28-1.11-.28-1.72s.1-1.18.28-1.72V4.94H.96C.35 6.17 0 7.55 0 9s.35 2.83.96 4.06l3.01-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+      <span data-i18n="btnGoogle">Google দিয়ে লগইন করুন</span>
+    </button>
   </div>
 </div>
 
@@ -442,6 +452,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 let currentUser = null;
 let childData = null; // { name, age, stream, stars:{}, totalStars, galleryUrls:[] }
@@ -456,6 +467,7 @@ const I18N = {
     authTag:'প্যারেন্ট লগইন করুন', ph_email:'ইমেইল', ph_pass:'পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)',
     btnLogin:'লগইন করুন', btnSignup:'অ্যাকাউন্ট বানান', switchToSignup:'নতুন এখানে? অ্যাকাউন্ট বানান',
     switchToLogin:'আগে থেকে অ্যাকাউন্ট আছে? লগইন করুন',
+    orDivider:'অথবা', btnGoogle:'Google দিয়ে লগইন করুন',
     setupTitle:'তোমার ছোট্ট বন্ধুর কথা বলো', setupTag:'এই তথ্য দিয়ে অ্যাপটা তার উপযোগী করে সাজাবো',
     ph_childName:'বাচ্চার নাম', ph_age:'বয়স', btnStart:'শুরু করি!',
     stream_bangla:'বাংলা মিডিয়াম', stream_english_version:'ইংলিশ ভার্সন', stream_english_medium:'ইংলিশ মিডিয়াম',
@@ -493,6 +505,7 @@ const I18N = {
     authTag:'Parent login', ph_email:'Email', ph_pass:'Password (min 6 characters)',
     btnLogin:'Log In', btnSignup:'Create Account', switchToSignup:'New here? Create an account',
     switchToLogin:'Already have an account? Log in',
+    orDivider:'or', btnGoogle:'Continue with Google',
     setupTitle:"Tell us about your little friend", setupTag:"We'll set up the app just for them",
     ph_childName:"Child's name", ph_age:'Age', btnStart:"Let's start!",
     stream_bangla:'Bangla Medium', stream_english_version:'English Version', stream_english_medium:'English Medium',
@@ -551,7 +564,18 @@ function applyLanguage(){
 function setLanguage(lang){
   currentLang = lang;
   localStorage.setItem('khukirLang', lang);
+  localStorage.setItem('khukirLangManual', '1');
   applyLanguage();
+}
+function defaultLangForStream(stream){
+  return (stream === 'english_version' || stream === 'english_medium') ? 'en' : 'bn';
+}
+function applyStreamLanguageDefault(){
+  if(!localStorage.getItem('khukirLangManual') && childData && childData.stream){
+    currentLang = defaultLangForStream(childData.stream);
+    localStorage.setItem('khukirLang', currentLang);
+    applyLanguage();
+  }
 }
 function updateAppTitle(){
   const titleText = (childData && childData.childName)
@@ -634,6 +658,18 @@ function handleAuthSubmit(){
     : auth.signInWithEmailAndPassword(email, pass);
   action.catch(e => { errEl.textContent = translateAuthError(e.code); });
 }
+function handleGoogleLogin(){
+  const errEl = document.getElementById('authError');
+  errEl.textContent = '';
+  auth.signInWithPopup(googleProvider).catch(e=>{
+    // মোবাইলে অনেক সময় popup ব্লক হয়ে যায় — তখন redirect দিয়ে ট্রাই করি
+    if(e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment' || e.code === 'auth/cancelled-popup-request'){
+      auth.signInWithRedirect(googleProvider).catch(e2=>{ errEl.textContent = translateAuthError(e2.code); });
+    } else if(e.code !== 'auth/popup-closed-by-user'){
+      errEl.textContent = translateAuthError(e.code);
+    }
+  });
+}
 function translateAuthError(code){
   const map = {
     'auth/email-already-in-use':'err_auth_email_in_use',
@@ -680,6 +716,7 @@ function handleSetupSubmit(){
 }
 
 function showHome(){
+  applyStreamLanguageDefault();
   document.getElementById('appHeader').style.display='block';
   document.getElementById('home').style.display='block';
   filterHomeByLevel();
