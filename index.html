@@ -498,7 +498,12 @@ const I18N = {
     err_authRequired:'সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন',
     err_auth_email_in_use:'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন', err_auth_invalid_email:'ইমেইলটা ঠিক নেই',
     err_auth_wrong_password:'পাসওয়ার্ড ভুল হয়েছে', err_auth_user_not_found:'এই ইমেইলে কোনো অ্যাকাউন্ট নেই, নতুন বানান',
-    err_auth_weak_password:'পাসওয়ার্ড আরেকটু শক্তিশালী দিন', err_auth_generic:'কিছু একটা সমস্যা হয়েছে, আবার চেষ্টা করুন'
+    err_auth_weak_password:'পাসওয়ার্ড আরেকটু শক্তিশালী দিন', err_auth_generic:'কিছু একটা সমস্যা হয়েছে, আবার চেষ্টা করুন',
+    draw_save:'সেভ করো', draw_clear:'মুছে ফেলো', draw_galleryTitle:'আমার গ্যালারি',
+    draw_galleryEmpty:'এখনো কোনো ছবি সেভ করা হয়নি — উপরে আঁকো, তারপর "সেভ করো" চাপো!',
+    draw_saved:'ছবিটা সেভ হয়েছে! 🖼️', draw_imgAlt:'ছবি', draw_savedImgAlt:'সেভ করা ছবি',
+    praiseDefault:'দারুণ হয়েছে! 🎉', praiseMatchWin:'সব মিলিয়ে ফেলেছ! তুমি সেরা! 🏆',
+    num_subIntro:'{n}টা মৌমাছি গুনো!', num_subMemorize:'{n} সংখ্যাটা মনে রাখো!'
   },
   en: {
     appTitleGeneric:"Khukir Bagan 🌷", headerSub:'Play, draw and learn — at your own pace',
@@ -536,7 +541,12 @@ const I18N = {
     err_authRequired:'Enter a valid email and a password of at least 6 characters',
     err_auth_email_in_use:'An account already exists with this email — please log in', err_auth_invalid_email:"That email doesn't look right",
     err_auth_wrong_password:'Incorrect password', err_auth_user_not_found:'No account found with this email — please sign up',
-    err_auth_weak_password:'Please choose a stronger password', err_auth_generic:'Something went wrong, please try again'
+    err_auth_weak_password:'Please choose a stronger password', err_auth_generic:'Something went wrong, please try again',
+    draw_save:'Save', draw_clear:'Clear', draw_galleryTitle:'My Gallery',
+    draw_galleryEmpty:'No pictures saved yet — draw above, then tap "Save"!',
+    draw_saved:'Picture saved! 🖼️', draw_imgAlt:'Picture', draw_savedImgAlt:'Saved picture',
+    praiseDefault:'Great job! 🎉', praiseMatchWin:"You matched them all! You're the best! 🏆",
+    num_subIntro:'Count {n} bees!', num_subMemorize:'Remember the number {n}!'
   }
 };
 let currentLang = localStorage.getItem('khukirLang') || 'bn';
@@ -639,6 +649,8 @@ function bnDigitsOf(num){
   const map = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
   return String(num).split('').map(ch=>map[ch]!==undefined?map[ch]:ch).join('');
 }
+// English UI দেখানোর সময় সংখ্যা পশ্চিমা অঙ্কে (0-9) দেখানো হয়; বাংলা UI-তে বাংলা লিপিতে (০-৯)
+function digitsOf(num){ return currentLang === 'en' ? String(num) : bnDigitsOf(num); }
 
 // ================= Auth flow =================
 function toggleAuthMode(){
@@ -784,7 +796,7 @@ function bump(n, moduleKey){
 }
 function praise(msg){
   const p = document.getElementById('praise');
-  p.textContent = msg || 'দারুণ হয়েছে! 🎉';
+  p.textContent = msg || t('praiseDefault');
   p.classList.add('show');
   setTimeout(()=>p.classList.remove('show'), 1100);
 }
@@ -920,28 +932,28 @@ function buildNumbers(body){
   const level = (childData && childData.level) || 'playgroup';
   const maxNum = {playgroup:10, nursery:20, kg:50, class1:100}[level] || 20;
   body.innerHTML = `
-    <div class="stage" id="numStage" style="background:${COLORS[0]}">১</div>
+    <div class="stage" id="numStage" style="background:${COLORS[0]}">${digitsOf(1)}</div>
     <div id="beeRow" style="font-size:26px; letter-spacing:3px; margin:8px 0 4px; min-height:40px; max-width:280px; text-align:center;"></div>
-    <div class="word-sub" id="numSub">১টা মৌমাছি গুনো!</div>
+    <div class="word-sub" id="numSub">${t('num_subIntro').replace('{n}', digitsOf(1))}</div>
     <button class="say-btn" onclick="sayNum()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="numGrid"></div>
   `;
   const grid = document.getElementById('numGrid');
   for(let i=1;i<=maxNum;i++){
     const b = document.createElement('button');
-    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = bnDigitsOf(i);
+    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = digitsOf(i);
     b.onclick = ()=>showNum(i);
     grid.appendChild(b);
   }
   window.showNum = function(i){
     n = i;
     const stage = document.getElementById('numStage');
-    stage.textContent = bnDigitsOf(i);
+    stage.textContent = digitsOf(i);
     stage.style.background = COLORS[i%COLORS.length];
     stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
     // ২০ এর বেশি হলে মৌমাছির বদলে সংখ্যাটাই ইঙ্গিত হিসেবে দেখানো হয়, বেশি ভিড় এড়াতে
     document.getElementById('beeRow').textContent = i<=20 ? '🐝'.repeat(i) : '';
-    document.getElementById('numSub').textContent = bnDigitsOf(i) + ' সংখ্যাটা মনে রাখো!';
+    document.getElementById('numSub').textContent = t('num_subMemorize').replace('{n}', digitsOf(i));
     speak(bnDigitsOf(i));
     bump(1, 'numbers');
   };
@@ -1131,7 +1143,7 @@ function buildMultiplication(body){
   for(let t=2;t<=10;t++){
     const btn = document.createElement('button');
     btn.className = 'mode-btn' + (t===2?' active':'');
-    btn.textContent = bnDigitsOf(t);
+    btn.textContent = digitsOf(t);
     btn.onclick = ()=>{ table=t; [...tabs.children].forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderTable(); };
     tabs.appendChild(btn);
   }
@@ -1143,8 +1155,8 @@ function buildMultiplication(body){
       row.className = 'flower-stop';
       row.style.margin = '8px 0';
       row.style.cursor = 'pointer';
-      row.innerHTML = `<div class="flower-icon c2" style="font-size:20px;">${bnDigitsOf(table)}×${bnDigitsOf(i)}</div>
-        <div><h2 style="font-size:20px;">= ${bnDigitsOf(table*i)}</h2></div>`;
+      row.innerHTML = `<div class="flower-icon c2" style="font-size:20px;">${digitsOf(table)}×${digitsOf(i)}</div>
+        <div><h2 style="font-size:20px;">= ${digitsOf(table*i)}</h2></div>`;
       row.onclick = ()=>{ speak(bnDigitsOf(table)+' গুণ '+bnDigitsOf(i)+' সমান '+bnDigitsOf(table*i)); bump(1,'multiplication'); };
       list.appendChild(row);
     }
@@ -1227,7 +1239,7 @@ function buildMatch(body){
             bump(2, 'match');
             praise();
             if(matchedCount===emojiSet.length){
-              setTimeout(()=>praise('সব মিলিয়ে ফেলেছ! তুমি সেরা! 🏆'), 300);
+              setTimeout(()=>praise(t('praiseMatchWin')), 300);
             }
           } else {
             flipped.forEach(f=>{ f.classList.remove('flipped'); f.textContent='❓'; });
@@ -1248,12 +1260,12 @@ function buildDraw(body){
       <canvas id="canvas"></canvas>
       <div class="palette" id="palette"></div>
       <div class="draw-tools">
-        <button class="tool-btn" style="background:var(--coral); box-shadow:0 4px 0 #d9583f;" onclick="saveToGallery()">💾 সেভ করো</button>
-        <button class="tool-btn" onclick="clearCanvas()">🧹 মুছে ফেলো</button>
+        <button class="tool-btn" style="background:var(--coral); box-shadow:0 4px 0 #d9583f;" onclick="saveToGallery()">💾 <span data-i18n="draw_save">সেভ করো</span></button>
+        <button class="tool-btn" onclick="clearCanvas()">🧹 <span data-i18n="draw_clear">মুছে ফেলো</span></button>
       </div>
-      <h3 class="display" style="margin:20px 0 6px; font-size:18px; text-align:center; color:var(--plum);">আমার গ্যালারি</h3>
+      <h3 class="display" style="margin:20px 0 6px; font-size:18px; text-align:center; color:var(--plum);" data-i18n="draw_galleryTitle">আমার গ্যালারি</h3>
       <div class="gallery-grid" id="galleryGrid"></div>
-      <div class="empty-note" id="galleryEmpty">এখনো কোনো ছবি সেভ করা হয়নি — উপরে আঁকো, তারপর "সেভ করো" চাপো!</div>
+      <div class="empty-note" id="galleryEmpty" data-i18n="draw_galleryEmpty">এখনো কোনো ছবি সেভ করা হয়নি — উপরে আঁকো, তারপর "সেভ করো" চাপো!</div>
     </div>
   `;
   const canvas = document.getElementById('canvas');
@@ -1300,7 +1312,7 @@ function buildDraw(body){
     drawGallery.push({dataUrl});
     renderGallery();
     bump(3, 'draw');
-    praise('ছবিটা সেভ হয়েছে! 🖼️');
+    praise(t('draw_saved'));
     // Firebase Storage-এ আপলোড করে স্থায়ীভাবে গ্যালারিতে রাখা হয় (লগইন করা থাকলে)
     if(currentUser){
       canvas.toBlob(async (blob)=>{
@@ -1325,14 +1337,14 @@ function buildDraw(body){
     drawGallery.forEach((item, i)=>{
       const div = document.createElement('div');
       div.className = 'gallery-item';
-      div.innerHTML = `<img src="${item.dataUrl}" alt="ছবি ${i+1}">
+      div.innerHTML = `<img src="${item.dataUrl}" alt="${t('draw_imgAlt')} ${i+1}">
         <a href="${item.dataUrl}" download="amar-chobi-${i+1}.png">⬇️</a>`;
       grid.appendChild(div);
     });
     persisted.forEach((url, i)=>{
       const div = document.createElement('div');
       div.className = 'gallery-item';
-      div.innerHTML = `<img src="${url}" alt="সেভ করা ছবি ${i+1}">`;
+      div.innerHTML = `<img src="${url}" alt="${t('draw_savedImgAlt')} ${i+1}">`;
       grid.appendChild(div);
     });
   }
