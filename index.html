@@ -194,24 +194,6 @@
   .mini-gallery{display:grid; grid-template-columns:repeat(auto-fill,minmax(70px,1fr)); gap:8px;}
   .mini-gallery img{width:100%; border-radius:10px;}
 
-  /* ---------- AI bot ---------- */
-  .bot-fab{position:fixed; bottom:20px; right:20px; width:60px; height:60px; border-radius:50%; background:var(--lilac);
-    color:#fff; font-size:28px; border:none; box-shadow:0 6px 16px rgba(0,0,0,.2); cursor:pointer; z-index:40;
-    display:flex; align-items:center; justify-content:center;}
-  #botModal{position:fixed; inset:0; background:rgba(58,46,68,.4); z-index:60; display:none; align-items:flex-end; justify-content:center;}
-  #botModal.open{display:flex;}
-  .bot-sheet{background:#fff; width:100%; max-width:480px; border-radius:24px 24px 0 0; max-height:80vh;
-    display:flex; flex-direction:column; box-shadow:0 -8px 24px rgba(0,0,0,.2);}
-  .bot-head{display:flex; align-items:center; padding:14px 18px; border-bottom:1px solid #eee;}
-  .bot-head h3{font-family:'Baloo Da 2', sans-serif; margin:0; font-size:17px; color:var(--plum);}
-  .bot-head button{margin-left:auto; background:none; border:none; font-size:20px; cursor:pointer;}
-  .bot-msgs{flex:1; overflow-y:auto; padding:14px 18px; display:flex; flex-direction:column; gap:10px; min-height:180px;}
-  .bot-msg{max-width:80%; padding:10px 14px; border-radius:16px; font-size:14px; line-height:1.4;}
-  .bot-msg.bot{background:#F0EAF8; align-self:flex-start;}
-  .bot-msg.me{background:var(--sky); color:#fff; align-self:flex-end;}
-  .bot-input-row{display:flex; gap:8px; padding:12px 14px; border-top:1px solid #eee;}
-  .bot-input-row input{flex:1; border:2px solid #eee; border-radius:20px; padding:10px 16px; font-family:'Hind Siliguri',sans-serif;}
-  .bot-input-row button{background:var(--lilac); color:#fff; border:none; width:42px; height:42px; border-radius:50%; cursor:pointer;}
 
   .praise{
     position:fixed; top:20px; left:50%; transform:translateX(-50%) scale(.8); background:var(--sun); color:var(--plum);
@@ -367,21 +349,12 @@
   </div>
 </div>
 
-<!-- ---------- AI bot ---------- -->
-<button class="bot-fab" id="botFab" onclick="openBot()" style="display:none;">💬</button>
-<div id="botModal">
-  <div class="bot-sheet">
-    <div class="bot-head">
-      <h3 id="botTitle">🌷 বাগান বন্ধু</h3>
-      <button onclick="closeBot()">✕</button>
-    </div>
-    <div class="bot-msgs" id="botMsgs"></div>
-    <div class="bot-input-row">
-      <input id="botInput" placeholder="কিছু জিজ্ঞেস করো..." onkeydown="if(event.key==='Enter') sendBotMessage()">
-      <button onclick="sendBotMessage()">➤</button>
-    </div>
-  </div>
-</div>
+<!-- ---------- AI বট: বাইরের চ্যাট উইজেট (নিজস্ব বট) ---------- -->
+<script>
+  window.MULTI_AI_ENDPOINT = "https://the-o.himon.workers.dev";
+  window.MULTI_AI_STREAM = true;
+</script>
+<script src="https://bot.handsandhead.com/chat-widget.js"></script>
 
 <div class="praise" id="praise">দারুণ হয়েছে! 🎉</div>
 
@@ -396,8 +369,6 @@ const firebaseConfig = {
   messagingSenderId: "473906193558",
   appId: "1:473906193558:web:304cde07e050faaa308eb7"
 };
-// Cloud Function ডিপ্লয় করার পর এখানে তার URL বসান (SETUP_GUIDE.md ধাপ ৭)
-const BOT_FUNCTION_URL = "PASTE_YOUR_CLOUD_FUNCTION_URL_HERE";
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -407,7 +378,6 @@ const storage = firebase.storage();
 let currentUser = null;
 let childData = null; // { name, age, stream, stars:{}, totalStars, galleryUrls:[] }
 let isSignupMode = false;
-let botMode = 'child';
 
 const STREAM_LABELS = {bangla:'বাংলা মিডিয়াম', english_version:'ইংলিশ ভার্সন', english_medium:'ইংলিশ মিডিয়াম'};
 const LEVEL_LABELS = {playgroup:'প্লে-গ্রুপ', nursery:'নার্সারি', kg:'কেজি (KG)', class1:'ক্লাস ১'};
@@ -479,7 +449,6 @@ auth.onAuthStateChanged(async (user)=>{
     document.getElementById('setupScreen').style.display='none';
     document.getElementById('appHeader').style.display='none';
     document.getElementById('home').style.display='none';
-    document.getElementById('botFab').style.display='none';
     return;
   }
   document.getElementById('authScreen').style.display='none';
@@ -508,7 +477,6 @@ function handleSetupSubmit(){
 function showHome(){
   document.getElementById('appHeader').style.display='block';
   document.getElementById('home').style.display='block';
-  document.getElementById('botFab').style.display='flex';
   filterHomeByLevel();
   bump.__loaded = true;
 }
@@ -555,55 +523,6 @@ function handleLevelChange(newLevel){
   childData.level = newLevel;
   if(currentUser) db.collection('users').doc(currentUser.uid).update({level:newLevel}).catch(e=>console.error('level save failed', e));
   filterHomeByLevel();
-}
-
-// ================= AI bot =================
-function openBot(){
-  botMode = document.getElementById('dashboard').classList.contains('open') ? 'parent' : 'child';
-  document.getElementById('botTitle').textContent = botMode==='parent' ? '🤖 সহায়ক সহকারী' : '🌷 বাগান বন্ধু';
-  document.getElementById('botModal').classList.add('open');
-  const msgs = document.getElementById('botMsgs');
-  if(!msgs.dataset.greeted){
-    addBotMsg(botMode==='parent' ? 'নমস্কার! বাচ্চার অগ্রগতি নিয়ে কিছু জিজ্ঞেস করতে চান?' : 'হাই! আমি তোমার বাগান বন্ধু! কী জানতে চাও?', 'bot');
-    msgs.dataset.greeted = '1';
-  }
-}
-function closeBot(){ document.getElementById('botModal').classList.remove('open'); }
-function addBotMsg(text, who){
-  const div = document.createElement('div');
-  div.className = 'bot-msg ' + who;
-  div.textContent = text;
-  const msgs = document.getElementById('botMsgs');
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-async function sendBotMessage(){
-  const input = document.getElementById('botInput');
-  const text = input.value.trim();
-  if(!text) return;
-  addBotMsg(text, 'me');
-  input.value = '';
-  addBotMsg('...', 'bot');
-  const msgs = document.getElementById('botMsgs');
-  const thinkingEl = msgs.lastChild;
-  try{
-    const token = await currentUser.getIdToken();
-    const body = { message: text, mode: botMode };
-    if(botMode==='parent'){
-      body.childContext = { name: childData.childName, age: childData.childAge,
-        stream: childData.stream, stars: childData.stars, totalStars: childData.totalStars };
-    }
-    const resp = await fetch(BOT_FUNCTION_URL, {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
-      body: JSON.stringify(body)
-    });
-    const data = await resp.json();
-    thinkingEl.textContent = data.reply || data.error || 'উত্তর পাওয়া যায়নি';
-    if(botMode==='child' && data.reply) speak(data.reply);
-  }catch(e){
-    thinkingEl.textContent = 'সংযোগে সমস্যা হয়েছে — BOT_FUNCTION_URL ঠিকভাবে বসানো হয়েছে কিনা দেখুন';
-  }
 }
 
 let stars = 0;
