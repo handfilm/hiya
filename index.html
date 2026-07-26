@@ -201,6 +201,35 @@
     transition:all .25s ease; box-shadow:0 6px 16px rgba(0,0,0,.15); font-size:16px;
   }
   .praise.show{opacity:1; transform:translateX(-50%) scale(1);}
+
+  /* ---------- Global topbar (menu + language) ---------- */
+  body{padding-top:54px;}
+  .global-topbar{position:fixed; top:0; left:0; width:100%; height:54px; z-index:60;
+    display:flex; align-items:center; justify-content:space-between; padding:0 14px;
+    background:rgba(255,251,240,.92); backdrop-filter:blur(6px); box-shadow:0 2px 8px rgba(58,46,68,.06);}
+  .icon-btn{background:#fff; border:none; width:40px; height:40px; border-radius:50%; font-size:19px;
+    cursor:pointer; box-shadow:0 3px 8px rgba(0,0,0,.1); display:flex; align-items:center; justify-content:center; color:var(--plum);}
+  .icon-btn:active{transform:scale(.92);}
+  .lang-toggle{display:flex; background:#fff; border-radius:20px; padding:3px; box-shadow:0 3px 8px rgba(0,0,0,.1); gap:2px;}
+  .lang-opt{border:none; background:transparent; padding:7px 13px; border-radius:16px; font-family:'Baloo Da 2', sans-serif;
+    font-size:13px; font-weight:700; cursor:pointer; color:var(--plum); opacity:.5;}
+  .lang-opt.active{background:var(--leaf); color:#fff; opacity:1;}
+
+  /* ---------- Menu drawer ---------- */
+  .drawer-overlay{position:fixed; inset:0; background:rgba(58,46,68,.45); z-index:70; display:none;}
+  .drawer-overlay.open{display:block;}
+  .drawer{position:fixed; top:0; left:-300px; width:280px; max-width:82vw; height:100%; background:#fff; z-index:80;
+    transition:left .28s ease; box-shadow:6px 0 24px rgba(0,0,0,.15); display:flex; flex-direction:column; overflow-y:auto;}
+  .drawer.open{left:0;}
+  .drawer-head{display:flex; align-items:center; justify-content:space-between; padding:18px 18px 8px;}
+  .drawer-head h3{font-family:'Baloo Da 2', sans-serif; margin:0; color:var(--leaf-dark); font-size:19px;}
+  .drawer-close{background:#f2f2f2; border:none; width:34px; height:34px; border-radius:50%; font-size:15px; cursor:pointer;}
+  .drawer-section-title{font-size:11px; text-transform:uppercase; letter-spacing:.06em; opacity:.5; padding:14px 18px 4px; font-weight:700;}
+  .drawer-item{display:flex; align-items:center; gap:12px; padding:10px 18px; cursor:pointer; font-size:14.5px;}
+  .drawer-item:active{background:#f7f7f7;}
+  .drawer-item .di-icon{font-size:19px; width:24px; text-align:center;}
+  .drawer-item.soon{opacity:.45; cursor:default;}
+  .drawer-item.soon .badge{margin-left:auto; font-size:9.5px; background:#eee; padding:3px 8px; border-radius:10px; white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -209,50 +238,89 @@
   <div class="sun"></div>
 </div>
 
+<!-- ---------- Global topbar: menu + language ---------- -->
+<div class="global-topbar">
+  <button class="icon-btn" onclick="openDrawer()" aria-label="Menu">☰</button>
+  <div class="lang-toggle">
+    <button class="lang-opt" id="langBtnBn" onclick="setLanguage('bn')">বাং</button>
+    <button class="lang-opt" id="langBtnEn" onclick="setLanguage('en')">EN</button>
+  </div>
+</div>
+
+<!-- ---------- Menu drawer ---------- -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3 data-i18n="drawerTitle">মেনু</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-section-title" data-i18n="drawerCurrent">এখন যা আছে</div>
+  <div class="drawer-item" onclick="drawerGo('home')"><span class="di-icon">🏡</span><span data-i18n="drawerHome">হোম / বাগান</span></div>
+  <div class="drawer-item" onclick="drawerGo('dashboard')"><span class="di-icon">📊</span><span data-i18n="drawerDashboard">প্যারেন্ট ড্যাশবোর্ড</span></div>
+  <div class="drawer-item" onclick="drawerGo('letters')"><span class="di-icon">🔤</span><span data-i18n="m_letters">বর্ণ বাগান</span></div>
+  <div class="drawer-item" onclick="drawerGo('numbers')"><span class="di-icon">🐝</span><span data-i18n="m_numbers">সংখ্যা মৌমাছি</span></div>
+  <div class="drawer-item" onclick="drawerGo('match')"><span class="di-icon">🍎</span><span data-i18n="m_match">মিলাও তো</span></div>
+  <div class="drawer-item" onclick="drawerGo('draw')"><span class="di-icon">🎨</span><span data-i18n="m_draw">আঁকার খাতা</span></div>
+  <div class="drawer-item" onclick="drawerGo('animals')"><span class="di-icon">🦁</span><span data-i18n="m_animals">প্রাণী জগৎ</span></div>
+  <div class="drawer-item" onclick="drawerGo('words')"><span class="di-icon">📖</span><span data-i18n="m_words">শব্দ পড়ি</span></div>
+  <div class="drawer-item" onclick="drawerGo('mathgame')"><span class="di-icon">➕</span><span data-i18n="m_mathgame">যোগ-বিয়োগ</span></div>
+  <div class="drawer-item" onclick="drawerGo('english')"><span class="di-icon">🅰️</span><span data-i18n="m_english">ABC গার্ডেন</span></div>
+  <div class="drawer-item" onclick="drawerGo('multiplication')"><span class="di-icon">✖️</span><span data-i18n="m_multiplication">নামতা শিখি</span></div>
+  <div class="drawer-item" onclick="drawerGo('sentences')"><span class="di-icon">📝</span><span data-i18n="m_sentences">বাক্য পড়ি</span></div>
+  <div class="drawer-item" onclick="drawerGo('videos')"><span class="di-icon">📺</span><span data-i18n="m_videos">ভিডিও কর্নার</span></div>
+
+  <div class="drawer-section-title" data-i18n="drawerSoon">শীঘ্রই আসছে</div>
+  <div class="drawer-item soon"><span class="di-icon">🌐</span><span data-i18n="soon_engui">সম্পূর্ণ ইংরেজি UI (স্ট্রিম অনুযায়ী)</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
+  <div class="drawer-item soon"><span class="di-icon">🔑</span><span data-i18n="soon_social">গুগল / সোশ্যাল লগইন</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
+  <div class="drawer-item soon"><span class="di-icon">🤖</span><span data-i18n="soon_bot">চ্যাট বন্ধুর সাথে child/parent মোড</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
+  <div class="drawer-item soon"><span class="di-icon">🏆</span><span data-i18n="soon_badges">ব্যাজ ও অ্যাচিভমেন্ট</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
+  <div class="drawer-item soon"><span class="di-icon">👨‍👩‍👧</span><span data-i18n="soon_multi">একাধিক বাচ্চা প্রোফাইল</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
+</div>
+
 <!-- ---------- Auth screen ---------- -->
 <div id="authScreen" class="center-screen">
   <div class="auth-card">
-    <h2 class="display">খুকির বাগান 🌷</h2>
-    <p class="tag">প্যারেন্ট লগইন করুন</p>
-    <input class="field" id="authEmail" type="email" placeholder="ইমেইল">
-    <input class="field" id="authPass" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
-    <button class="primary-btn" id="authSubmitBtn" onclick="handleAuthSubmit()">লগইন করুন</button>
+    <h2 class="display" data-i18n="appTitleGeneric">খুকির বাগান 🌷</h2>
+    <p class="tag" data-i18n="authTag">প্যারেন্ট লগইন করুন</p>
+    <input class="field" id="authEmail" type="email" data-i18n-ph="ph_email" placeholder="ইমেইল">
+    <input class="field" id="authPass" type="password" data-i18n-ph="ph_pass" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)">
+    <button class="primary-btn" id="authSubmitBtn" onclick="handleAuthSubmit()" data-i18n="btnLogin">লগইন করুন</button>
     <div class="auth-error" id="authError"></div>
-    <div class="switch-link" id="authSwitchLink" onclick="toggleAuthMode()">নতুন এখানে? অ্যাকাউন্ট বানান</div>
+    <div class="switch-link" id="authSwitchLink" onclick="toggleAuthMode()" data-i18n="switchToSignup">নতুন এখানে? অ্যাকাউন্ট বানান</div>
   </div>
 </div>
 
 <!-- ---------- Child profile setup (first time) ---------- -->
 <div id="setupScreen" class="center-screen" style="display:none;">
   <div class="auth-card">
-    <h2 class="display">তোমার ছোট্ট বন্ধুর কথা বলো</h2>
-    <p class="tag">এই তথ্য দিয়ে অ্যাপটা তার উপযোগী করে সাজাবো</p>
-    <input class="field" id="setupName" placeholder="বাচ্চার নাম">
+    <h2 class="display" data-i18n="setupTitle">তোমার ছোট্ট বন্ধুর কথা বলো</h2>
+    <p class="tag" data-i18n="setupTag">এই তথ্য দিয়ে অ্যাপটা তার উপযোগী করে সাজাবো</p>
+    <input class="field" id="setupName" data-i18n-ph="ph_childName" placeholder="বাচ্চার নাম">
     <div class="select-row">
-      <input class="field" id="setupAge" type="number" placeholder="বয়স" min="2" max="10">
+      <input class="field" id="setupAge" type="number" data-i18n-ph="ph_age" placeholder="বয়স" min="2" max="10">
       <select class="field" id="setupStream">
-        <option value="bangla">বাংলা মিডিয়াম</option>
-        <option value="english_version">ইংলিশ ভার্সন</option>
-        <option value="english_medium">ইংলিশ মিডিয়াম</option>
+        <option value="bangla" data-i18n="stream_bangla">বাংলা মিডিয়াম</option>
+        <option value="english_version" data-i18n="stream_english_version">ইংলিশ ভার্সন</option>
+        <option value="english_medium" data-i18n="stream_english_medium">ইংলিশ মিডিয়াম</option>
       </select>
     </div>
     <select class="field" id="setupLevel">
-      <option value="playgroup">প্লে-গ্রুপ</option>
-      <option value="nursery">নার্সারি</option>
-      <option value="kg">কেজি (KG)</option>
-      <option value="class1">ক্লাস ১ (Standard 1)</option>
+      <option value="playgroup" data-i18n="level_playgroup">প্লে-গ্রুপ</option>
+      <option value="nursery" data-i18n="level_nursery">নার্সারি</option>
+      <option value="kg" data-i18n="level_kg">কেজি (KG)</option>
+      <option value="class1" data-i18n="level_class1">ক্লাস ১ (Standard 1)</option>
     </select>
-    <button class="primary-btn" onclick="handleSetupSubmit()">শুরু করি!</button>
+    <button class="primary-btn" onclick="handleSetupSubmit()" data-i18n="btnStart">শুরু করি!</button>
     <div class="auth-error" id="setupError"></div>
   </div>
 </div>
 
 <header id="appHeader" style="display:none;">
-  <h1>খুকির বাগান 🌷</h1>
-  <div class="sub">খেলো, আঁকো, শেখো — নিজের মতো করে</div>
+  <h1 id="appTitle">খুকির বাগান 🌷</h1>
+  <div class="sub" data-i18n="headerSub">খেলো, আঁকো, শেখো — নিজের মতো করে</div>
   <div class="home-topbar">
-    <button class="pill-btn" onclick="openDashboard()">📊 প্যারেন্ট ড্যাশবোর্ড</button>
-    <button class="pill-btn" onclick="handleLogout()">🚪 লগআউট</button>
+    <button class="pill-btn" onclick="openDashboard()">📊 <span data-i18n="drawerDashboard">প্যারেন্ট ড্যাশবোর্ড</span></button>
+    <button class="pill-btn" onclick="handleLogout()">🚪 <span data-i18n="btnLogout">লগআউট</span></button>
   </div>
 </header>
 
@@ -260,47 +328,47 @@
   <div class="path">
     <div class="flower-stop" data-module="letters" onclick="openActivity('letters')">
       <div class="flower-icon c1">🔤</div>
-      <div><h2>বর্ণ বাগান</h2><p>বাংলা অক্ষর চেনো ও শোনো</p></div>
+      <div><h2 data-i18n="m_letters">বর্ণ বাগান</h2><p data-i18n="d_letters">বাংলা অক্ষর চেনো ও শোনো</p></div>
     </div>
     <div class="flower-stop" data-module="numbers" onclick="openActivity('numbers')">
       <div class="flower-icon c2">🐝</div>
-      <div><h2>সংখ্যা মৌমাছি</h2><p>গুনে গুনে শিখি</p></div>
+      <div><h2 data-i18n="m_numbers">সংখ্যা মৌমাছি</h2><p data-i18n="d_numbers">গুনে গুনে শিখি</p></div>
     </div>
     <div class="flower-stop" data-module="match" onclick="openActivity('match')">
       <div class="flower-icon c3">🍎</div>
-      <div><h2>মিলাও তো!</h2><p>একই জোড়া খুঁজে বের করো</p></div>
+      <div><h2 data-i18n="m_match">মিলাও তো!</h2><p data-i18n="d_match">একই জোড়া খুঁজে বের করো</p></div>
     </div>
     <div class="flower-stop" data-module="draw" onclick="openActivity('draw')">
       <div class="flower-icon c4">🎨</div>
-      <div><h2>আঁকার খাতা</h2><p>নিজের ছবি নিজে আঁকো, সেভ করো</p></div>
+      <div><h2 data-i18n="m_draw">আঁকার খাতা</h2><p data-i18n="d_draw">নিজের ছবি নিজে আঁকো, সেভ করো</p></div>
     </div>
     <div class="flower-stop" data-module="animals" onclick="openActivity('animals')">
       <div class="flower-icon c5">🦁</div>
-      <div><h2>প্রাণী জগৎ</h2><p>প্রাণীর নাম ও ডাক শোনো</p></div>
+      <div><h2 data-i18n="m_animals">প্রাণী জগৎ</h2><p data-i18n="d_animals">প্রাণীর নাম ও ডাক শোনো</p></div>
     </div>
     <div class="flower-stop" data-module="words" onclick="openActivity('words')">
       <div class="flower-icon c1">📖</div>
-      <div><h2>শব্দ পড়ি</h2><p>ছোট ছোট শব্দ পড়তে শেখো</p></div>
+      <div><h2 data-i18n="m_words">শব্দ পড়ি</h2><p data-i18n="d_words">ছোট ছোট শব্দ পড়তে শেখো</p></div>
     </div>
     <div class="flower-stop" data-module="mathgame" onclick="openActivity('mathgame')">
       <div class="flower-icon c2">➕</div>
-      <div><h2>যোগ-বিয়োগ</h2><p>গুনে গুনে যোগ আর বিয়োগ</p></div>
+      <div><h2 data-i18n="m_mathgame">যোগ-বিয়োগ</h2><p data-i18n="d_mathgame">গুনে গুনে যোগ আর বিয়োগ</p></div>
     </div>
     <div class="flower-stop" data-module="english" onclick="openActivity('english')">
       <div class="flower-icon c3">🅰️</div>
-      <div><h2>ABC গার্ডেন</h2><p>ইংরেজি অক্ষর চেনো ও শোনো</p></div>
+      <div><h2 data-i18n="m_english">ABC গার্ডেন</h2><p data-i18n="d_english">ইংরেজি অক্ষর চেনো ও শোনো</p></div>
     </div>
     <div class="flower-stop" data-module="multiplication" onclick="openActivity('multiplication')">
       <div class="flower-icon c4">✖️</div>
-      <div><h2>নামতা শিখি</h2><p>২ থেকে ১০ পর্যন্ত নামতা</p></div>
+      <div><h2 data-i18n="m_multiplication">নামতা শিখি</h2><p data-i18n="d_multiplication">২ থেকে ১০ পর্যন্ত নামতা</p></div>
     </div>
     <div class="flower-stop" data-module="sentences" onclick="openActivity('sentences')">
       <div class="flower-icon c5">📝</div>
-      <div><h2>বাক্য পড়ি</h2><p>ছোট ছোট বাক্য পড়তে শেখো</p></div>
+      <div><h2 data-i18n="m_sentences">বাক্য পড়ি</h2><p data-i18n="d_sentences">ছোট ছোট বাক্য পড়তে শেখো</p></div>
     </div>
     <div class="flower-stop" data-module="videos" onclick="openActivity('videos')">
       <div class="flower-icon c1">📺</div>
-      <div><h2>ভিডিও কর্নার</h2><p>পছন্দের ছড়া ও গল্প দেখো</p></div>
+      <div><h2 data-i18n="m_videos">ভিডিও কর্নার</h2><p data-i18n="d_videos">পছন্দের ছড়া ও গল্প দেখো</p></div>
     </div>
   </div>
 </div>
@@ -318,33 +386,33 @@
 <div id="dashboard">
   <div class="topbar">
     <button class="backBtn" onclick="closeDashboard()">←</button>
-    <h2 class="display" style="margin:0; font-size:20px;">প্যারেন্ট ড্যাশবোর্ড</h2>
+    <h2 class="display" id="dashTitle" style="margin:0; font-size:20px;">প্যারেন্ট ড্যাশবোর্ড</h2>
   </div>
   <div class="dash-body">
     <div class="dash-card">
       <h3 id="dashChildName">—</h3>
-      <div class="stat-row"><span>বয়স</span><span id="dashAge">—</span></div>
-      <div class="stat-row"><span>স্ট্রিম</span><span id="dashStream">—</span></div>
-      <div class="stat-row"><span>মোট স্টার</span><span id="dashTotalStars">⭐ 0</span></div>
+      <div class="stat-row"><span data-i18n="dashAgeLbl">বয়স</span><span id="dashAge">—</span></div>
+      <div class="stat-row"><span data-i18n="dashStreamLbl">স্ট্রিম</span><span id="dashStream">—</span></div>
+      <div class="stat-row"><span data-i18n="dashStarsLbl">মোট স্টার</span><span id="dashTotalStars">⭐ 0</span></div>
     </div>
     <div class="dash-card">
-      <h3>ক্লাস / লেভেল</h3>
-      <p style="font-size:13px; opacity:.6; margin:0 0 10px;">লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে</p>
+      <h3 data-i18n="dashLevelTitle">ক্লাস / লেভেল</h3>
+      <p style="font-size:13px; opacity:.6; margin:0 0 10px;" data-i18n="dashLevelHint">লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে</p>
       <select class="field" id="dashLevelSelect" style="margin-bottom:0;" onchange="handleLevelChange(this.value)">
-        <option value="playgroup">প্লে-গ্রুপ</option>
-        <option value="nursery">নার্সারি</option>
-        <option value="kg">কেজি (KG)</option>
-        <option value="class1">ক্লাস ১ (Standard 1)</option>
+        <option value="playgroup" data-i18n="level_playgroup">প্লে-গ্রুপ</option>
+        <option value="nursery" data-i18n="level_nursery">নার্সারি</option>
+        <option value="kg" data-i18n="level_kg">কেজি (KG)</option>
+        <option value="class1" data-i18n="level_class1">ক্লাস ১ (Standard 1)</option>
       </select>
     </div>
     <div class="dash-card">
-      <h3>বিষয়ভিত্তিক অগ্রগতি</h3>
+      <h3 data-i18n="dashProgressTitle">বিষয়ভিত্তিক অগ্রগতি</h3>
       <div id="dashModuleStats"></div>
     </div>
     <div class="dash-card">
-      <h3>আঁকা ছবির গ্যালারি</h3>
+      <h3 data-i18n="dashGalleryTitle">আঁকা ছবির গ্যালারি</h3>
       <div class="mini-gallery" id="dashGallery"></div>
-      <div class="empty-note" id="dashGalleryEmpty" style="display:none;">এখনো কোনো ছবি নেই</div>
+      <div class="empty-note" id="dashGalleryEmpty" style="display:none;" data-i18n="dashGalleryEmptyTxt">এখনো কোনো ছবি নেই</div>
     </div>
   </div>
 </div>
@@ -379,12 +447,132 @@ let currentUser = null;
 let childData = null; // { name, age, stream, stars:{}, totalStars, galleryUrls:[] }
 let isSignupMode = false;
 
+// ================= Language (i18n) =================
+// এটা একটা static dictionary-চালিত instant টগল — কোনো বাইরের translation API কল হয় না,
+// তাই ভাষা বদলানো সাথে সাথে (real-time) হয়, নেটওয়ার্ক লাগে না।
+const I18N = {
+  bn: {
+    appTitleGeneric:'খুকির বাগান 🌷', headerSub:'খেলো, আঁকো, শেখো — নিজের মতো করে',
+    authTag:'প্যারেন্ট লগইন করুন', ph_email:'ইমেইল', ph_pass:'পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)',
+    btnLogin:'লগইন করুন', btnSignup:'অ্যাকাউন্ট বানান', switchToSignup:'নতুন এখানে? অ্যাকাউন্ট বানান',
+    switchToLogin:'আগে থেকে অ্যাকাউন্ট আছে? লগইন করুন',
+    setupTitle:'তোমার ছোট্ট বন্ধুর কথা বলো', setupTag:'এই তথ্য দিয়ে অ্যাপটা তার উপযোগী করে সাজাবো',
+    ph_childName:'বাচ্চার নাম', ph_age:'বয়স', btnStart:'শুরু করি!',
+    stream_bangla:'বাংলা মিডিয়াম', stream_english_version:'ইংলিশ ভার্সন', stream_english_medium:'ইংলিশ মিডিয়াম',
+    level_playgroup:'প্লে-গ্রুপ', level_nursery:'নার্সারি', level_kg:'কেজি (KG)', level_class1:'ক্লাস ১ (Standard 1)',
+    drawerDashboard:'প্যারেন্ট ড্যাশবোর্ড', btnLogout:'লগআউট',
+    drawerTitle:'মেনু', drawerCurrent:'এখন যা আছে', drawerHome:'হোম / বাগান', drawerSoon:'শীঘ্রই আসছে', soonBadge:'শীঘ্রই',
+    soon_engui:'সম্পূর্ণ ইংরেজি UI (স্ট্রিম অনুযায়ী)', soon_social:'গুগল / সোশ্যাল লগইন',
+    soon_bot:'চ্যাট বন্ধুর সাথে child/parent মোড', soon_badges:'ব্যাজ ও অ্যাচিভমেন্ট', soon_multi:'একাধিক বাচ্চা প্রোফাইল',
+    m_letters:'বর্ণ বাগান', d_letters:'বাংলা অক্ষর চেনো ও শোনো',
+    m_numbers:'সংখ্যা মৌমাছি', d_numbers:'গুনে গুনে শিখি',
+    m_match:'মিলাও তো!', d_match:'একই জোড়া খুঁজে বের করো',
+    m_draw:'আঁকার খাতা', d_draw:'নিজের ছবি নিজে আঁকো, সেভ করো',
+    m_animals:'প্রাণী জগৎ', d_animals:'প্রাণীর নাম ও ডাক শোনো',
+    m_words:'শব্দ পড়ি', d_words:'ছোট ছোট শব্দ পড়তে শেখো',
+    m_mathgame:'যোগ-বিয়োগ', d_mathgame:'গুনে গুনে যোগ আর বিয়োগ',
+    m_english:'ABC গার্ডেন', d_english:'ইংরেজি অক্ষর চেনো ও শোনো',
+    m_multiplication:'নামতা শিখি', d_multiplication:'২ থেকে ১০ পর্যন্ত নামতা',
+    m_sentences:'বাক্য পড়ি', d_sentences:'ছোট ছোট বাক্য পড়তে শেখো',
+    m_videos:'ভিডিও কর্নার', d_videos:'পছন্দের ছড়া ও গল্প দেখো',
+    dashAgeLbl:'বয়স', dashStreamLbl:'স্ট্রিম', dashStarsLbl:'মোট স্টার',
+    dashLevelTitle:'ক্লাস / লেভেল', dashLevelHint:'লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে',
+    dashProgressTitle:'বিষয়ভিত্তিক অগ্রগতি', dashGalleryTitle:'আঁকা ছবির গ্যালারি', dashGalleryEmptyTxt:'এখনো কোনো ছবি নেই',
+    appTitleChild:'{name}র বাগান'
+  },
+  en: {
+    appTitleGeneric:"Khukir Bagan 🌷", headerSub:'Play, draw and learn — at your own pace',
+    authTag:'Parent login', ph_email:'Email', ph_pass:'Password (min 6 characters)',
+    btnLogin:'Log In', btnSignup:'Create Account', switchToSignup:'New here? Create an account',
+    switchToLogin:'Already have an account? Log in',
+    setupTitle:"Tell us about your little friend", setupTag:"We'll set up the app just for them",
+    ph_childName:"Child's name", ph_age:'Age', btnStart:"Let's start!",
+    stream_bangla:'Bangla Medium', stream_english_version:'English Version', stream_english_medium:'English Medium',
+    level_playgroup:'Play Group', level_nursery:'Nursery', level_kg:'KG', level_class1:'Class 1 (Standard 1)',
+    drawerDashboard:'Parent Dashboard', btnLogout:'Log Out',
+    drawerTitle:'Menu', drawerCurrent:'Available now', drawerHome:'Home / Garden', drawerSoon:'Coming soon', soonBadge:'Soon',
+    soon_engui:'Full English UI (per stream)', soon_social:'Google / social login',
+    soon_bot:'Chat buddy with child/parent mode', soon_badges:'Badges & achievements', soon_multi:'Multiple child profiles',
+    m_letters:'Letter Garden', d_letters:'Learn and hear Bangla letters',
+    m_numbers:'Number Bees', d_numbers:'Learn by counting',
+    m_match:'Find the Pair!', d_match:'Find the matching pairs',
+    m_draw:'Drawing Book', d_draw:'Draw your own picture and save it',
+    m_animals:'Animal World', d_animals:'Hear animal names and sounds',
+    m_words:'Word Reading', d_words:'Learn to read small words',
+    m_mathgame:'Add & Subtract', d_mathgame:'Practice adding and subtracting',
+    m_english:'ABC Garden', d_english:'Learn and hear English letters',
+    m_multiplication:'Times Tables', d_multiplication:'Tables from 2 to 10',
+    m_sentences:'Sentence Reading', d_sentences:'Learn to read small sentences',
+    m_videos:'Video Corner', d_videos:'Watch favourite rhymes and stories',
+    dashAgeLbl:'Age', dashStreamLbl:'Stream', dashStarsLbl:'Total stars',
+    dashLevelTitle:'Class / Level', dashLevelHint:"Changing the level will show modules suited to the child's age on the home screen",
+    dashProgressTitle:'Progress by module', dashGalleryTitle:'Drawing gallery', dashGalleryEmptyTxt:'No pictures yet',
+    appTitleChild:"{name}'s Garden"
+  }
+};
+let currentLang = localStorage.getItem('khukirLang') || 'bn';
+function t(key){
+  const dict = I18N[currentLang] || I18N.bn;
+  return dict[key] !== undefined ? dict[key] : (I18N.bn[key] || key);
+}
+function applyLanguage(){
+  document.documentElement.lang = currentLang === 'en' ? 'en' : 'bn';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    el.setAttribute('placeholder', t(el.dataset.i18nPh));
+  });
+  document.getElementById('langBtnBn').classList.toggle('active', currentLang==='bn');
+  document.getElementById('langBtnEn').classList.toggle('active', currentLang==='en');
+  const switchLink = document.getElementById('authSwitchLink');
+  if(switchLink) switchLink.textContent = isSignupMode ? t('switchToLogin') : t('switchToSignup');
+  const submitBtn = document.getElementById('authSubmitBtn');
+  if(submitBtn) submitBtn.textContent = isSignupMode ? t('btnSignup') : t('btnLogin');
+  updateAppTitle();
+  if(childData && document.getElementById('dashboard').classList.contains('open')) openDashboard();
+}
+function setLanguage(lang){
+  currentLang = lang;
+  localStorage.setItem('khukirLang', lang);
+  applyLanguage();
+}
+function updateAppTitle(){
+  const titleText = (childData && childData.childName)
+    ? t('appTitleChild').replace('{name}', childData.childName)
+    : t('appTitleGeneric');
+  const appTitleEl = document.getElementById('appTitle');
+  if(appTitleEl) appTitleEl.textContent = titleText;
+  document.title = titleText.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '').trim();
+  const dashTitleEl = document.getElementById('dashTitle');
+  if(dashTitleEl) dashTitleEl.textContent = t('drawerDashboard');
+}
+function moduleLabel(key){ return t('m_' + key); }
+
+// ================= Menu drawer =================
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+function drawerGo(target){
+  closeDrawer();
+  if(!currentUser || !childData){ return; }
+  if(target === 'home'){ closeActivity(); closeDashboard(); }
+  else if(target === 'dashboard'){ closeActivity(); openDashboard(); }
+  else { closeDashboard(); openActivity(target); }
+}
+
 const STREAM_LABELS = {bangla:'বাংলা মিডিয়াম', english_version:'ইংলিশ ভার্সন', english_medium:'ইংলিশ মিডিয়াম'};
 const LEVEL_LABELS = {playgroup:'প্লে-গ্রুপ', nursery:'নার্সারি', kg:'কেজি (KG)', class1:'ক্লাস ১'};
 const LEVEL_ORDER = ['playgroup','nursery','kg','class1'];
 const MODULE_LABELS = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো', draw:'আঁকার খাতা',
   animals:'প্রাণী জগৎ', words:'শব্দ পড়ি', mathgame:'যোগ-বিয়োগ', english:'ABC গার্ডেন',
   multiplication:'নামতা শিখি', sentences:'বাক্য পড়ি'};
+function streamLabel(key){ return t('stream_' + key) || STREAM_LABELS[key] || key; }
 // প্রতিটা মডিউল কোন কোন লেভেলে দেখানো হবে
 const MODULE_LEVELS = {
   letters:['playgroup','nursery','kg','class1'],
@@ -415,8 +603,8 @@ function bnDigitsOf(num){
 // ================= Auth flow =================
 function toggleAuthMode(){
   isSignupMode = !isSignupMode;
-  document.getElementById('authSubmitBtn').textContent = isSignupMode ? 'অ্যাকাউন্ট বানান' : 'লগইন করুন';
-  document.getElementById('authSwitchLink').textContent = isSignupMode ? 'আগে থেকে অ্যাকাউন্ট আছে? লগইন করুন' : 'নতুন এখানে? অ্যাকাউন্ট বানান';
+  document.getElementById('authSubmitBtn').textContent = isSignupMode ? t('btnSignup') : t('btnLogin');
+  document.getElementById('authSwitchLink').textContent = isSignupMode ? t('switchToLogin') : t('switchToSignup');
   document.getElementById('authError').textContent = '';
 }
 function handleAuthSubmit(){
@@ -459,6 +647,7 @@ auth.onAuthStateChanged(async (user)=>{
   } else {
     document.getElementById('setupScreen').style.display='flex';
   }
+  updateAppTitle();
 });
 
 function handleSetupSubmit(){
@@ -478,6 +667,7 @@ function showHome(){
   document.getElementById('appHeader').style.display='block';
   document.getElementById('home').style.display='block';
   filterHomeByLevel();
+  updateAppTitle();
   bump.__loaded = true;
 }
 
@@ -498,16 +688,17 @@ function openDashboard(){
   if(!childData) return;
   document.getElementById('dashChildName').textContent = childData.childName;
   document.getElementById('dashAge').textContent = childData.childAge;
-  document.getElementById('dashStream').textContent = STREAM_LABELS[childData.stream] || childData.stream;
+  document.getElementById('dashStream').textContent = streamLabel(childData.stream) || childData.stream;
   document.getElementById('dashTotalStars').textContent = '⭐ ' + (childData.totalStars||0);
   document.getElementById('dashLevelSelect').value = childData.level || 'playgroup';
+  document.getElementById('dashTitle').textContent = t('drawerDashboard');
   const modBox = document.getElementById('dashModuleStats');
   modBox.innerHTML = '';
   const stars = childData.stars || {};
   Object.keys(MODULE_LABELS).forEach(key=>{
     const row = document.createElement('div');
     row.className = 'stat-row';
-    row.innerHTML = `<span>${MODULE_LABELS[key]}</span><span>⭐ ${stars[key]||0}</span>`;
+    row.innerHTML = `<span>${moduleLabel(key)}</span><span>⭐ ${stars[key]||0}</span>`;
     modBox.appendChild(row);
   });
   const gal = document.getElementById('dashGallery');
@@ -619,8 +810,7 @@ const animalList = [
 
 function openActivity(name){
   document.getElementById('activity').classList.add('open');
-  const title = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো!', draw:'আঁকার খাতা', animals:'প্রাণী জগৎ', words:'শব্দ পড়ি', mathgame:'যোগ-বিয়োগ', english:'ABC গার্ডেন', multiplication:'নামতা শিখি', sentences:'বাক্য পড়ি', videos:'ভিডিও কর্নার'}[name];
-  document.getElementById('actTitle').textContent = title;
+  document.getElementById('actTitle').textContent = moduleLabel(name);
   const body = document.getElementById('actBody');
   body.innerHTML = '';
   if(name==='letters') buildLetters(body);
@@ -1095,6 +1285,8 @@ function buildDraw(body){
   renderGallery();
 }
 
+// ================= Initial language apply =================
+applyLanguage();
 </script>
 </body>
 </html>
