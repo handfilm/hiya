@@ -117,6 +117,46 @@
     color:#fff; font-size:14px; cursor:pointer; box-shadow:0 4px 0 #4a9fbf;}
   .tool-btn:active{transform:translateY(3px); box-shadow:none;}
 
+  /* Word reading */
+  .syll-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:14px 0 4px;}
+  .syll{font-family:'Baloo Da 2', sans-serif; font-weight:800; font-size:clamp(30px,9vw,46px); color:#fff;
+    padding:10px 18px; border-radius:16px; box-shadow:0 4px 0 rgba(0,0,0,.15); cursor:pointer;}
+  .word-card-list{display:flex; gap:12px; overflow-x:auto; width:100%; max-width:520px; padding:6px 2px 14px; margin-top:16px;}
+  .word-card{min-width:100px; background:#fff; border-radius:18px; padding:12px; text-align:center; cursor:pointer;
+    box-shadow:0 5px 0 rgba(0,0,0,.08); border:3px solid transparent;}
+  .word-card.active{border-color:var(--leaf);}
+  .word-card .emo{font-size:32px;}
+  .word-card .txt{font-family:'Baloo Da 2', sans-serif; font-size:16px; margin-top:4px;}
+
+  /* Math game */
+  .math-row{display:flex; align-items:center; gap:14px; font-size:38px; margin:10px 0;}
+  .obj-group{display:flex; flex-wrap:wrap; gap:4px; max-width:160px; min-height:44px;}
+  .op-sign{font-family:'Baloo Da 2', sans-serif; font-weight:800; font-size:34px; color:var(--coral);}
+  .ans-options{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;}
+  .ans-btn{background:var(--sky); border:none; color:#fff; font-family:'Baloo Da 2', sans-serif; font-size:26px;
+    font-weight:700; width:60px; height:60px; border-radius:16px; cursor:pointer; box-shadow:0 4px 0 #4a9fbf;}
+  .ans-btn.correct{background:var(--leaf); box-shadow:0 4px 0 var(--leaf-dark);}
+  .ans-btn.wrong{background:#e05a4d; box-shadow:0 4px 0 #a83f36;}
+  .mode-toggle{display:flex; gap:8px; margin-bottom:10px;}
+  .mode-btn{border:none; padding:8px 16px; border-radius:20px; font-family:'Baloo Da 2', sans-serif; font-size:14px;
+    background:#eee; cursor:pointer;}
+  .mode-btn.active{background:var(--sun); color:var(--plum);}
+
+  /* Gallery */
+  .gallery-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:10px; width:100%; max-width:460px; margin-top:16px;}
+  .gallery-item{position:relative; border-radius:12px; overflow:hidden; box-shadow:0 3px 10px rgba(0,0,0,.15);}
+  .gallery-item img{width:100%; display:block;}
+  .gallery-item a{position:absolute; bottom:2px; right:2px; background:rgba(255,255,255,.85); border-radius:8px;
+    font-size:11px; padding:2px 6px; text-decoration:none; color:var(--plum);}
+  .empty-note{opacity:.55; font-size:14px; margin-top:20px; text-align:center;}
+
+  /* Video corner */
+  .video-list{width:100%; max-width:480px;}
+  .video-card{background:#fff; border-radius:20px; padding:12px; margin-bottom:14px; box-shadow:0 5px 14px rgba(0,0,0,.08);}
+  .video-card h3{font-family:'Baloo Da 2', sans-serif; margin:0 0 8px; font-size:17px;}
+  .video-card iframe{width:100%; aspect-ratio:16/9; border:none; border-radius:14px;}
+  .video-note{font-size:12.5px; opacity:.55; text-align:center; margin-top:6px;}
+
   .praise{
     position:fixed; top:20px; left:50%; transform:translateX(-50%) scale(.8); background:var(--sun); color:var(--plum);
     font-family:'Baloo Da 2', sans-serif; font-weight:700; padding:10px 22px; border-radius:30px; z-index:50; opacity:0;
@@ -152,11 +192,23 @@
     </div>
     <div class="flower-stop" onclick="openActivity('draw')">
       <div class="flower-icon c4">🎨</div>
-      <div><h2>আঁকার খাতা</h2><p>নিজের ছবি নিজে আঁকো</p></div>
+      <div><h2>আঁকার খাতা</h2><p>নিজের ছবি নিজে আঁকো, সেভ করো</p></div>
     </div>
     <div class="flower-stop" onclick="openActivity('animals')">
       <div class="flower-icon c5">🦁</div>
       <div><h2>প্রাণী জগৎ</h2><p>প্রাণীর নাম ও ডাক শোনো</p></div>
+    </div>
+    <div class="flower-stop" onclick="openActivity('words')">
+      <div class="flower-icon c1">📖</div>
+      <div><h2>শব্দ পড়ি</h2><p>ছোট ছোট শব্দ পড়তে শেখো</p></div>
+    </div>
+    <div class="flower-stop" onclick="openActivity('mathgame')">
+      <div class="flower-icon c2">➕</div>
+      <div><h2>যোগ-বিয়োগ</h2><p>গুনে গুনে যোগ আর বিয়োগ</p></div>
+    </div>
+    <div class="flower-stop" onclick="openActivity('videos')">
+      <div class="flower-icon c3">📺</div>
+      <div><h2>ভিডিও কর্নার</h2><p>পছন্দের ছড়া ও গল্প দেখো</p></div>
     </div>
   </div>
 </div>
@@ -199,6 +251,29 @@ const letters = [
   ['ট','টমেটো'],['ঠ','ঠোঁট']
 ];
 
+const wordList = [
+  {word:'মা', syll:['মা'], emoji:'👩'},
+  {word:'বাবা', syll:['বা','বা'], emoji:'👨'},
+  {word:'আম', syll:['আ','ম'], emoji:'🥭'},
+  {word:'জল', syll:['জ','ল'], emoji:'💧'},
+  {word:'ফল', syll:['ফ','ল'], emoji:'🍎'},
+  {word:'কলা', syll:['ক','লা'], emoji:'🍌'},
+  {word:'মাছ', syll:['মা','ছ'], emoji:'🐟'},
+  {word:'হাত', syll:['হা','ত'], emoji:'✋'},
+  {word:'বই', syll:['ব','ই'], emoji:'📚'},
+  {word:'টমেটো', syll:['ট','মে','টো'], emoji:'🍅'}
+];
+
+/* Parent tip: add more curated videos here — {title, id} where id is the YouTube video ID.
+   These are from the Sisimpur (Bangla Sesame Street) channel, a safe children's education show. */
+const videoList = [
+  {title:'সিসিমপুর পরিবার - পর্ব ১', id:'M341Hd0Lzew'},
+  {title:'সিসিমপুর পরিবার - পর্ব ২', id:'djE_hSAA2wg'},
+  {title:'সিসিমপুরের মজার ঘটনা', id:'ZE-4Hm7u1es'}
+];
+
+let drawGallery = []; // in-memory only for this session — each save creates a real downloadable PNG
+
 const animalList = [
   ['🦁','সিংহ','গর্জন করে'],['🐄','গরু','হাম্বা ডাকে'],['🐘','হাতি','বড় শুঁড় আছে'],
   ['🐦','পাখি','কিচিরমিচির করে'],['🐸','ব্যাঙ','ঘ্যাঙঘ্যাঙ ডাকে'],['🐕','কুকুর','ঘেউঘেউ করে'],
@@ -207,7 +282,7 @@ const animalList = [
 
 function openActivity(name){
   document.getElementById('activity').classList.add('open');
-  const title = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো!', draw:'আঁকার খাতা', animals:'প্রাণী জগৎ'}[name];
+  const title = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো!', draw:'আঁকার খাতা', animals:'প্রাণী জগৎ', words:'শব্দ পড়ি', mathgame:'যোগ-বিয়োগ', videos:'ভিডিও কর্নার'}[name];
   document.getElementById('actTitle').textContent = title;
   const body = document.getElementById('actBody');
   body.innerHTML = '';
@@ -216,6 +291,9 @@ function openActivity(name){
   if(name==='match') buildMatch(body);
   if(name==='draw') buildDraw(body);
   if(name==='animals') buildAnimals(body);
+  if(name==='words') buildWords(body);
+  if(name==='mathgame') buildMath(body);
+  if(name==='videos') buildVideos(body);
 }
 function closeActivity(){
   document.getElementById('activity').classList.remove('open');
@@ -314,6 +392,122 @@ function buildAnimals(body){
   window.sayAni = function(){ speak(animalList[idx][1] + ' ' + animalList[idx][2]); };
 }
 
+/* ---------- Word reading ---------- */
+function buildWords(body){
+  let idx = 0;
+  body.innerHTML = `
+    <div class="stage" id="wordStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${wordList[0].emoji}</div>
+    <div class="syll-row" id="syllRow"></div>
+    <button class="say-btn" onclick="sayWholeWord()">🔊 পুরো শব্দ শোনো</button>
+    <div class="word-card-list" id="wordCardList"></div>
+  `;
+  const list = document.getElementById('wordCardList');
+  wordList.forEach((w,i)=>{
+    const c = document.createElement('div');
+    c.className = 'word-card' + (i===0?' active':'');
+    c.innerHTML = `<div class="emo">${w.emoji}</div><div class="txt">${w.word}</div>`;
+    c.onclick = ()=>showWord(i);
+    list.appendChild(c);
+  });
+  window.showWord = function(i){
+    idx = i;
+    [...list.children].forEach((c,ci)=>c.classList.toggle('active', ci===i));
+    const stage = document.getElementById('wordStage');
+    stage.textContent = wordList[i].emoji;
+    stage.style.background = COLORS[i%COLORS.length];
+    stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+    const row = document.getElementById('syllRow');
+    row.innerHTML = '';
+    wordList[i].syll.forEach((s, si)=>{
+      const b = document.createElement('div');
+      b.className = 'syll'; b.style.background = COLORS[(i+si)%COLORS.length]; b.textContent = s;
+      b.onclick = ()=>{ speak(s); };
+      row.appendChild(b);
+    });
+    speak(wordList[i].word);
+    bump(1);
+  };
+  window.sayWholeWord = function(){ speak(wordList[idx].word); };
+}
+
+/* ---------- Addition & subtraction ---------- */
+function buildMath(body){
+  let mode = 'add';
+  body.innerHTML = `
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="modeAdd" onclick="setMathMode('add')">➕ যোগ</button>
+      <button class="mode-btn" id="modeSub" onclick="setMathMode('sub')">➖ বিয়োগ</button>
+    </div>
+    <div class="math-row" id="mathRow"></div>
+    <div class="ans-options" id="ansOptions"></div>
+  `;
+  let a,b,correct;
+  function newProblem(){
+    if(mode==='add'){
+      a = 1 + Math.floor(Math.random()*6);
+      b = 1 + Math.floor(Math.random()*6);
+      if(a+b>10){ b = Math.max(1,10-a); }
+      correct = a+b;
+    } else {
+      a = 2 + Math.floor(Math.random()*8);
+      b = 1 + Math.floor(Math.random()*(a-1));
+      correct = a-b;
+    }
+    const row = document.getElementById('mathRow');
+    const icon = mode==='add' ? '🍬' : '🎈';
+    row.innerHTML = `
+      <div class="obj-group">${icon.repeat(a)}</div>
+      <div class="op-sign">${mode==='add'?'+':'−'}</div>
+      <div class="obj-group">${icon.repeat(b)}</div>
+      <div class="op-sign">=</div>
+      <div class="op-sign">❓</div>
+    `;
+    const opts = new Set([correct]);
+    while(opts.size<3){
+      const d = correct + (Math.floor(Math.random()*5)-2);
+      if(d>=0 && d<=14) opts.add(d);
+    }
+    const arr = [...opts].sort(()=>Math.random()-0.5);
+    const ansBox = document.getElementById('ansOptions');
+    ansBox.innerHTML = '';
+    arr.forEach(v=>{
+      const btn = document.createElement('button');
+      btn.className='ans-btn'; btn.textContent = v;
+      btn.onclick = ()=>{
+        if(v===correct){
+          btn.classList.add('correct'); bump(2); praise();
+          setTimeout(newProblem, 700);
+        } else {
+          btn.classList.add('wrong');
+          setTimeout(()=>btn.classList.remove('wrong'), 500);
+        }
+      };
+      ansBox.appendChild(btn);
+    });
+  }
+  window.setMathMode = function(m){
+    mode = m;
+    document.getElementById('modeAdd').classList.toggle('active', m==='add');
+    document.getElementById('modeSub').classList.toggle('active', m==='sub');
+    newProblem();
+  };
+  newProblem();
+}
+
+/* ---------- Video corner ---------- */
+function buildVideos(body){
+  body.innerHTML = `<div class="video-list" id="videoList"></div><div class="video-note">শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না</div>`;
+  const list = document.getElementById('videoList');
+  videoList.forEach(v=>{
+    const card = document.createElement('div');
+    card.className='video-card';
+    card.innerHTML = `<h3>${v.title}</h3>
+      <iframe src="https://www.youtube-nocookie.com/embed/${v.id}?modestbranding=1&rel=0" loading="lazy"
+        title="${v.title}" allowfullscreen></iframe>`;
+    list.appendChild(card);
+  });
+}
+
 /* ---------- Matching memory game ---------- */
 function buildMatch(body){
   const emojiSet = ['🍎','🍌','🍇','🍉','🥕','🌽','🍓','🍍'];
@@ -365,8 +559,12 @@ function buildDraw(body){
       <canvas id="canvas"></canvas>
       <div class="palette" id="palette"></div>
       <div class="draw-tools">
+        <button class="tool-btn" style="background:var(--coral); box-shadow:0 4px 0 #d9583f;" onclick="saveToGallery()">💾 সেভ করো</button>
         <button class="tool-btn" onclick="clearCanvas()">🧹 মুছে ফেলো</button>
       </div>
+      <h3 class="display" style="margin:20px 0 6px; font-size:18px; text-align:center; color:var(--plum);">আমার গ্যালারি</h3>
+      <div class="gallery-grid" id="galleryGrid"></div>
+      <div class="empty-note" id="galleryEmpty">এখনো কোনো ছবি সেভ করা হয়নি — উপরে আঁকো, তারপর "সেভ করো" চাপো!</div>
     </div>
   `;
   const canvas = document.getElementById('canvas');
@@ -407,6 +605,27 @@ function buildDraw(body){
   canvas.addEventListener('touchmove', move, {passive:false});
   canvas.addEventListener('touchend', end);
   window.clearCanvas = function(){ ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height); };
+  window.saveToGallery = function(){
+    const dataUrl = canvas.toDataURL('image/png');
+    const stamp = new Date().toLocaleTimeString('bn-BD', {hour:'2-digit', minute:'2-digit'});
+    drawGallery.push({dataUrl, stamp});
+    bump(3); praise('ছবিটা সেভ হয়েছে! 🖼️');
+    renderGallery();
+  };
+  function renderGallery(){
+    const grid = document.getElementById('galleryGrid');
+    const empty = document.getElementById('galleryEmpty');
+    grid.innerHTML = '';
+    empty.style.display = drawGallery.length ? 'none' : 'block';
+    drawGallery.forEach((item, i)=>{
+      const div = document.createElement('div');
+      div.className = 'gallery-item';
+      div.innerHTML = `<img src="${item.dataUrl}" alt="ছবি ${i+1}">
+        <a href="${item.dataUrl}" download="amar-chobi-${i+1}.png">⬇️</a>`;
+      grid.appendChild(div);
+    });
+  }
+  renderGallery();
 }
 </script>
 </body>
