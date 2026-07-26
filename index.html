@@ -478,7 +478,15 @@ const I18N = {
     dashAgeLbl:'বয়স', dashStreamLbl:'স্ট্রিম', dashStarsLbl:'মোট স্টার',
     dashLevelTitle:'ক্লাস / লেভেল', dashLevelHint:'লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে',
     dashProgressTitle:'বিষয়ভিত্তিক অগ্রগতি', dashGalleryTitle:'আঁকা ছবির গ্যালারি', dashGalleryEmptyTxt:'এখনো কোনো ছবি নেই',
-    appTitleChild:'{name}র বাগান'
+    appTitleChild:'{name}র বাগান',
+    act_listen:'শোনো', act_listenWord:'পুরো শব্দ শোনো', act_listenSentence:'বাক্যটা শোনো',
+    act_matchHint:'দুটো একই ছবি খুঁজে বের করো', act_videoNote:'শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না',
+    math_add:'যোগ', math_sub:'বিয়োগ',
+    err_setupRequired:'নাম আর বয়স দুটোই দিন', err_setupSave:'সেভ করতে সমস্যা হয়েছে, আবার চেষ্টা করুন',
+    err_authRequired:'সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন',
+    err_auth_email_in_use:'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন', err_auth_invalid_email:'ইমেইলটা ঠিক নেই',
+    err_auth_wrong_password:'পাসওয়ার্ড ভুল হয়েছে', err_auth_user_not_found:'এই ইমেইলে কোনো অ্যাকাউন্ট নেই, নতুন বানান',
+    err_auth_weak_password:'পাসওয়ার্ড আরেকটু শক্তিশালী দিন', err_auth_generic:'কিছু একটা সমস্যা হয়েছে, আবার চেষ্টা করুন'
   },
   en: {
     appTitleGeneric:"Khukir Bagan 🌷", headerSub:'Play, draw and learn — at your own pace',
@@ -507,7 +515,15 @@ const I18N = {
     dashAgeLbl:'Age', dashStreamLbl:'Stream', dashStarsLbl:'Total stars',
     dashLevelTitle:'Class / Level', dashLevelHint:"Changing the level will show modules suited to the child's age on the home screen",
     dashProgressTitle:'Progress by module', dashGalleryTitle:'Drawing gallery', dashGalleryEmptyTxt:'No pictures yet',
-    appTitleChild:"{name}'s Garden"
+    appTitleChild:"{name}'s Garden",
+    act_listen:'Listen', act_listenWord:'Listen to word', act_listenSentence:'Listen to sentence',
+    act_matchHint:'Find the two matching pictures', act_videoNote:'Only curated videos are shown — nothing else will be suggested',
+    math_add:'Add', math_sub:'Subtract',
+    err_setupRequired:'Please enter both name and age', err_setupSave:'Could not save, please try again',
+    err_authRequired:'Enter a valid email and a password of at least 6 characters',
+    err_auth_email_in_use:'An account already exists with this email — please log in', err_auth_invalid_email:"That email doesn't look right",
+    err_auth_wrong_password:'Incorrect password', err_auth_user_not_found:'No account found with this email — please sign up',
+    err_auth_weak_password:'Please choose a stronger password', err_auth_generic:'Something went wrong, please try again'
   }
 };
 let currentLang = localStorage.getItem('khukirLang') || 'bn';
@@ -612,7 +628,7 @@ function handleAuthSubmit(){
   const pass = document.getElementById('authPass').value;
   const errEl = document.getElementById('authError');
   errEl.textContent = '';
-  if(!email || pass.length<6){ errEl.textContent = 'সঠিক ইমেইল ও কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন'; return; }
+  if(!email || pass.length<6){ errEl.textContent = t('err_authRequired'); return; }
   const action = isSignupMode
     ? auth.createUserWithEmailAndPassword(email, pass)
     : auth.signInWithEmailAndPassword(email, pass);
@@ -620,13 +636,13 @@ function handleAuthSubmit(){
 }
 function translateAuthError(code){
   const map = {
-    'auth/email-already-in-use':'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন',
-    'auth/invalid-email':'ইমেইলটা ঠিক নেই',
-    'auth/wrong-password':'পাসওয়ার্ড ভুল হয়েছে',
-    'auth/user-not-found':'এই ইমেইলে কোনো অ্যাকাউন্ট নেই, নতুন বানান',
-    'auth/weak-password':'পাসওয়ার্ড আরেকটু শক্তিশালী দিন'
+    'auth/email-already-in-use':'err_auth_email_in_use',
+    'auth/invalid-email':'err_auth_invalid_email',
+    'auth/wrong-password':'err_auth_wrong_password',
+    'auth/user-not-found':'err_auth_user_not_found',
+    'auth/weak-password':'err_auth_weak_password'
   };
-  return map[code] || 'কিছু একটা সমস্যা হয়েছে, আবার চেষ্টা করুন';
+  return t(map[code] || 'err_auth_generic');
 }
 function handleLogout(){ auth.signOut(); }
 
@@ -656,11 +672,11 @@ function handleSetupSubmit(){
   const stream = document.getElementById('setupStream').value;
   const level = document.getElementById('setupLevel').value;
   const errEl = document.getElementById('setupError');
-  if(!name || !age){ errEl.textContent = 'নাম আর বয়স দুটোই দিন'; return; }
+  if(!name || !age){ errEl.textContent = t('err_setupRequired'); return; }
   childData = { childName:name, childAge:Number(age), stream, level, stars:{}, totalStars:0, galleryUrls:[] };
   db.collection('users').doc(currentUser.uid).set(childData)
     .then(()=>{ document.getElementById('setupScreen').style.display='none'; showHome(); })
-    .catch(()=>{ errEl.textContent = 'সেভ করতে সমস্যা হয়েছে, আবার চেষ্টা করুন'; });
+    .catch(()=>{ errEl.textContent = t('err_setupSave'); });
 }
 
 function showHome(){
@@ -824,6 +840,7 @@ function openActivity(name){
   if(name==='multiplication') buildMultiplication(body);
   if(name==='sentences') buildSentences(body);
   if(name==='videos') buildVideos(body);
+  applyLanguage();
 }
 function closeActivity(){
   document.getElementById('activity').classList.remove('open');
@@ -837,7 +854,7 @@ function buildLetters(body){
     <div class="stage" id="letterStage" style="background:${COLORS[0]}">${letters[0][0]}</div>
     <div class="word-label" id="letterWord">${letters[0][1]}</div>
     <div class="word-sub">তে ${letters[0][1]}</div>
-    <button class="say-btn" onclick="sayLetter()">🔊 শোনো</button>
+    <button class="say-btn" onclick="sayLetter()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="letterGrid"></div>
   `;
   const grid = document.getElementById('letterGrid');
@@ -869,7 +886,7 @@ function buildNumbers(body){
     <div class="stage" id="numStage" style="background:${COLORS[0]}">১</div>
     <div id="beeRow" style="font-size:26px; letter-spacing:3px; margin:8px 0 4px; min-height:40px; max-width:280px; text-align:center;"></div>
     <div class="word-sub" id="numSub">১টা মৌমাছি গুনো!</div>
-    <button class="say-btn" onclick="sayNum()">🔊 শোনো</button>
+    <button class="say-btn" onclick="sayNum()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="numGrid"></div>
   `;
   const grid = document.getElementById('numGrid');
@@ -901,7 +918,7 @@ function buildAnimals(body){
     <div class="stage" id="aniStage" style="background:${COLORS[0]}">${animalList[0][0]}</div>
     <div class="word-label" id="aniWord">${animalList[0][1]}</div>
     <div class="word-sub" id="aniSub">${animalList[0][2]}</div>
-    <button class="say-btn" onclick="sayAni()">🔊 শোনো</button>
+    <button class="say-btn" onclick="sayAni()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="aniGrid"></div>
   `;
   const grid = document.getElementById('aniGrid');
@@ -931,7 +948,7 @@ function buildWords(body){
   body.innerHTML = `
     <div class="stage" id="wordStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${wordList[0].emoji}</div>
     <div class="syll-row" id="syllRow"></div>
-    <button class="say-btn" onclick="sayWholeWord()">🔊 পুরো শব্দ শোনো</button>
+    <button class="say-btn" onclick="sayWholeWord()">🔊 <span data-i18n="act_listenWord">পুরো শব্দ শোনো</span></button>
     <div class="word-card-list" id="wordCardList"></div>
   `;
   const list = document.getElementById('wordCardList');
@@ -968,8 +985,8 @@ function buildMath(body){
   let mode = 'add';
   body.innerHTML = `
     <div class="mode-toggle">
-      <button class="mode-btn active" id="modeAdd" onclick="setMathMode('add')">➕ যোগ</button>
-      <button class="mode-btn" id="modeSub" onclick="setMathMode('sub')">➖ বিয়োগ</button>
+      <button class="mode-btn active" id="modeAdd" onclick="setMathMode('add')">➕ <span data-i18n="math_add">যোগ</span></button>
+      <button class="mode-btn" id="modeSub" onclick="setMathMode('sub')">➖ <span data-i18n="math_sub">বিয়োগ</span></button>
     </div>
     <div class="math-row" id="mathRow"></div>
     <div class="ans-options" id="ansOptions"></div>
@@ -1034,7 +1051,7 @@ function buildEnglish(body){
     <div class="stage" id="engStage" style="background:${COLORS[0]}; font-size:clamp(60px,18vw,110px);">${englishLetters[0][2]}</div>
     <div class="word-label" id="engLetter">A</div>
     <div class="word-sub" id="engWord">Apple</div>
-    <button class="say-btn" onclick="sayEng()">🔊 শোনো</button>
+    <button class="say-btn" onclick="sayEng()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="engGrid"></div>
   `;
   const grid = document.getElementById('engGrid');
@@ -1104,7 +1121,7 @@ function buildSentences(body){
   body.innerHTML = `
     <div class="stage" id="sentStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${sentenceList[0].emoji}</div>
     <div class="word-label" id="sentText" style="font-size:20px; max-width:320px; text-align:center;">${sentenceList[0].text}</div>
-    <button class="say-btn" onclick="saySentence()">🔊 বাক্যটা শোনো</button>
+    <button class="say-btn" onclick="saySentence()">🔊 <span data-i18n="act_listenSentence">বাক্যটা শোনো</span></button>
     <div class="word-card-list" id="sentCardList"></div>
   `;
   const list = document.getElementById('sentCardList');
@@ -1131,7 +1148,7 @@ function buildSentences(body){
 
 /* ---------- Video corner ---------- */
 function buildVideos(body){
-  body.innerHTML = `<div class="video-list" id="videoList"></div><div class="video-note">শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না</div>`;
+  body.innerHTML = `<div class="video-list" id="videoList"></div><div class="video-note" data-i18n="act_videoNote">শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না</div>`;
   const list = document.getElementById('videoList');
   videoList.forEach(v=>{
     const card = document.createElement('div');
@@ -1148,7 +1165,7 @@ function buildMatch(body){
   const emojiSet = ['🍎','🍌','🍇','🍉','🥕','🌽','🍓','🍍'];
   let cards = [...emojiSet, ...emojiSet];
   cards.sort(()=>Math.random()-0.5);
-  body.innerHTML = `<div class="word-sub" style="margin-bottom:8px;">দুটো একই ছবি খুঁজে বের করো</div><div class="memo-grid" id="memoGrid"></div>`;
+  body.innerHTML = `<div class="word-sub" style="margin-bottom:8px;" data-i18n="act_matchHint">দুটো একই ছবি খুঁজে বের করো</div><div class="memo-grid" id="memoGrid"></div>`;
   const grid = document.getElementById('memoGrid');
   let flipped = [];
   let lock = false;
