@@ -46,6 +46,13 @@ body{
   overflow-x:hidden;
 }
 .sky-deco{ opacity:.35; mix-blend-mode:screen; }
+
+/* ---------- Bold primary text (headings, labels, key UI copy) ---------- */
+h1, h2, h3, .display,
+.auth-card h2, .flower-stop h2, .word-label, .word-sub,
+.video-card h3, .drawer-head h3, .stat-row, .drawer-item{
+  font-weight:700 !important;
+}
 .sky-deco .sun{
   background:radial-gradient(circle at 35% 35%, #FFEFB0, var(--firefly-gold)) !important;
   box-shadow:0 0 60px 18px rgba(255,216,102,.35) !important;
