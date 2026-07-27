@@ -512,6 +512,10 @@
       <div id="dashModuleStats"></div>
     </div>
     <div class="dash-card">
+      <h3 data-i18n="dashGamesTitle">🎮 গেম অগ্রগতি</h3>
+      <div id="dashGameStats"></div>
+    </div>
+    <div class="dash-card">
       <h3 data-i18n="dashGalleryTitle">আঁকা ছবির গ্যালারি</h3>
       <div class="mini-gallery" id="dashGallery"></div>
       <div class="empty-note" id="dashGalleryEmpty" style="display:none;" data-i18n="dashGalleryEmptyTxt">এখনো কোনো ছবি নেই</div>
@@ -588,6 +592,7 @@ const I18N = {
     dashAgeLbl:'বয়স', dashStreamLbl:'স্ট্রিম', dashStarsLbl:'মোট স্টার',
     dashLevelTitle:'ক্লাস / লেভেল', dashLevelHint:'লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে',
     dashProgressTitle:'বিষয়ভিত্তিক অগ্রগতি', dashGalleryTitle:'আঁকা ছবির গ্যালারি', dashGalleryEmptyTxt:'এখনো কোনো ছবি নেই',
+    dashGamesTitle:'🎮 গেম অগ্রগতি', dashGameNotPlayed:'এখনো খেলা হয়নি',
     appTitleChild:'{name}র বাগান',
     act_listen:'শোনো', act_listenWord:'পুরো শব্দ শোনো', act_listenSentence:'বাক্যটা শোনো',
     act_matchHint:'দুটো একই ছবি খুঁজে বের করো', act_videoNote:'শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না',
@@ -637,6 +642,7 @@ const I18N = {
     dashAgeLbl:'Age', dashStreamLbl:'Stream', dashStarsLbl:'Total stars',
     dashLevelTitle:'Class / Level', dashLevelHint:"Changing the level will show modules suited to the child's age on the home screen",
     dashProgressTitle:'Progress by module', dashGalleryTitle:'Drawing gallery', dashGalleryEmptyTxt:'No pictures yet',
+    dashGamesTitle:'🎮 Game progress', dashGameNotPlayed:'Not played yet',
     appTitleChild:"{name}'s Garden",
     act_listen:'Listen', act_listenWord:'Listen to word', act_listenSentence:'Listen to sentence',
     act_matchHint:'Find the two matching pictures', act_videoNote:'Only curated videos are shown — nothing else will be suggested',
@@ -749,6 +755,15 @@ const MODULE_LEVELS = {
   shapebuilder:['nursery','kg','class1'],
   melodyfarm:['playgroup','nursery','kg']
 };
+// Each of the 5 standalone games saves under childData.games.<id> with its own
+// shape; this pulls one friendly headline stat out of each for the dashboard.
+const GAME_SUMMARY = [
+  { id:'bubbleocean', summarize:d => `🫧 ${(d.reef||[]).length}/12` },
+  { id:'tinychef', summarize:d => `🍳 ${Object.values(d.progress||{}).filter(p=>p.completed).length}` },
+  { id:'skypainter', summarize:d => d.name ? '🎨 ✓' : '—' },
+  { id:'shapebuilder', summarize:d => `🧩 ${Object.values(d.progress||{}).filter(p=>p.completed).length}` },
+  { id:'melodyfarm', summarize:d => `🎵 ${(d.unlockedAnimals||[]).length}` }
+];
 function filterHomeByLevel(){
   const level = (childData && childData.level) || 'playgroup';
   document.querySelectorAll('.flower-stop').forEach(el=>{
@@ -872,11 +887,22 @@ function openDashboard(){
   const modBox = document.getElementById('dashModuleStats');
   modBox.innerHTML = '';
   const stars = childData.stars || {};
-  Object.keys(MODULE_LABELS).forEach(key=>{
+  const LEARNING_MODULE_KEYS = ['letters','numbers','match','draw','animals','words','mathgame','english','multiplication','sentences'];
+  LEARNING_MODULE_KEYS.forEach(key=>{
     const row = document.createElement('div');
     row.className = 'stat-row';
     row.innerHTML = `<span>${moduleLabel(key)}</span><span>⭐ ${stars[key]||0}</span>`;
     modBox.appendChild(row);
+  });
+  const gameBox = document.getElementById('dashGameStats');
+  gameBox.innerHTML = '';
+  const games = childData.games || {};
+  GAME_SUMMARY.forEach(g=>{
+    const data = games[g.id];
+    const row = document.createElement('div');
+    row.className = 'stat-row';
+    row.innerHTML = `<span>${moduleLabel(g.id)}</span><span>${data ? g.summarize(data) : t('dashGameNotPlayed')}</span>`;
+    gameBox.appendChild(row);
   });
   const gal = document.getElementById('dashGallery');
   gal.innerHTML = '';

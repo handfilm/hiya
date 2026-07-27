@@ -270,6 +270,20 @@ let currentUser = null; // { uid, guest:boolean }
 let childProfile = { name:'', age:'' };
 let selectedAge = null;
 
+// If a parent already signed into the main Khukir Bagan app in this browser,
+// reuse that session instead of asking to log in again here.
+let sessionChecked = false;
+if(firebaseReady){
+  auth.onAuthStateChanged(async (user) => {
+    if(sessionChecked) return;
+    sessionChecked = true;
+    if(user && !user.isAnonymous){
+      currentUser = { uid: user.uid, guest:false };
+      await afterAuth();
+    }
+  });
+}
+
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -347,14 +361,16 @@ function loadLocalProfile(){ try{ const raw = localStorage.getItem(profileKey())
 async function saveRemoteProfile(){
   if(!firebaseReady || !db || !currentUser || currentUser.guest) return;
   try{
-    await db.collection('children').doc(currentUser.uid).set({
+    const update = {};
+    update['games.skypainter'] = {
       name: childProfile.name, age: childProfile.age, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge:true });
+    };
+    await db.collection('users').doc(currentUser.uid).set(update, { merge:true });
   }catch(e){ console.warn('Firestore profile save failed.', e); }
 }
 async function loadRemoteProfile(){
   if(!firebaseReady || !db || !currentUser || currentUser.guest) return null;
-  try{ const doc = await db.collection('children').doc(currentUser.uid).get(); if(doc.exists) return doc.data(); }
+  try{ const doc = await db.collection('users').doc(currentUser.uid).get(); if(doc.exists) return (doc.data().games && doc.data().games.skypainter) || null; }
   catch(e){ console.warn('Firestore profile load failed.', e); }
   return null;
 }

@@ -327,9 +327,12 @@ function loadLocal(){
 async function saveProgressRemote(){
   if(fbReady && currentUid){
     try{
-      await db.collection("users").doc(currentUid).set({
-        childName:state.childName, avatar:state.avatar, progress:state.progress
-      }, {merge:true});
+      const update = {};
+      update["games.shapebuilder"] = {
+        childName:state.childName, avatar:state.avatar, progress:state.progress,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      await db.collection("users").doc(currentUid).set(update, {merge:true});
     }catch(e){ console.warn("Firestore save failed, using local only.", e); }
   }
   saveLocal();
@@ -338,8 +341,8 @@ async function loadProgressRemote(){
   if(fbReady && currentUid){
     try{
       const doc = await db.collection("users").doc(currentUid).get();
-      if(doc.exists){
-        const d = doc.data();
+      const d = doc.exists ? (doc.data().games && doc.data().games.shapebuilder) : null;
+      if(d){
         state.childName = d.childName || "";
         state.avatar = d.avatar || "👷";
         state.progress = d.progress || {};
@@ -580,8 +583,18 @@ async function finishLevel(){
 /* ============ BOOT ============ */
 window.addEventListener("load", ()=>{
   if(fbReady){
+    let sessionChecked = false;
     auth.onAuthStateChanged(async (user)=>{
-      // Auth state observed; actual sign-in triggered by the Start button.
+      if(sessionChecked) return;
+      sessionChecked = true;
+      // If a parent already signed into the main Khukir Bagan app in this
+      // browser, reuse that session instead of falling back to a guest.
+      if(user && !user.isAnonymous){
+        currentUid = user.uid;
+        const hasProfile = await loadProgressRemote();
+        if(hasProfile && state.childName){ enterHome(); }
+        else{ showScreen("setupScreen"); }
+      }
     });
   }
 });

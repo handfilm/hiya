@@ -392,6 +392,21 @@ try{
 
 let currentUser = null; // { uid, guest:boolean }
 
+// If a parent already signed into the main Khukir Bagan app in this browser,
+// Firebase keeps that session (same project, same origin) — detect it here
+// and skip straight past this game's own login screen.
+let sessionChecked = false;
+if(firebaseReady){
+  auth.onAuthStateChanged(async (user) => {
+    if(sessionChecked) return;
+    sessionChecked = true;
+    if(user && !user.isAnonymous){
+      currentUser = { uid: user.uid, guest:false };
+      await afterAuth();
+    }
+  });
+}
+
 /* ---------------- Creature data ---------------- */
 const CREATURES = [
   {id:'clownfish', name:'Clownfish', color:'#FF7A45', accent:'#FFFFFF', shape:'clownfish',
@@ -572,19 +587,21 @@ function saveLocalProfile(){
 async function saveRemoteProfile(){
   if(!firebaseReady || !db || !currentUser || currentUser.guest) return;
   try{
-    await db.collection('children').doc(currentUser.uid).set({
+    const update = {};
+    update['games.bubbleocean'] = {
       name: childProfile.name,
       age: childProfile.age,
       reef: childProfile.reef,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+    };
+    await db.collection('users').doc(currentUser.uid).set(update, { merge:true });
   }catch(e){ console.warn('Firestore save failed, staying local.', e); }
 }
 async function loadRemoteProfile(){
   if(!firebaseReady || !db || !currentUser || currentUser.guest) return null;
   try{
-    const doc = await db.collection('children').doc(currentUser.uid).get();
-    if(doc.exists) return doc.data();
+    const doc = await db.collection('users').doc(currentUser.uid).get();
+    if(doc.exists) return (doc.data().games && doc.data().games.bubbleocean) || null;
   }catch(e){ console.warn('Firestore load failed, using local.', e); }
   return null;
 }
