@@ -21,6 +21,15 @@
     --plum:#3A2E44;
     --lilac:#B98CE0;
     --card:#FFFFFF;
+    /* punchy glossy accents — used sparingly on buttons/icons, white stays the base */
+    --pop-lime:#C6F135;
+    --pop-lime-dark:#9BC400;
+    --pop-red:#FF4B4B;
+    --pop-red-dark:#E23434;
+    --pop-green:#22C55E;
+    --pop-green-dark:#159647;
+    --pop-blue:#2E9CFF;
+    --pop-blue-dark:#1B7FE0;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
   html,body{margin:0; padding:0; width:100%; height:100%; overflow-x:hidden;}
@@ -31,6 +40,19 @@
     color:var(--plum);
   }
   .display{font-family:'Baloo Da 2', sans-serif;}
+
+  /* ---------- Glossy 3D shine (shared across every button/icon "character") ---------- */
+  .flower-icon, .stage, .mini-btn, .say-btn, .primary-btn, .memo-card, .tool-btn,
+  .ans-btn, .mode-btn, .swatch, .icon-btn, .pill-btn, .backBtn, .drawer-close, .syll{
+    position:relative; z-index:0; overflow:hidden;
+  }
+  .flower-icon::before, .stage::before, .mini-btn::before, .say-btn::before, .primary-btn::before,
+  .memo-card::before, .tool-btn::before, .ans-btn::before, .mode-btn::before, .swatch::before,
+  .icon-btn::before, .pill-btn::before, .backBtn::before, .drawer-close::before, .syll::before{
+    content:''; position:absolute; z-index:-1; top:-25%; left:-12%; width:124%; height:52%;
+    background:linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0));
+    border-radius:50%; pointer-events:none;
+  }
 
   /* ---------- Sky decorations ---------- */
   .sky-deco{position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; overflow:hidden;}
@@ -63,12 +85,16 @@
     font-size:44px; width:76px; height:76px; min-width:76px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
     animation: sway 3s ease-in-out infinite;
+    box-shadow:0 6px 14px rgba(0,0,0,.16), inset 0 -8px 12px rgba(0,0,0,.14), inset 0 4px 6px rgba(255,255,255,.45);
   }
   @keyframes sway{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
   .flower-stop h2{font-family:'Baloo Da 2', sans-serif; font-size:21px; margin:0 0 3px; color:var(--plum);}
   .flower-stop p{margin:0; font-size:13.5px; color:var(--plum); opacity:.65;}
-  .c1{background:#FFE9CE;} .c2{background:#DDF3E4;} .c3{background:#E1F0FB;}
-  .c4{background:#F5E7FB;} .c5{background:#FFE3DE;}
+  .c1{background:radial-gradient(circle at 35% 28%, #FF9A8F, var(--pop-red));}
+  .c2{background:radial-gradient(circle at 35% 28%, #6FE39B, var(--pop-green));}
+  .c3{background:radial-gradient(circle at 35% 28%, #7FC4FF, var(--pop-blue));}
+  .c4{background:radial-gradient(circle at 35% 28%, #D6ABF2, var(--lilac));}
+  .c5{background:radial-gradient(circle at 35% 28%, #E9F787, var(--pop-lime));}
 
   /* ---------- Activity screen ---------- */
   #activity{position:fixed; inset:0; background:var(--cream); z-index:10; display:none; flex-direction:column;}
@@ -84,7 +110,9 @@
   .stage{
     width:min(78vw, 260px); height:min(78vw,260px); border-radius:36px; display:flex; align-items:center; justify-content:center;
     font-size:clamp(80px,26vw,140px); font-family:'Baloo Da 2', sans-serif; font-weight:800; color:#fff;
-    box-shadow:0 10px 0 rgba(0,0,0,.1); margin:10px 0 6px; transition: transform .12s ease;
+    box-shadow:0 10px 0 rgba(0,0,0,.12), 0 16px 26px rgba(0,0,0,.16),
+      inset 0 8px 14px rgba(255,255,255,.35), inset 0 -14px 20px rgba(0,0,0,.18);
+    margin:10px 0 6px; transition: transform .12s ease;
   }
   .stage.pop{animation: pop .4s ease;}
   @keyframes pop{0%{transform:scale(.7) rotate(-4deg);}60%{transform:scale(1.12) rotate(3deg);}100%{transform:scale(1) rotate(0);}}
@@ -94,18 +122,20 @@
   .grid-nav{display:grid; grid-template-columns:repeat(auto-fill,minmax(64px,1fr)); gap:10px; width:100%; max-width:480px; margin-top:18px;}
   .mini-btn{
     aspect-ratio:1; border-radius:16px; border:none; font-family:'Baloo Da 2', sans-serif; font-size:26px; font-weight:700;
-    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 0 rgba(0,0,0,.12);
+    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 0 rgba(0,0,0,.18), inset 0 -5px 8px rgba(0,0,0,.15), inset 0 3px 4px rgba(255,255,255,.4);
   }
   .mini-btn:active{transform:translateY(3px); box-shadow:none;}
 
-  .say-btn{margin-top:16px; background:var(--coral); color:#fff; border:none; padding:14px 26px; border-radius:30px;
-    font-family:'Baloo Da 2', sans-serif; font-size:18px; box-shadow:0 5px 0 #d9583f; cursor:pointer;}
+  .say-btn{margin-top:16px; background:linear-gradient(180deg, #FF7A7A, var(--pop-red)); color:#fff; border:none; padding:14px 26px; border-radius:30px;
+    font-family:'Baloo Da 2', sans-serif; font-size:18px;
+    box-shadow:0 5px 0 var(--pop-red-dark), inset 0 -6px 10px rgba(0,0,0,.15); cursor:pointer;}
   .say-btn:active{transform:translateY(4px); box-shadow:none;}
 
   /* Matching game */
   .memo-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; width:100%; max-width:420px; margin-top:8px;}
-  .memo-card{aspect-ratio:1; border-radius:16px; background:var(--leaf); display:flex; align-items:center; justify-content:center;
-    font-size:34px; cursor:pointer; box-shadow:0 5px 0 var(--leaf-dark); transition:transform .15s;}
+  .memo-card{aspect-ratio:1; border-radius:16px; background:linear-gradient(180deg, #4FDE85, var(--pop-green)); display:flex; align-items:center; justify-content:center;
+    font-size:34px; cursor:pointer; box-shadow:0 5px 0 var(--pop-green-dark), inset 0 -6px 8px rgba(0,0,0,.12); transition:transform .15s;}
   .memo-card.flipped, .memo-card.matched{background:#fff; box-shadow:0 5px 0 #ddd;}
   .memo-card.matched{opacity:.55;}
   .memo-card:active{transform:scale(.94);}
@@ -117,8 +147,8 @@
   .swatch{width:38px; height:38px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 2px rgba(0,0,0,.1); cursor:pointer;}
   .swatch.active{box-shadow:0 0 0 3px var(--plum);}
   .draw-tools{display:flex; gap:10px; justify-content:center;}
-  .tool-btn{background:var(--sky); border:none; padding:10px 18px; border-radius:20px; font-family:'Baloo Da 2',sans-serif;
-    color:#fff; font-size:14px; cursor:pointer; box-shadow:0 4px 0 #4a9fbf;}
+  .tool-btn{background:linear-gradient(180deg, #6EBBFF, var(--pop-blue)); border:none; padding:10px 18px; border-radius:20px; font-family:'Baloo Da 2',sans-serif;
+    color:#fff; font-size:14px; cursor:pointer; box-shadow:0 4px 0 var(--pop-blue-dark), inset 0 -5px 8px rgba(0,0,0,.12);}
   .tool-btn:active{transform:translateY(3px); box-shadow:none;}
 
   /* Word reading */
@@ -137,14 +167,15 @@
   .obj-group{display:flex; flex-wrap:wrap; gap:4px; max-width:160px; min-height:44px;}
   .op-sign{font-family:'Baloo Da 2', sans-serif; font-weight:800; font-size:34px; color:var(--coral);}
   .ans-options{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;}
-  .ans-btn{background:var(--sky); border:none; color:#fff; font-family:'Baloo Da 2', sans-serif; font-size:26px;
-    font-weight:700; width:60px; height:60px; border-radius:16px; cursor:pointer; box-shadow:0 4px 0 #4a9fbf;}
-  .ans-btn.correct{background:var(--leaf); box-shadow:0 4px 0 var(--leaf-dark);}
-  .ans-btn.wrong{background:#e05a4d; box-shadow:0 4px 0 #a83f36;}
+  .ans-btn{background:linear-gradient(180deg, #6EBBFF, var(--pop-blue)); border:none; color:#fff; font-family:'Baloo Da 2', sans-serif; font-size:26px;
+    font-weight:700; width:60px; height:60px; border-radius:16px; cursor:pointer;
+    box-shadow:0 4px 0 var(--pop-blue-dark), inset 0 -5px 8px rgba(0,0,0,.12);}
+  .ans-btn.correct{background:linear-gradient(180deg, #4FDE85, var(--pop-green)); box-shadow:0 4px 0 var(--pop-green-dark), inset 0 -5px 8px rgba(0,0,0,.12);}
+  .ans-btn.wrong{background:linear-gradient(180deg, #FF7A7A, var(--pop-red)); box-shadow:0 4px 0 var(--pop-red-dark), inset 0 -5px 8px rgba(0,0,0,.12);}
   .mode-toggle{display:flex; gap:8px; margin-bottom:10px;}
   .mode-btn{border:none; padding:8px 16px; border-radius:20px; font-family:'Baloo Da 2', sans-serif; font-size:14px;
     background:#eee; cursor:pointer;}
-  .mode-btn.active{background:var(--sun); color:var(--plum);}
+  .mode-btn.active{background:linear-gradient(180deg, #FFDE85, var(--sun)); color:var(--plum); box-shadow:inset 0 -4px 6px rgba(0,0,0,.1);}
 
   /* Gallery */
   .gallery-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:10px; width:100%; max-width:460px; margin-top:16px;}
@@ -170,8 +201,9 @@
   .field{width:100%; padding:13px 16px; border-radius:14px; border:2px solid #eee; font-size:15px;
     font-family:'Hind Siliguri',sans-serif; margin-bottom:12px; box-sizing:border-box;}
   .field:focus{outline:none; border-color:var(--leaf);}
-  .primary-btn{width:100%; padding:14px; border:none; border-radius:16px; background:var(--leaf); color:#fff;
-    font-family:'Baloo Da 2', sans-serif; font-size:17px; cursor:pointer; box-shadow:0 5px 0 var(--leaf-dark); margin-top:4px;}
+  .primary-btn{width:100%; padding:14px; border:none; border-radius:16px; background:linear-gradient(180deg, #4FDE85, var(--pop-green)); color:#fff;
+    font-family:'Baloo Da 2', sans-serif; font-size:17px; cursor:pointer;
+    box-shadow:0 5px 0 var(--pop-green-dark), inset 0 -6px 10px rgba(0,0,0,.12); margin-top:4px;}
   .primary-btn:active{transform:translateY(4px); box-shadow:none;}
   .switch-link{margin-top:14px; font-size:13.5px; color:var(--sky); cursor:pointer; text-decoration:underline;}
   .auth-error{color:#c0392b; font-size:13px; margin-top:8px; min-height:16px;}
@@ -220,7 +252,7 @@
   .lang-toggle{display:flex; background:#fff; border-radius:20px; padding:3px; box-shadow:0 3px 8px rgba(0,0,0,.1); gap:2px;}
   .lang-opt{border:none; background:transparent; padding:7px 13px; border-radius:16px; font-family:'Baloo Da 2', sans-serif;
     font-size:13px; font-weight:700; cursor:pointer; color:var(--plum); opacity:.5;}
-  .lang-opt.active{background:var(--leaf); color:#fff; opacity:1;}
+  .lang-opt.active{background:linear-gradient(180deg, #6EBBFF, var(--pop-blue)); color:#fff; opacity:1;}
 
   /* ---------- Menu drawer ---------- */
   .drawer-overlay{position:fixed; inset:0; background:rgba(58,46,68,.45); z-index:70; display:none;}
@@ -809,7 +841,7 @@ function speak(text){
   }catch(e){}
 }
 
-const COLORS = ['#FF7A68','#3FAE7C','#6FC6E8','#FFCF56','#B98CE0','#FF9F43','#4FC3D9'];
+const COLORS = ['#FF6B6B','#22C55E','#2E9CFF','#FFCF56','#B98CE0','#FF9F43','#C6F135'];
 
 const letters = [
   // স্বরবর্ণ (১১টি)
