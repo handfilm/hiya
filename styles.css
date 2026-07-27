@@ -1,0 +1,337 @@
+/* =====================================================================
+   KHUKIR BAGAN — "Tuni's Night Garden" design system
+   A single cohesive upgrade layered on top of the base app styles:
+   deep cinematic gradient sky + drifting firefly particles (advanced
+   graphic layer, see app.js) + glossy "candy" 3D components blended
+   with soft glass surfaces + Tuni the firefly mascot who reacts to
+   praise/bump events across every screen.
+   This file is loaded AFTER the page's inline <style>, so plain class
+   selectors here win the cascade without needing !important.
+   ===================================================================== */
+
+/* ---------- 1. Palette + surface tokens ---------- */
+:root{
+  /* base app variables, repointed to the night-garden palette */
+  --cream:#0A1230;              /* was light cream page bg -> deep night navy (drives #activity/#dashboard) */
+  --plum:#EEF1FF;                /* was dark text -> light text for dark surfaces */
+  --leaf-dark:#5FFFE0;           /* was dark green heading -> glowing aurora-teal for headings */
+  --card:#141B3D;                /* was white card -> deep glass card base */
+
+  /* new tokens */
+  --night-1:#080D24;
+  --night-2:#0F1740;
+  --night-3:#1B2560;
+  --aurora-teal:#3FEBC9;
+  --aurora-violet:#9C7CFF;
+  --aurora-pink:#FF6FB0;
+  --firefly-gold:#FFD866;
+  --glass-bg:rgba(255,255,255,.06);
+  --glass-bg-hi:rgba(255,255,255,.11);
+  --glass-border:rgba(255,255,255,.16);
+  --text-hi:#F6F8FF;
+  --text-mid:rgba(246,248,255,.74);
+  --text-dim:rgba(246,248,255,.5);
+  --shadow-deep:0 18px 40px rgba(0,0,0,.45);
+}
+
+/* ---------- 2. Cinematic backdrop (persists behind every screen) ---------- */
+html,body{ background:var(--night-1); }
+body{
+  background:
+    radial-gradient(1100px 620px at 18% -8%, rgba(156,124,255,.30), transparent 60%),
+    radial-gradient(900px 560px at 100% 10%, rgba(63,235,201,.22), transparent 55%),
+    radial-gradient(800px 700px at 50% 115%, rgba(255,111,176,.16), transparent 60%),
+    linear-gradient(180deg, var(--night-1) 0%, var(--night-2) 45%, var(--night-3) 100%) !important;
+  color:var(--text-hi);
+  overflow-x:hidden;
+}
+.sky-deco{ opacity:.35; mix-blend-mode:screen; }
+.sky-deco .sun{
+  background:radial-gradient(circle at 35% 35%, #FFEFB0, var(--firefly-gold)) !important;
+  box-shadow:0 0 60px 18px rgba(255,216,102,.35) !important;
+}
+.cloud{ filter:brightness(.6) saturate(0); opacity:.25; }
+
+/* Fixed aurora glow orbs + firefly canvas, injected once near top of <body> */
+.aurora-bg{ position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.aurora-orb{ position:absolute; border-radius:50%; filter:blur(60px); opacity:.55; }
+.aurora-orb.o1{ width:360px; height:360px; left:-80px; top:-60px; background:var(--aurora-violet); animation:auroraDrift 18s ease-in-out infinite; }
+.aurora-orb.o2{ width:300px; height:300px; right:-60px; top:120px; background:var(--aurora-teal); animation:auroraDrift 22s ease-in-out infinite reverse; }
+.aurora-orb.o3{ width:340px; height:340px; left:20%; bottom:-140px; background:var(--aurora-pink); animation:auroraDrift 26s ease-in-out infinite; }
+@keyframes auroraDrift{
+  0%,100%{ transform:translate(0,0) scale(1); }
+  50%{ transform:translate(24px,-18px) scale(1.08); }
+}
+#fireflyCanvas{ position:fixed; inset:0; z-index:1; pointer-events:none; }
+
+/* Everything else sits above the backdrop */
+.global-topbar, .drawer, .drawer-overlay, header, #home, #activity, #dashboard,
+#authScreen, #setupScreen, #tuniMascot, .praise{ position-relative:0; }
+header, #home, .center-screen{ position:relative; z-index:2; }
+
+/* ---------- 3. Global topbar + language toggle ---------- */
+.global-topbar{
+  background:rgba(10,15,40,.55) !important;
+  backdrop-filter:blur(10px);
+  box-shadow:0 2px 18px rgba(0,0,0,.35) !important;
+  border-bottom:1px solid var(--glass-border);
+}
+.icon-btn, .lang-toggle, .pill-btn, .google-btn, .channel-badge, .drawer-close{
+  background:var(--glass-bg-hi) !important;
+  border:1px solid var(--glass-border);
+  color:var(--text-hi) !important;
+  box-shadow:0 4px 14px rgba(0,0,0,.3) !important;
+}
+.icon-btn:hover, .pill-btn:hover{ background:rgba(255,255,255,.16) !important; }
+.lang-opt{ color:var(--text-dim) !important; }
+.lang-opt.active{
+  background:linear-gradient(180deg,#6EE7D8,var(--aurora-teal)) !important;
+  color:#052922 !important; opacity:1;
+  box-shadow:0 0 14px rgba(63,235,201,.6) !important;
+}
+
+/* ---------- 4. Header / hero ---------- */
+h1{
+  color:var(--text-hi) !important;
+  text-shadow:0 0 22px rgba(156,124,255,.55), 0 3px 0 rgba(0,0,0,.25) !important;
+}
+.sub{ color:var(--text-mid) !important; opacity:1 !important; }
+
+/* ---------- 5. Garden path (home) ---------- */
+.flower-stop{
+  background:linear-gradient(180deg, var(--glass-bg-hi), var(--glass-bg)) !important;
+  border:1px solid var(--glass-border) !important;
+  box-shadow:var(--shadow-deep), inset 0 1px 0 rgba(255,255,255,.12) !important;
+  backdrop-filter:blur(8px);
+  transition:transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.flower-stop:hover{ transform:translateY(-2px); border-color:rgba(255,255,255,.3) !important; }
+.flower-stop:active{ transform:scale(.96) translateY(0); }
+.flower-stop h2{ color:var(--text-hi) !important; }
+.flower-stop p{ color:var(--text-mid) !important; opacity:1 !important; }
+.flower-icon{
+  box-shadow:
+    0 6px 14px rgba(0,0,0,.4),
+    inset 0 -8px 12px rgba(0,0,0,.22),
+    inset 0 4px 8px rgba(255,255,255,.55),
+    0 0 30px var(--glow, rgba(156,124,255,.5)) !important;
+}
+.c1{ --glow:rgba(255,90,70,.55); }
+.c2{ --glow:rgba(34,197,94,.55); }
+.c3{ --glow:rgba(46,156,255,.55); }
+.c4{ --glow:rgba(185,140,224,.55); }
+.c5{ --glow:rgba(198,241,53,.5); }
+.c6{ --glow:rgba(23,169,184,.55); }
+.c7{ --glow:rgba(240,138,28,.55); }
+.c8{ --glow:rgba(62,127,224,.55); }
+.c9{ --glow:rgba(232,85,143,.55); }
+.c10{ --glow:rgba(111,174,44,.55); }
+
+.section-divider span{ color:var(--aurora-teal) !important; text-shadow:0 0 16px rgba(63,235,201,.5); }
+.section-divider::before, .section-divider::after{ background:var(--glass-border) !important; }
+.flower-stop.game-stop{ border-color:rgba(255,216,102,.4) !important; }
+.game-badge{
+  background:linear-gradient(180deg,#FF7D6E,var(--pop-red)) !important;
+  box-shadow:0 3px 0 var(--pop-red-dark), 0 0 12px rgba(255,75,75,.6) !important;
+}
+
+/* ---------- 6. Activity screen chrome ---------- */
+#activity, #dashboard{
+  background:
+    radial-gradient(700px 420px at 15% 0%, rgba(156,124,255,.18), transparent 60%),
+    radial-gradient(600px 420px at 100% 0%, rgba(63,235,201,.14), transparent 55%),
+    var(--cream) !important;
+}
+.topbar{
+  background:linear-gradient(180deg, rgba(27,37,96,.9), rgba(15,23,64,.9)) !important;
+  border-bottom:1px solid var(--glass-border);
+  backdrop-filter:blur(8px);
+}
+.stars{ background:rgba(255,255,255,.14) !important; color:var(--firefly-gold); }
+.backBtn{ background:rgba(255,255,255,.14) !important; }
+
+/* Stage tile — the lantern in the middle of every learning screen */
+.stage{
+  box-shadow:
+    0 10px 0 rgba(0,0,0,.3), 0 20px 40px rgba(0,0,0,.45),
+    inset 0 8px 14px rgba(255,255,255,.4), inset 0 -14px 20px rgba(0,0,0,.22),
+    0 0 60px rgba(156,124,255,.35) !important;
+}
+.word-label, .word-sub{ color:var(--text-hi) !important; }
+.word-sub{ opacity:.75 !important; }
+
+.mini-btn{ box-shadow:0 4px 0 rgba(0,0,0,.32), inset 0 -5px 8px rgba(0,0,0,.2), inset 0 3px 5px rgba(255,255,255,.45), 0 0 14px rgba(0,0,0,.25) !important; }
+.say-btn{ box-shadow:0 5px 0 var(--pop-red-dark), inset 0 -6px 10px rgba(0,0,0,.2), 0 0 22px rgba(255,75,75,.45) !important; }
+
+/* Matching game */
+.memo-card{ box-shadow:0 5px 0 var(--pop-green-dark), inset 0 -6px 8px rgba(0,0,0,.2), 0 0 18px rgba(34,197,94,.35) !important; }
+.memo-card.flipped, .memo-card.matched{
+  background:linear-gradient(180deg, var(--glass-bg-hi), var(--glass-bg)) !important;
+  border:1px solid var(--glass-border);
+  box-shadow:0 5px 0 rgba(0,0,0,.3) !important;
+}
+
+/* Drawing pad — canvas itself stays white, it's the paper */
+canvas{ box-shadow:0 10px 30px rgba(0,0,0,.5), 0 0 0 4px var(--glass-border) !important; }
+.swatch{ box-shadow:0 0 0 2px rgba(0,0,0,.4) !important; }
+.swatch.active{ box-shadow:0 0 0 3px var(--firefly-gold), 0 0 14px rgba(255,216,102,.6) !important; }
+.tool-btn{ box-shadow:0 4px 0 var(--pop-blue-dark), inset 0 -5px 8px rgba(0,0,0,.2), 0 0 16px rgba(46,156,255,.4) !important; }
+.gallery-item{ box-shadow:0 4px 14px rgba(0,0,0,.5) !important; }
+.gallery-item a{ background:rgba(255,255,255,.92) !important; color:var(--night-deep,#101636) !important; }
+.empty-note{ color:var(--text-dim) !important; opacity:1 !important; }
+
+/* Word reading */
+.syll{ box-shadow:0 4px 0 rgba(0,0,0,.32), 0 0 14px rgba(0,0,0,.25) !important; }
+.word-card{
+  background:linear-gradient(180deg, var(--glass-bg-hi), var(--glass-bg)) !important;
+  border:1px solid var(--glass-border) !important;
+  box-shadow:0 5px 0 rgba(0,0,0,.3) !important;
+}
+.word-card.active{ border-color:var(--aurora-teal) !important; box-shadow:0 5px 0 rgba(0,0,0,.3), 0 0 16px rgba(63,235,201,.5) !important; }
+.word-card .txt{ color:var(--text-hi) !important; }
+
+/* Math game */
+.op-sign{ color:var(--firefly-gold) !important; }
+.ans-btn{ box-shadow:0 4px 0 var(--pop-blue-dark), inset 0 -5px 8px rgba(0,0,0,.2), 0 0 16px rgba(46,156,255,.4) !important; }
+.ans-btn.correct{ box-shadow:0 4px 0 var(--pop-green-dark), inset 0 -5px 8px rgba(0,0,0,.2), 0 0 18px rgba(34,197,94,.55) !important; }
+.ans-btn.wrong{ box-shadow:0 4px 0 var(--pop-red-dark), inset 0 -5px 8px rgba(0,0,0,.2), 0 0 18px rgba(255,75,75,.55) !important; }
+.mode-btn{ background:var(--glass-bg-hi) !important; color:var(--text-mid) !important; border:1px solid var(--glass-border); }
+.mode-btn.active{
+  background:linear-gradient(180deg,#FFE08A,var(--firefly-gold)) !important;
+  color:#3A2600 !important;
+  box-shadow:inset 0 -4px 6px rgba(0,0,0,.15), 0 0 16px rgba(255,216,102,.55) !important;
+}
+
+/* Video corner */
+.video-card{
+  background:linear-gradient(180deg, var(--glass-bg-hi), var(--glass-bg)) !important;
+  border:1px solid var(--glass-border) !important;
+  box-shadow:0 6px 20px rgba(0,0,0,.4) !important;
+}
+.video-card h3{ color:var(--text-hi) !important; }
+.video-tag{ color:var(--aurora-teal) !important; }
+.video-note{ color:var(--text-dim) !important; opacity:1 !important; }
+.channel-badge .ch-avatar{ box-shadow:0 0 10px rgba(46,156,255,.6); }
+
+/* multiplication table rows reuse .flower-stop, already covered above */
+
+/* ---------- 7. Auth / setup screens ---------- */
+.auth-card{
+  background:linear-gradient(180deg, rgba(27,37,96,.7), rgba(15,23,64,.75)) !important;
+  border:1px solid var(--glass-border) !important;
+  backdrop-filter:blur(14px);
+  box-shadow:var(--shadow-deep), 0 0 60px rgba(156,124,255,.25) !important;
+}
+.auth-card h2{ color:var(--text-hi) !important; text-shadow:0 0 20px rgba(156,124,255,.5); }
+.auth-card p.tag{ color:var(--text-mid) !important; opacity:1 !important; }
+.field{
+  background:rgba(255,255,255,.06) !important;
+  border:2px solid var(--glass-border) !important;
+  color:var(--text-hi) !important;
+}
+.field::placeholder{ color:var(--text-dim); }
+.field:focus{ border-color:var(--aurora-teal) !important; box-shadow:0 0 0 3px rgba(63,235,201,.25); }
+.primary-btn{ box-shadow:0 5px 0 var(--pop-green-dark), inset 0 -6px 10px rgba(0,0,0,.2), 0 0 22px rgba(34,197,94,.4) !important; }
+.switch-link{ color:var(--aurora-teal) !important; }
+.or-divider{ color:var(--text-dim) !important; opacity:1 !important; }
+.or-divider::before, .or-divider::after{ background:var(--glass-border) !important; }
+.google-btn:active{ background:rgba(255,255,255,.18) !important; }
+select.field option{ color:#111; }
+
+/* ---------- 8. Parent dashboard ---------- */
+.dash-card{
+  background:linear-gradient(180deg, var(--glass-bg-hi), var(--glass-bg)) !important;
+  border:1px solid var(--glass-border) !important;
+  box-shadow:var(--shadow-deep) !important;
+}
+.dash-card h3{ text-shadow:0 0 14px rgba(63,235,201,.4); }
+.stat-row{ border-bottom:1px solid rgba(255,255,255,.08) !important; color:var(--text-mid); }
+
+/* ---------- 9. Menu drawer ---------- */
+.drawer{
+  background:linear-gradient(180deg, var(--night-2), var(--night-1)) !important;
+  border-right:1px solid var(--glass-border);
+}
+.drawer-head h3{ color:var(--text-hi) !important; }
+.drawer-section-title{ color:var(--text-dim) !important; opacity:1 !important; }
+.drawer-item{ color:var(--text-hi); border-radius:12px; transition:background .15s ease; }
+.drawer-item:hover{ background:rgba(255,255,255,.06); }
+.drawer-item.soon{ opacity:.45; }
+.badge{ background:rgba(255,255,255,.12); }
+.drawer-overlay{ background:rgba(5,8,24,.6) !important; backdrop-filter:blur(2px); }
+
+/* ---------- 10. Praise toast ---------- */
+.praise{
+  background:linear-gradient(180deg,#FFE08A,var(--firefly-gold)) !important;
+  color:#3A2600 !important;
+  box-shadow:0 8px 24px rgba(0,0,0,.4), 0 0 30px rgba(255,216,102,.55) !important;
+}
+
+/* ---------- 11. Focus visibility (accessibility floor) ---------- */
+button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:focus-visible{
+  outline:3px solid var(--aurora-teal);
+  outline-offset:2px;
+}
+
+/* ---------- 12. Tuni the firefly mascot ---------- */
+#tuniMascot{
+  position:fixed; right:14px; bottom:16px; z-index:45;
+  width:64px; height:64px; pointer-events:none;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.4));
+  animation:tuniBob 3.2s ease-in-out infinite;
+  transition:transform .25s ease;
+}
+#tuniMascot .glow{ animation:tuniPulse 2.6s ease-in-out infinite; transform-origin:center; }
+#tuniMascot.happy{ animation:tuniHappy .7s ease; }
+@keyframes tuniBob{
+  0%,100%{ transform:translateY(0) rotate(-4deg); }
+  50%{ transform:translateY(-10px) rotate(4deg); }
+}
+@keyframes tuniPulse{
+  0%,100%{ opacity:.55; transform:scale(1); }
+  50%{ opacity:.9; transform:scale(1.18); }
+}
+@keyframes tuniHappy{
+  0%{ transform:scale(1) rotate(0); }
+  30%{ transform:scale(1.3) rotate(-12deg); }
+  60%{ transform:scale(1.1) rotate(10deg); }
+  100%{ transform:scale(1) rotate(0); }
+}
+.tuni-sparkle{
+  position:fixed; z-index:46; pointer-events:none; font-size:18px;
+  animation:sparkleFly .9s ease-out forwards;
+}
+@keyframes sparkleFly{
+  0%{ opacity:1; transform:translate(0,0) scale(.6) rotate(0deg); }
+  100%{ opacity:0; transform:var(--fly, translate(-40px,-60px)) scale(1.1) rotate(120deg); }
+}
+
+/* ---------- 13. Ripple + confetti (spawned by app.js) ---------- */
+.ui-ripple{
+  position:absolute; border-radius:50%; background:rgba(255,255,255,.55);
+  transform:scale(0); pointer-events:none; animation:rippleGrow .55s ease-out forwards;
+}
+@keyframes rippleGrow{ to{ transform:scale(1); opacity:0; } }
+
+.confetti-piece{
+  position:fixed; top:0; left:0; width:9px; height:14px; z-index:90; pointer-events:none;
+  border-radius:2px; animation:confettiFall linear forwards;
+}
+@keyframes confettiFall{
+  0%{ transform:translate(var(--x0), -20px) rotate(0deg); opacity:1; }
+  100%{ transform:translate(var(--x1), 100vh) rotate(var(--spin,540deg)); opacity:0; }
+}
+
+/* ---------- 14. Screen transition ---------- */
+.screen.active, #activity.open, #dashboard.open{ animation:screenIn .35s ease both; }
+@keyframes screenIn{
+  0%{ opacity:0; transform:translateY(10px) scale(.99); }
+  100%{ opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* ---------- 15. Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  #tuniMascot, #tuniMascot .glow, .aurora-orb, .flower-icon, .stage.pop,
+  .screen.active, #activity.open, #dashboard.open{ animation:none !important; }
+  #fireflyCanvas{ display:none; }
+}
