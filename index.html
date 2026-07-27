@@ -668,6 +668,8 @@ const I18N = {
     err_auth_email_in_use:'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট আছে, লগইন করুন', err_auth_invalid_email:'ইমেইলটা ঠিক নেই',
     err_auth_wrong_password:'পাসওয়ার্ড ভুল হয়েছে', err_auth_user_not_found:'এই ইমেইলে কোনো অ্যাকাউন্ট নেই, নতুন বানান',
     err_auth_weak_password:'পাসওয়ার্ড আরেকটু শক্তিশালী দিন', err_auth_generic:'কিছু একটা সমস্যা হয়েছে, আবার চেষ্টা করুন',
+    err_auth_unauthorized_domain:'এই ওয়েবসাইট ঠিকানাটি (ডোমেইন) Firebase-এ অনুমোদিত নয় — Firebase Console → Authentication → Settings → Authorized domains-এ গিয়ে "{domain}" যোগ করুন',
+    err_auth_popup_blocked_all:'ব্রাউজার পপ-আপ/থার্ড-পার্টি কুকি ব্লক করে দিচ্ছে — ব্রাউজারের পপ-আপ ব্লকার বন্ধ করে আবার চেষ্টা করুন',
     draw_save:'সেভ করো', draw_clear:'মুছে ফেলো', draw_galleryTitle:'আমার গ্যালারি',
     draw_galleryEmpty:'এখনো কোনো ছবি সেভ করা হয়নি — উপরে আঁকো, তারপর "সেভ করো" চাপো!',
     draw_saved:'ছবিটা সেভ হয়েছে! 🖼️', draw_imgAlt:'ছবি', draw_savedImgAlt:'সেভ করা ছবি',
@@ -718,6 +720,8 @@ const I18N = {
     err_auth_email_in_use:'An account already exists with this email — please log in', err_auth_invalid_email:"That email doesn't look right",
     err_auth_wrong_password:'Incorrect password', err_auth_user_not_found:'No account found with this email — please sign up',
     err_auth_weak_password:'Please choose a stronger password', err_auth_generic:'Something went wrong, please try again',
+    err_auth_unauthorized_domain:'This website address ("{domain}") is not authorized in Firebase — go to Firebase Console → Authentication → Settings → Authorized domains and add it',
+    err_auth_popup_blocked_all:'Your browser is blocking pop-ups or third-party cookies — turn off the pop-up blocker and try again',
     draw_save:'Save', draw_clear:'Clear', draw_galleryTitle:'My Gallery',
     draw_galleryEmpty:'No pictures saved yet — draw above, then tap "Save"!',
     draw_saved:'Picture saved! 🖼️', draw_imgAlt:'Picture', draw_savedImgAlt:'Saved picture',
@@ -867,23 +871,42 @@ function handleGoogleLogin(){
   const errEl = document.getElementById('authError');
   errEl.textContent = '';
   auth.signInWithPopup(googleProvider).catch(e=>{
+    console.error('Google sign-in (popup) failed:', e.code, e.message);
     // মোবাইলে অনেক সময় popup ব্লক হয়ে যায় — তখন redirect দিয়ে ট্রাই করি
     if(e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment' || e.code === 'auth/cancelled-popup-request'){
-      auth.signInWithRedirect(googleProvider).catch(e2=>{ errEl.textContent = translateAuthError(e2.code); });
+      auth.signInWithRedirect(googleProvider).catch(e2=>{
+        console.error('Google sign-in (redirect) failed:', e2.code, e2.message);
+        errEl.textContent = translateAuthError(e2.code);
+      });
     } else if(e.code !== 'auth/popup-closed-by-user'){
       errEl.textContent = translateAuthError(e.code);
     }
   });
 }
+// If a redirect-based sign-in was used (popup blocked), this catches it when the
+// page reloads after Google redirects back — otherwise a failure here would be silent.
+auth.getRedirectResult().catch(e=>{
+  console.error('Google sign-in (redirect result) failed:', e.code, e.message);
+  const errEl = document.getElementById('authError');
+  if(errEl) errEl.textContent = translateAuthError(e.code);
+});
 function translateAuthError(code){
   const map = {
     'auth/email-already-in-use':'err_auth_email_in_use',
     'auth/invalid-email':'err_auth_invalid_email',
     'auth/wrong-password':'err_auth_wrong_password',
     'auth/user-not-found':'err_auth_user_not_found',
-    'auth/weak-password':'err_auth_weak_password'
+    'auth/weak-password':'err_auth_weak_password',
+    'auth/unauthorized-domain':'err_auth_unauthorized_domain',
+    'auth/popup-blocked':'err_auth_popup_blocked_all',
+    'auth/web-storage-unsupported':'err_auth_popup_blocked_all'
   };
-  return t(map[code] || 'err_auth_generic');
+  const key = map[code] || 'err_auth_generic';
+  let msg = t(key);
+  if(key === 'err_auth_unauthorized_domain'){ msg = msg.replace('{domain}', window.location.hostname); }
+  // Unmapped errors still show the raw Firebase code so it can be reported/looked up.
+  if(!map[code] && code){ msg += ` (${code})`; }
+  return msg;
 }
 function handleLogout(){ auth.signOut(); }
 
