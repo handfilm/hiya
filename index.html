@@ -459,6 +459,7 @@
   <h1 id="appTitle">খুকির বাগান 🌷</h1>
   <div class="sub" data-i18n="headerSub">খেলো, আঁকো, শেখো — নিজের মতো করে</div>
   <div class="home-topbar">
+    <button class="pill-btn" onclick="speakWelcome()">🔊 <span data-i18n="btnHowTo">কীভাবে খেলব?</span></button>
     <button class="pill-btn" onclick="openDashboard()">📊 <span data-i18n="drawerDashboard">প্যারেন্ট ড্যাশবোর্ড</span></button>
     <button class="pill-btn" onclick="handleLogout()">🚪 <span data-i18n="btnLogout">লগআউট</span></button>
   </div>
@@ -673,7 +674,10 @@ const I18N = {
     draw_galleryEmpty:'এখনো কোনো ছবি সেভ করা হয়নি — উপরে আঁকো, তারপর "সেভ করো" চাপো!',
     draw_saved:'ছবিটা সেভ হয়েছে! 🖼️', draw_imgAlt:'ছবি', draw_savedImgAlt:'সেভ করা ছবি',
     praiseDefault:'দারুণ হয়েছে! 🎉', praiseMatchWin:'সব মিলিয়ে ফেলেছ! তুমি সেরা! 🏆',
-    num_subIntro:'{n}টা মৌমাছি গুনো!', num_subMemorize:'{n} সংখ্যাটা মনে রাখো!'
+    num_subIntro:'{n}টা মৌমাছি গুনো!', num_subMemorize:'{n} সংখ্যাটা মনে রাখো!',
+    btnHowTo:'কীভাবে খেলব?',
+    welcomeMsg:'{name}, আমাদের ছোট্ট বাগানে স্বাগতম। প্রতিটা ফুলে আলতো করে চাপ দিলেই একটা নতুন খেলা খুলে যাবে। যেকোনো সময় এই বোতামে চাপলে আমি আবার বলে দেব। চলো, শুরু করি!',
+    welcomeDefaultName:'সোনামণি'
   },
   en: {
     appTitleGeneric:"Khukir Bagan 🌷", headerSub:'Play, draw and learn — at your own pace',
@@ -723,7 +727,10 @@ const I18N = {
     draw_galleryEmpty:'No pictures saved yet — draw above, then tap "Save"!',
     draw_saved:'Picture saved! 🖼️', draw_imgAlt:'Picture', draw_savedImgAlt:'Saved picture',
     praiseDefault:'Great job! 🎉', praiseMatchWin:"You matched them all! You're the best! 🏆",
-    num_subIntro:'Count {n} bees!', num_subMemorize:'Remember the number {n}!'
+    num_subIntro:'Count {n} bees!', num_subMemorize:'Remember the number {n}!',
+    btnHowTo:'How do I play?',
+    welcomeMsg:"Welcome to our little garden, {name}. Gently tap any flower below to open a game. Tap this button anytime if you'd like me to say this again. Let's begin!",
+    welcomeDefaultName:'friend'
   }
 };
 let currentLang = localStorage.getItem('khukirLang') || 'bn';
@@ -928,6 +935,10 @@ function showHome(){
   filterHomeByLevel();
   updateAppTitle();
   bump.__loaded = true;
+  if(!sessionStorage.getItem('khukirWelcomed')){
+    sessionStorage.setItem('khukirWelcomed','1');
+    setTimeout(()=>{ try{ speakWelcome(); }catch(e){} }, 600);
+  }
 }
 
 // ================= Progress sync (per-module stars) =================
@@ -1005,10 +1016,34 @@ function praise(msg){
   p.classList.add('show');
   setTimeout(()=>p.classList.remove('show'), 1100);
 }
-function speak(text){
+/* ---------- Speech: pick the warmest available voice, speak slowly & softly ---------- */
+let bnVoice = null, enVoice = null;
+function pickVoices(){
+  const voices = (window.speechSynthesis && window.speechSynthesis.getVoices()) || [];
+  if(!voices.length) return;
+  // Prefer higher-quality named engines (Google/Natural/Neural) over the
+  // default robotic system voice, since that default is usually what
+  // makes isolated syllables/words sound "nonhuman".
+  bnVoice = voices.find(v => /^bn/i.test(v.lang) && /google|natural|neural/i.test(v.name))
+         || voices.find(v => /^bn/i.test(v.lang))
+         || null;
+  enVoice = voices.find(v => /^en/i.test(v.lang) && /google|natural|neural/i.test(v.name))
+         || voices.find(v => /^en/i.test(v.lang))
+         || null;
+}
+pickVoices();
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = pickVoices;
+
+function speak(text, opts){
   try{
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'bn-BD'; u.rate = 0.85;
+    u.lang = 'bn-BD';
+    if(bnVoice) u.voice = bnVoice;
+    // Soft, slow, polite by default — a caring-adult pace rather than a
+    // rushed system-voice pace. Individual call sites can override.
+    u.rate = (opts && opts.rate) || 0.78;
+    u.pitch = (opts && opts.pitch) || 1.04;
+    u.volume = 1;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
   }catch(e){}
@@ -1250,7 +1285,7 @@ function buildWords(body){
     wordList[i].syll.forEach((s, si)=>{
       const b = document.createElement('div');
       b.className = 'syll'; b.style.background = COLORS[(i+si)%COLORS.length]; b.textContent = s;
-      b.onclick = ()=>{ speak(s); };
+      b.onclick = ()=>{ speak(s, {rate:0.65, pitch:1.06}); };
       row.appendChild(b);
     });
     speak(wordList[i].word);
@@ -1353,14 +1388,29 @@ function buildEnglish(body){
   };
   window.sayEng = function(){ speakEn(englishLetters[idx][0] + ', for ' + englishLetters[idx][1]); };
 }
-function speakEn(text){
+function speakEn(text, opts){
   try{
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-US'; u.rate = 0.85;
+    u.lang = 'en-US';
+    if(enVoice) u.voice = enVoice;
+    u.rate = (opts && opts.rate) || 0.8;
+    u.pitch = (opts && opts.pitch) || 1.03;
+    u.volume = 1;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
   }catch(e){}
 }
+
+// ---- Warm welcome + simple navigation instructions ----
+// Plays once automatically the first time Home is reached each session,
+// and can be replayed anytime via the 🔊 header button.
+function speakWelcome(){
+  const name = (childData && childData.childName) || t('welcomeDefaultName');
+  const msg = t('welcomeMsg').replace('{name}', name);
+  if(currentLang === 'en'){ speakEn(msg, {rate:0.82, pitch:1.03}); }
+  else { speak(msg, {rate:0.8, pitch:1.03}); }
+}
+window.speakWelcome = speakWelcome;
 
 /* ---------- নামতা (multiplication tables, ২-১০) ---------- */
 function buildMultiplication(body){
