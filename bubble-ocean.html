@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Bubble Ocean</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --abyss:#071B2E;
+    --midwater:#0F3A57;
+    --shallows:#1C86A0;
+    --sungold:#FFD866;
+    --coral:#FF6F59;
+    --coral-dark:#E0543F;
+    --bubble:#EAFBFF;
+    --reef-cream:#FFF6E4;
+    --reef-cream-dark:#F5E6C8;
+    --ink:#06222E;
+    --font-display:'Baloo 2', system-ui, sans-serif;
+    --font-body:'Quicksand', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; width:100%; height:100%; overflow:hidden; font-family:var(--font-body); background:var(--abyss);}
+  #app{position:fixed; inset:0; width:100%; height:100%;}
+
+  .screen{
+    position:absolute; inset:0; display:none;
+    align-items:center; justify-content:center;
+    flex-direction:column;
+    width:100%; height:100%;
+  }
+  .screen.active{display:flex;}
+
+  /* ---------- Candy buttons ---------- */
+  .btn{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:1.1rem;
+    color:#fff;
+    border:none;
+    border-radius:999px;
+    padding:0.9em 1.8em;
+    cursor:pointer;
+    position:relative;
+    letter-spacing:0.3px;
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+    background:var(--coral);
+    box-shadow:
+      0 6px 0 var(--coral-dark),
+      0 10px 18px rgba(0,0,0,0.35),
+      inset 0 2px 4px rgba(255,255,255,0.45),
+      inset 0 -6px 10px rgba(0,0,0,0.12);
+  }
+  .btn:active{ transform:translateY(4px); box-shadow:0 2px 0 var(--coral-dark), 0 4px 8px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.4); }
+  .btn.secondary{ background:var(--shallows); box-shadow:0 6px 0 #145d70, 0 10px 18px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.4), inset 0 -6px 10px rgba(0,0,0,0.12); }
+  .btn.secondary:active{ box-shadow:0 2px 0 #145d70, 0 4px 8px rgba(0,0,0,0.3); }
+  .btn.gold{ background:var(--sungold); color:#5A4200; box-shadow:0 6px 0 #C79B2E, 0 10px 18px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.6), inset 0 -6px 10px rgba(0,0,0,0.08);}
+  .btn.gold:active{ box-shadow:0 2px 0 #C79B2E, 0 4px 8px rgba(0,0,0,0.25); }
+  .btn.small{ font-size:0.85rem; padding:0.6em 1.2em; }
+  .btn:disabled{ opacity:0.45; cursor:not-allowed; }
+  .btn-round{
+    width:56px; height:56px; border-radius:50%; padding:0;
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+  }
+
+  /* ---------- Auth Screen ---------- */
+  #authScreen{ background:radial-gradient(ellipse at 50% 0%, var(--midwater), var(--abyss) 70%); }
+  .auth-card{
+    background:rgba(8,40,60,0.55);
+    backdrop-filter:blur(6px);
+    border:2px solid rgba(255,255,255,0.15);
+    border-radius:28px;
+    padding:2rem 1.8rem;
+    width:min(90vw, 380px);
+    text-align:center;
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+  }
+  .logo-title{
+    font-family:var(--font-display);
+    font-size:2.1rem;
+    color:var(--bubble);
+    text-shadow:0 3px 0 rgba(0,0,0,0.25);
+    margin:0 0 0.2rem;
+  }
+  .logo-sub{ color:#AEE6F5; font-size:0.95rem; margin-bottom:1.4rem; }
+  .field{
+    width:100%; padding:0.85em 1.1em; margin-bottom:0.7rem;
+    border-radius:16px; border:none; font-family:var(--font-body); font-weight:600;
+    font-size:1rem; background:rgba(255,255,255,0.92); color:var(--ink);
+  }
+  .field:focus{ outline:3px solid var(--sungold); }
+  .tab-row{ display:flex; gap:0.5rem; margin-bottom:1rem; }
+  .tab-btn{
+    flex:1; padding:0.55em; border-radius:14px; border:2px solid rgba(255,255,255,0.25);
+    background:transparent; color:#AEE6F5; font-family:var(--font-display); font-weight:700;
+    cursor:pointer; font-size:0.95rem;
+  }
+  .tab-btn.active{ background:var(--shallows); color:#fff; border-color:var(--shallows); }
+  .auth-error{ color:#FFB4A8; font-size:0.85rem; min-height:1.2em; margin-bottom:0.5rem; }
+  .divider{ display:flex; align-items:center; gap:0.7rem; color:#7FB8CC; font-size:0.8rem; margin:0.9rem 0; }
+  .divider::before, .divider::after{ content:""; flex:1; height:1px; background:rgba(255,255,255,0.2); }
+  .stack{ display:flex; flex-direction:column; gap:0.6rem; }
+  .guest-note{ font-size:0.75rem; color:#7FB8CC; margin-top:0.9rem; line-height:1.4; }
+
+  /* ---------- Setup Screen ---------- */
+  #setupScreen{ background:radial-gradient(ellipse at 50% 0%, var(--midwater), var(--abyss) 70%); }
+  .setup-card{
+    background:rgba(8,40,60,0.55);
+    border:2px solid rgba(255,255,255,0.15);
+    border-radius:28px; padding:2rem 1.8rem; width:min(90vw,380px); text-align:center;
+    box-shadow:0 20px 40px rgba(0,0,0,0.4);
+  }
+  .age-row{ display:flex; gap:0.6rem; justify-content:center; margin:1rem 0 1.5rem; flex-wrap:wrap; }
+  .age-pill{
+    width:56px; height:56px; border-radius:50%; border:none; cursor:pointer;
+    font-family:var(--font-display); font-weight:800; font-size:1.3rem; color:#fff;
+    background:var(--shallows);
+    box-shadow:0 5px 0 #145d70, inset 0 2px 3px rgba(255,255,255,0.4);
+  }
+  .age-pill.selected{ background:var(--coral); box-shadow:0 5px 0 var(--coral-dark), inset 0 2px 3px rgba(255,255,255,0.5); transform:translateY(-2px); }
+
+  /* ---------- Home / Ocean Scene ---------- */
+  #homeScreen{ overflow:hidden; }
+  .ocean-bg{
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, #1C86A0 0%, #0F3A57 35%, #071B2E 100%);
+  }
+  .light-rays{ position:absolute; inset:0; overflow:hidden; opacity:0.35; mix-blend-mode:screen; pointer-events:none; }
+  .ray{
+    position:absolute; top:-20%; width:120px; height:160%;
+    background:linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0));
+    transform-origin:top center;
+    animation:raySway 9s ease-in-out infinite;
+  }
+  .ray1{ left:8%; transform:rotate(12deg); animation-delay:0s; }
+  .ray2{ left:32%; transform:rotate(-8deg); width:90px; animation-delay:2s; }
+  .ray3{ left:58%; transform:rotate(15deg); width:140px; animation-delay:4s; }
+  .ray4{ left:80%; transform:rotate(-14deg); width:80px; animation-delay:1s; }
+  @keyframes raySway{
+    0%,100%{ transform:rotate(var(--r,10deg)) translateX(0); opacity:0.3; }
+    50%{ transform:rotate(calc(var(--r,10deg) * -1)) translateX(20px); opacity:0.6; }
+  }
+
+  .topbar{
+    position:absolute; top:0; left:0; right:0; z-index:20;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:0.9rem 1rem;
+  }
+  .greet{
+    font-family:var(--font-display); color:var(--bubble); font-size:1.05rem;
+    background:rgba(7,27,46,0.4); padding:0.4em 0.9em; border-radius:16px;
+  }
+  .reef-btn{ position:relative; }
+  .reef-badge{
+    position:absolute; top:-6px; right:-6px; background:var(--sungold); color:#5A4200;
+    font-family:var(--font-display); font-weight:800; font-size:0.75rem;
+    min-width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--reef-cream);
+  }
+
+  .bubble-layer{ position:absolute; inset:0; z-index:5; }
+  .bubble{
+    position:absolute;
+    border-radius:50%;
+    cursor:pointer;
+    background:
+      radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(255,255,255,0.25) 30%, rgba(255,255,255,0.05) 55%, rgba(255,255,255,0.15) 80%),
+      radial-gradient(circle at 65% 70%, rgba(120,220,255,0.25), rgba(120,220,255,0.05) 60%);
+    box-shadow:
+      inset 0 0 14px rgba(255,255,255,0.5),
+      inset -6px -6px 12px rgba(0,60,90,0.25),
+      0 4px 10px rgba(0,0,0,0.15);
+    border:1px solid rgba(255,255,255,0.35);
+    will-change:transform;
+  }
+  .bubble::after{
+    content:"";
+    position:absolute; top:14%; left:20%; width:34%; height:20%;
+    background:rgba(255,255,255,0.85);
+    border-radius:50%;
+    filter:blur(1px);
+    transform:rotate(-25deg);
+  }
+  .bubble.popping{ animation:bubblePop 0.28s ease-out forwards; }
+  @keyframes bubblePop{
+    0%{ transform:scale(1); opacity:1; }
+    60%{ transform:scale(1.25); opacity:0.7; }
+    100%{ transform:scale(1.6); opacity:0; }
+  }
+
+  .particle{
+    position:absolute; border-radius:50%; pointer-events:none; z-index:15;
+  }
+
+  .coral-fg{ position:absolute; bottom:0; left:0; width:100%; z-index:10; pointer-events:none; }
+  .coral-back{ opacity:0.55; animation:coralSwayBack 7s ease-in-out infinite; transform-origin:bottom center; }
+  .coral-front{ animation:coralSwayFront 5.5s ease-in-out infinite; transform-origin:bottom center; }
+  @keyframes coralSwayBack{ 0%,100%{ transform:translateX(0) scaleY(1);} 50%{ transform:translateX(-6px) scaleY(1.01);} }
+  @keyframes coralSwayFront{ 0%,100%{ transform:translateX(0);} 50%{ transform:translateX(5px);} }
+
+  /* ---------- Creature Reveal Modal ---------- */
+  #creatureModal{
+    position:fixed; inset:0; z-index:100; display:none;
+    align-items:center; justify-content:center;
+    background:rgba(3,15,25,0.55);
+  }
+  #creatureModal.active{ display:flex; }
+  .creature-card{
+    background:var(--reef-cream);
+    border-radius:28px;
+    padding:1.8rem 1.6rem 1.5rem;
+    width:min(88vw, 360px);
+    text-align:center;
+    box-shadow:0 25px 50px rgba(0,0,0,0.5);
+    animation:cardBloom 0.4s cubic-bezier(.34,1.56,.64,1);
+    position:relative;
+  }
+  @keyframes cardBloom{
+    0%{ transform:scale(0.2); opacity:0; }
+    100%{ transform:scale(1); opacity:1; }
+  }
+  .creature-icon-wrap{
+    width:150px; height:150px; margin:0 auto 0.8rem;
+    background:radial-gradient(circle, rgba(255,255,255,0.9), rgba(255,255,255,0.2) 70%);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:inset 0 0 20px rgba(0,0,0,0.06);
+  }
+  .creature-name{ font-family:var(--font-display); font-size:1.6rem; color:var(--ink); margin:0.2rem 0; }
+  .creature-fact{ font-size:1rem; color:#3B4A4E; font-weight:600; line-height:1.4; margin:0.6rem 0 1.2rem; }
+  .new-tag{
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    background:var(--sungold); color:#5A4200; font-family:var(--font-display); font-weight:800;
+    font-size:0.8rem; padding:0.3em 1em; border-radius:999px; box-shadow:0 4px 0 #C79B2E;
+  }
+
+  /* ---------- Reef Screen ---------- */
+  #reefScreen{ background:var(--reef-cream); }
+  .reef-header{
+    width:100%; display:flex; align-items:center; gap:0.8rem;
+    padding:1rem 1.2rem; position:relative;
+  }
+  .reef-title{ font-family:var(--font-display); font-size:1.5rem; color:var(--ink); flex:1; text-align:center; margin-right:56px; }
+  .reef-grid{
+    width:100%; flex:1; overflow-y:auto; padding:0.5rem 1.2rem 2rem;
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:0.9rem;
+  }
+  .sticker{
+    background:#fff; border-radius:20px; padding:0.8rem 0.5rem 0.6rem;
+    display:flex; flex-direction:column; align-items:center;
+    box-shadow:0 6px 14px rgba(0,0,0,0.08), inset 0 0 0 2px var(--reef-cream-dark);
+    aspect-ratio:1/1.05;
+    justify-content:center;
+  }
+  .sticker .icon-box{ width:64%; aspect-ratio:1/1; }
+  .sticker.locked{ filter:grayscale(1) brightness(0.9); opacity:0.55; }
+  .sticker .s-name{ font-family:var(--font-display); font-size:0.75rem; color:var(--ink); margin-top:0.3rem; text-align:center; }
+  .sticker.locked .s-name{ color:#999; }
+
+  @media (prefers-reduced-motion: reduce){
+    .ray, .coral-back, .coral-front, .bubble{ animation:none !important; }
+  }
+
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- AUTH SCREEN -->
+  <div id="authScreen" class="screen active">
+    <div class="auth-card">
+      <h1 class="logo-title">🫧 Bubble Ocean</h1>
+      <p class="logo-sub">Pop bubbles. Meet sea friends.</p>
+
+      <div class="tab-row">
+        <button class="tab-btn active" id="tabSignIn">Sign In</button>
+        <button class="tab-btn" id="tabSignUp">Sign Up</button>
+      </div>
+
+      <div class="stack">
+        <input type="email" class="field" id="authEmail" placeholder="Parent email" autocomplete="email">
+        <input type="password" class="field" id="authPassword" placeholder="Password" autocomplete="current-password">
+      </div>
+      <p class="auth-error" id="authError"></p>
+      <button class="btn" id="authSubmitBtn" style="width:100%;">Sign In</button>
+
+      <div class="divider">or</div>
+
+      <div class="stack">
+        <button class="btn secondary" id="googleBtn" style="width:100%;">Continue with Google</button>
+        <button class="btn gold" id="guestBtn" style="width:100%;">Play as Guest</button>
+      </div>
+      <p class="guest-note" id="firebaseNote"></p>
+    </div>
+  </div>
+
+  <!-- SETUP SCREEN -->
+  <div id="setupScreen" class="screen">
+    <div class="setup-card">
+      <h1 class="logo-title" style="font-size:1.6rem;">Who's diving today?</h1>
+      <input type="text" class="field" id="childName" placeholder="Little diver's name" maxlength="20" style="margin-top:1rem;">
+      <p style="color:#AEE6F5; font-family:var(--font-display); margin:1rem 0 0.4rem;">How old?</p>
+      <div class="age-row" id="ageRow">
+        <button class="age-pill" data-age="3">3</button>
+        <button class="age-pill" data-age="4">4</button>
+        <button class="age-pill" data-age="5">5</button>
+        <button class="age-pill" data-age="6">6</button>
+      </div>
+      <button class="btn" id="diveInBtn" style="width:100%;">Dive In! 🤿</button>
+    </div>
+  </div>
+
+  <!-- HOME / OCEAN SCREEN -->
+  <div id="homeScreen" class="screen">
+    <div class="ocean-bg"></div>
+    <div class="light-rays">
+      <div class="ray ray1"></div>
+      <div class="ray ray2"></div>
+      <div class="ray ray3"></div>
+      <div class="ray ray4"></div>
+    </div>
+    <div class="bubble-layer" id="bubbleLayer"></div>
+    <svg class="coral-fg coral-back" viewBox="0 0 400 90" preserveAspectRatio="none" style="height:14vh;" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,90 L0,55 Q20,20 35,55 Q50,10 65,55 Q85,25 100,55 L100,90 Z" fill="#04101C" transform="scale(4,1)"></path>
+    </svg>
+    <svg class="coral-fg coral-front" viewBox="0 0 400 100" preserveAspectRatio="none" style="height:11vh;" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,100 L0,50 Q15,15 30,50 Q42,5 55,50 Q70,20 82,50 Q95,25 105,50 L105,100 Z" fill="#020B14" transform="scale(4,1)"></path>
+    </svg>
+    <div class="topbar">
+      <div class="greet" id="greetText">Hi!</div>
+      <button class="btn gold reef-btn btn-round" id="reefOpenBtn" title="My Reef">📖<span class="reef-badge" id="reefBadge">0</span></button>
+    </div>
+  </div>
+
+  <!-- CREATURE MODAL -->
+  <div id="creatureModal">
+    <div class="creature-card">
+      <div class="new-tag hidden" id="newTag">NEW!</div>
+      <div class="creature-icon-wrap" id="creatureIconWrap"></div>
+      <h2 class="creature-name" id="creatureName">Name</h2>
+      <p class="creature-fact" id="creatureFact">Fact</p>
+      <button class="btn" id="creatureCloseBtn">Yay! 🎉</button>
+    </div>
+  </div>
+
+  <!-- REEF SCREEN -->
+  <div id="reefScreen" class="screen">
+    <div class="reef-header">
+      <button class="btn secondary btn-round" id="reefBackBtn">←</button>
+      <h1 class="reef-title">My Reef</h1>
+    </div>
+    <div class="reef-grid" id="reefGrid"></div>
+  </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* =========================================================================
+   BUBBLE OCEAN — single file kids app
+   Replace firebaseConfig below with your own Firebase project credentials.
+   Firestore rules should restrict each child doc to its own uid, e.g.:
+     match /children/{uid} { allow read, write: if request.auth.uid == uid; }
+   ========================================================================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA9kOUaQK0V4s9ZNV1ezgYQnq_OBFpVoSo",
+  authDomain: "hiya-2cd78.firebaseapp.com",
+  projectId: "hiya-2cd78",
+  storageBucket: "hiya-2cd78.firebasestorage.app",
+  messagingSenderId: "473906193558",
+  appId: "1:473906193558:web:304cde07e050faaa308eb7"
+};
+
+let firebaseReady = false;
+let auth = null, db = null;
+try{
+  if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    firebaseReady = true;
+  }
+}catch(e){
+  console.warn("Firebase not configured, running in local-only mode.", e);
+}
+
+let currentUser = null; // { uid, guest:boolean }
+
+/* ---------------- Creature data ---------------- */
+const CREATURES = [
+  {id:'clownfish', name:'Clownfish', color:'#FF7A45', accent:'#FFFFFF', shape:'clownfish',
+   fact:"Clownfish snuggle inside sea anemones to stay safe!"},
+  {id:'turtle', name:'Sea Turtle', color:'#2E8B57', accent:'#C9F2D8', shape:'turtle',
+   fact:"Sea turtles can nap underwater for hours without breathing!"},
+  {id:'octopus', name:'Octopus', color:'#B565D9', accent:'#E9C9FF', shape:'octopus',
+   fact:"An octopus has three hearts and squirts ink to hide!"},
+  {id:'jellyfish', name:'Jellyfish', color:'#5FCBDD', accent:'#EAFBFF', shape:'jellyfish',
+   fact:"Jellyfish have no bones, no brain, and no heart at all!"},
+  {id:'seahorse', name:'Seahorse', color:'#F2B84B', accent:'#FFE9BD', shape:'seahorse',
+   fact:"Daddy seahorses carry their babies in a tummy pouch!"},
+  {id:'starfish', name:'Starfish', color:'#FF6F59', accent:'#FFD3C9', shape:'starfish',
+   fact:"A starfish can grow a new arm if it loses one!"},
+  {id:'crab', name:'Crab', color:'#E85D4E', accent:'#FFD7CE', shape:'crab',
+   fact:"Crabs walk sideways because of how their legs bend!"},
+  {id:'stingray', name:'Stingray', color:'#6C8CBF', accent:'#DCE6FA', shape:'stingray',
+   fact:"Stingrays glide through the water like underwater kites!"},
+  {id:'dolphin', name:'Dolphin', color:'#4C8FBF', accent:'#D6ECFA', shape:'dolphin',
+   fact:"Dolphins say hello with clicks and whistles!"},
+  {id:'shark', name:'Shark', color:'#6E8CA0', accent:'#D8E3EA', shape:'shark',
+   fact:"Sharks can smell a single drop of blood far, far away!"},
+  {id:'whale', name:'Whale', color:'#3E6B8C', accent:'#CFE4F0', shape:'whale',
+   fact:"A blue whale's heart is as big as a small car!"},
+  {id:'angelfish', name:'Angelfish', color:'#F2A9D6', accent:'#FFE1F2', shape:'angelfish',
+   fact:"Angelfish have tall, flowing fins like fancy wings!"}
+];
+
+function eyesAndMouth(cx1,cy1,cx2,cy2,mx,my){
+  return `
+    <circle cx="${cx1}" cy="${cy1}" r="6" fill="#fff"/>
+    <circle cx="${cx1+1.5}" cy="${cy1+1}" r="3" fill="#06222E"/>
+    <circle cx="${cx2}" cy="${cy2}" r="6" fill="#fff"/>
+    <circle cx="${cx2+1.5}" cy="${cy2+1}" r="3" fill="#06222E"/>
+    <path d="M ${mx-8} ${my} Q ${mx} ${my+7} ${mx+8} ${my}" stroke="#06222E" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  `;
+}
+
+function creatureSVG(c){
+  const {color, accent, shape} = c;
+  let before = '', body = '', after = '';
+  switch(shape){
+    case 'clownfish':
+      before = `<path d="M100,60 L118,45 L118,75 Z" fill="${color}"/>`;
+      body = `<ellipse cx="62" cy="60" rx="42" ry="30" fill="${color}"/>`;
+      after = `
+        <rect x="46" y="32" width="10" height="56" rx="5" fill="${accent}"/>
+        <rect x="68" y="30" width="10" height="60" rx="5" fill="${accent}"/>
+        ${eyesAndMouth(42,52,42,52,70,70)}
+        <circle cx="42" cy="52" r="6" fill="#fff"/><circle cx="43.5" cy="53" r="3" fill="#06222E"/>
+      `;
+      break;
+    case 'turtle':
+      before = `
+        <ellipse cx="22" cy="70" rx="10" ry="7" fill="${color}"/>
+        <ellipse cx="100" cy="70" rx="10" ry="7" fill="${color}"/>
+        <ellipse cx="35" cy="95" rx="8" ry="6" fill="${color}"/>
+        <ellipse cx="87" cy="95" rx="8" ry="6" fill="${color}"/>
+        <circle cx="61" cy="35" r="16" fill="${color}"/>
+      `;
+      body = `<ellipse cx="60" cy="65" rx="44" ry="34" fill="${color}"/>`;
+      after = `
+        <path d="M60,35 L60,95 M28,50 L92,50 M28,80 L92,80 M40,35 L40,95 M80,35 L80,95" stroke="${accent}" stroke-width="2.5" opacity="0.55" fill="none"/>
+        ${eyesAndMouth(54,32,68,32,61,42)}
+      `;
+      break;
+    case 'octopus':
+      before = `
+        <path d="M30,70 Q20,95 30,110 Q35,95 38,80 Z" fill="${color}"/>
+        <path d="M45,78 Q40,105 48,115 Q52,98 52,82 Z" fill="${color}"/>
+        <path d="M60,80 Q60,108 60,116 Q64,100 62,80 Z" fill="${color}"/>
+        <path d="M75,78 Q80,105 72,115 Q68,98 68,82 Z" fill="${color}"/>
+        <path d="M90,70 Q100,95 90,110 Q85,95 82,80 Z" fill="${color}"/>
+      `;
+      body = `<ellipse cx="60" cy="55" rx="40" ry="34" fill="${color}"/>`;
+      after = eyesAndMouth(46,50,74,50,60,66);
+      break;
+    case 'jellyfish':
+      before = `
+        <path d="M35,70 Q30,95 35,115" stroke="${color}" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.85"/>
+        <path d="M50,72 Q48,100 52,118" stroke="${color}" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.85"/>
+        <path d="M70,72 Q72,100 68,118" stroke="${color}" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.85"/>
+        <path d="M85,70 Q90,95 85,115" stroke="${color}" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.85"/>
+      `;
+      body = `<path d="M20,65 Q20,15 60,15 Q100,15 100,65 Q60,80 20,65 Z" fill="${color}"/>`;
+      after = eyesAndMouth(46,45,74,45,60,58);
+      break;
+    case 'seahorse':
+      before = `<path d="M75,30 Q95,25 90,45 Q85,40 78,42 Z" fill="${accent}"/>`;
+      body = `<path d="M55,15 Q80,15 75,38 Q95,45 85,65 Q95,75 80,88 Q85,100 65,105 Q45,108 40,90 Q55,88 55,78 Q40,72 45,60 Q35,55 42,42 Q35,30 55,15 Z" fill="${color}"/>`;
+      after = `
+        <path d="M55,20 L60,12 M62,24 L68,17 M68,30 L75,24" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>
+        ${eyesAndMouth(58,28,58,28,68,32)}
+        <circle cx="58" cy="28" r="5" fill="#fff"/><circle cx="59.5" cy="29" r="2.5" fill="#06222E"/>
+      `;
+      break;
+    case 'starfish':
+      body = `<polygon points="60,10 72,45 108,45 79,66 90,102 60,80 30,102 41,66 12,45 48,45"
+                fill="${color}"/>`;
+      after = eyesAndMouth(50,58,70,58,60,72);
+      break;
+    case 'crab':
+      before = `
+        <circle cx="18" cy="45" r="12" fill="${color}"/>
+        <circle cx="102" cy="45" r="12" fill="${color}"/>
+        <path d="M30,80 L10,95 M35,88 L18,105 M85,80 L110,95 M80,88 L102,105" stroke="${color}" stroke-width="6" stroke-linecap="round" fill="none"/>
+      `;
+      body = `<ellipse cx="60" cy="65" rx="38" ry="28" fill="${color}"/>`;
+      after = eyesAndMouth(46,55,74,55,60,72);
+      break;
+    case 'stingray':
+      before = `<path d="M60,90 Q65,105 60,118" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
+      body = `<path d="M60,15 L105,68 Q60,95 60,95 Q60,95 15,68 Z" fill="${color}"/>`;
+      after = eyesAndMouth(50,55,70,55,60,65);
+      break;
+    case 'dolphin':
+      before = `
+        <path d="M55,30 Q60,10 68,30 Z" fill="${color}"/>
+        <path d="M95,65 Q118,60 112,78 Q100,75 92,68 Z" fill="${color}"/>
+      `;
+      body = `<path d="M15,70 Q20,40 55,35 Q90,32 105,55 Q95,60 60,62 Q35,64 22,80 Z" fill="${color}"/>`;
+      after = eyesAndMouth(38,50,38,50,55,55);
+      break;
+    case 'shark':
+      before = `
+        <path d="M50,25 Q58,5 66,25 Z" fill="${color}"/>
+        <path d="M95,75 Q115,80 110,95 Q98,88 90,80 Z" fill="${color}"/>
+      `;
+      body = `<path d="M10,75 Q20,45 60,40 Q100,38 115,68 Q95,75 60,72 Q30,70 18,88 Z" fill="${color}"/>`;
+      after = `
+        ${eyesAndMouth(40,55,40,55,65,68)}
+        <path d="M55,75 L60,82 L65,75 L70,82 L75,75" stroke="#fff" stroke-width="2" fill="none"/>
+      `;
+      break;
+    case 'whale':
+      before = `<path d="M95,55 Q118,45 112,68 Q100,60 92,58 Z" fill="${color}"/>
+                 <path d="M50,20 L55,8 M56,20 L58,8" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>`;
+      body = `<path d="M10,70 Q15,35 55,30 Q100,28 108,58 Q80,68 50,66 Q25,65 15,85 Z" fill="${color}"/>`;
+      after = eyesAndMouth(38,48,38,48,55,55);
+      break;
+    case 'angelfish':
+      before = `
+        <path d="M60,15 Q45,35 60,50 Q75,35 60,15 Z" fill="${color}" opacity="0.85"/>
+        <path d="M60,90 Q45,80 60,65 Q75,80 60,90 Z" fill="${color}" opacity="0.85"/>
+        <path d="M100,55 L118,55 L108,68 Z" fill="${color}"/>
+      `;
+      body = `<ellipse cx="58" cy="55" rx="34" ry="38" fill="${color}"/>`;
+      after = `
+        <path d="M40,40 L40,72 M50,32 L50,80" stroke="${accent}" stroke-width="3" opacity="0.6" fill="none"/>
+        ${eyesAndMouth(48,48,48,48,68,58)}
+      `;
+      break;
+    default:
+      body = `<circle cx="60" cy="60" r="40" fill="${color}"/>`;
+  }
+  return `<svg viewBox="0 0 120 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">${before}${body}${after}</svg>`;
+}
+
+/* ---------------- App state ---------------- */
+let childProfile = { name:'', age:'', reef:[] };
+let selectedAge = null;
+let bubbleTimer = null;
+let bubbleId = 0;
+const activeBubbles = new Map();
+
+function storageKey(){ return 'bubbleocean_' + (currentUser ? currentUser.uid : 'guest'); }
+
+function loadLocalProfile(){
+  try{
+    const raw = localStorage.getItem(storageKey());
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return null;
+}
+function saveLocalProfile(){
+  try{ localStorage.setItem(storageKey(), JSON.stringify(childProfile)); }catch(e){}
+}
+async function saveRemoteProfile(){
+  if(!firebaseReady || !db || !currentUser || currentUser.guest) return;
+  try{
+    await db.collection('children').doc(currentUser.uid).set({
+      name: childProfile.name,
+      age: childProfile.age,
+      reef: childProfile.reef,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  }catch(e){ console.warn('Firestore save failed, staying local.', e); }
+}
+async function loadRemoteProfile(){
+  if(!firebaseReady || !db || !currentUser || currentUser.guest) return null;
+  try{
+    const doc = await db.collection('children').doc(currentUser.uid).get();
+    if(doc.exists) return doc.data();
+  }catch(e){ console.warn('Firestore load failed, using local.', e); }
+  return null;
+}
+function persistProfile(){
+  saveLocalProfile();
+  saveRemoteProfile();
+}
+
+/* ---------------- Screen navigation ---------------- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ---------------- Auth ---------------- */
+let authMode = 'signin';
+const tabSignIn = document.getElementById('tabSignIn');
+const tabSignUp = document.getElementById('tabSignUp');
+const authSubmitBtn = document.getElementById('authSubmitBtn');
+const authError = document.getElementById('authError');
+const firebaseNote = document.getElementById('firebaseNote');
+
+if(!firebaseReady){
+  firebaseNote.textContent = "Email and Google sign-in need Firebase setup. Tap “Play as Guest” to dive in now!";
+  document.getElementById('googleBtn').disabled = true;
+  authSubmitBtn.disabled = true;
+  document.getElementById('authEmail').disabled = true;
+  document.getElementById('authPassword').disabled = true;
+}
+
+tabSignIn.addEventListener('click', () => {
+  authMode = 'signin';
+  tabSignIn.classList.add('active'); tabSignUp.classList.remove('active');
+  authSubmitBtn.textContent = 'Sign In';
+  authError.textContent = '';
+});
+tabSignUp.addEventListener('click', () => {
+  authMode = 'signup';
+  tabSignUp.classList.add('active'); tabSignIn.classList.remove('active');
+  authSubmitBtn.textContent = 'Sign Up';
+  authError.textContent = '';
+});
+
+authSubmitBtn.addEventListener('click', async () => {
+  const email = document.getElementById('authEmail').value.trim();
+  const pw = document.getElementById('authPassword').value;
+  authError.textContent = '';
+  if(!email || !pw){ authError.textContent = 'Please fill in both fields.'; return; }
+  try{
+    let cred;
+    if(authMode === 'signup'){
+      cred = await auth.createUserWithEmailAndPassword(email, pw);
+    }else{
+      cred = await auth.signInWithEmailAndPassword(email, pw);
+    }
+    currentUser = { uid: cred.user.uid, guest:false };
+    await afterAuth();
+  }catch(e){
+    authError.textContent = friendlyAuthError(e);
+  }
+});
+
+document.getElementById('googleBtn').addEventListener('click', async () => {
+  try{
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const cred = await auth.signInWithPopup(provider);
+    currentUser = { uid: cred.user.uid, guest:false };
+    await afterAuth();
+  }catch(e){
+    authError.textContent = friendlyAuthError(e);
+  }
+});
+
+document.getElementById('guestBtn').addEventListener('click', async () => {
+  currentUser = { uid:'guest', guest:true };
+  await afterAuth();
+});
+
+function friendlyAuthError(e){
+  const msg = (e && e.code) || '';
+  if(msg.includes('wrong-password') || msg.includes('user-not-found') || msg.includes('invalid-credential')) return "That email or password doesn't match.";
+  if(msg.includes('email-already-in-use')) return "That email already has an account — try Sign In.";
+  if(msg.includes('weak-password')) return "Password should be at least 6 characters.";
+  return "Something went wrong. Please try again.";
+}
+
+async function afterAuth(){
+  const remote = await loadRemoteProfile();
+  const local = loadLocalProfile();
+  const existing = remote || local;
+  if(existing && existing.name){
+    childProfile = { name: existing.name, age: existing.age, reef: existing.reef || [] };
+    saveLocalProfile();
+    enterHome();
+  }else{
+    showScreen('setupScreen');
+  }
+}
+
+/* ---------------- Setup ---------------- */
+document.querySelectorAll('.age-pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.age-pill').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedAge = btn.dataset.age;
+  });
+});
+document.getElementById('diveInBtn').addEventListener('click', () => {
+  const name = document.getElementById('childName').value.trim() || 'Little Diver';
+  childProfile = { name, age: selectedAge || '4', reef: [] };
+  persistProfile();
+  enterHome();
+});
+
+function enterHome(){
+  document.getElementById('greetText').textContent = `Hi, ${childProfile.name}! 👋`;
+  updateReefBadge();
+  showScreen('homeScreen');
+  startBubbles();
+}
+
+/* ---------------- Bubbles ---------------- */
+const bubbleLayer = document.getElementById('bubbleLayer');
+
+function weightedCreature(){
+  const undiscovered = CREATURES.filter(c => !childProfile.reef.includes(c.id));
+  if(undiscovered.length && Math.random() < 0.7){
+    return undiscovered[Math.floor(Math.random() * undiscovered.length)];
+  }
+  return CREATURES[Math.floor(Math.random() * CREATURES.length)];
+}
+
+function spawnBubble(){
+  const size = 46 + Math.random() * 64;
+  const startX = Math.random() * (window.innerWidth - size);
+  const el = document.createElement('div');
+  const id = 'b' + (bubbleId++);
+  el.className = 'bubble';
+  el.style.width = size + 'px';
+  el.style.height = size + 'px';
+  el.style.left = startX + 'px';
+  el.style.top = (window.innerHeight + size) + 'px';
+  el.dataset.id = id;
+
+  const speed = 0.35 + (100 - size) / 100 * 0.5 + Math.random() * 0.25;
+  const amplitude = 10 + Math.random() * 22;
+  const freq = 0.8 + Math.random() * 0.8;
+  const phase = Math.random() * Math.PI * 2;
+  const creature = weightedCreature();
+
+  const state = { el, y: window.innerHeight + size, x: startX, size, speed, amplitude, freq, phase, t:0, creature, popped:false };
+  activeBubbles.set(id, state);
+
+  el.addEventListener('pointerdown', () => popBubble(id));
+  bubbleLayer.appendChild(el);
+}
+
+function popBubble(id){
+  const state = activeBubbles.get(id);
+  if(!state || state.popped) return;
+  state.popped = true;
+  const rect = state.el.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
+  burstParticles(cx, cy, state.creature.color);
+  state.el.classList.add('popping');
+  playPopTone();
+  setTimeout(() => {
+    state.el.remove();
+    activeBubbles.delete(id);
+    revealCreature(state.creature);
+  }, 260);
+}
+
+function burstParticles(x, y, color){
+  const count = 14;
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const s = 5 + Math.random()*7;
+    p.style.width = s + 'px';
+    p.style.height = s + 'px';
+    p.style.left = (x - s/2) + 'px';
+    p.style.top = (y - s/2) + 'px';
+    p.style.background = Math.random() < 0.5 ? color : '#fff';
+    p.style.opacity = '0.9';
+    document.getElementById('homeScreen').appendChild(p);
+    const angle = (Math.PI * 2 * i / count) + Math.random()*0.5;
+    const dist = 40 + Math.random()*60;
+    const dx = Math.cos(angle)*dist;
+    const dy = Math.sin(angle)*dist - 20;
+    p.animate([
+      { transform:'translate(0,0) scale(1)', opacity:1 },
+      { transform:`translate(${dx}px, ${dy}px) scale(0.2)`, opacity:0 }
+    ], { duration:550 + Math.random()*200, easing:'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => p.remove();
+  }
+}
+
+let animRunning = false;
+function bubbleLoop(){
+  if(!animRunning) return;
+  activeBubbles.forEach((state) => {
+    if(state.popped) return;
+    state.t += 0.016;
+    state.y -= state.speed;
+    const wobble = Math.sin(state.t * state.freq + state.phase) * state.amplitude;
+    state.el.style.transform = `translate(${wobble}px, ${state.y - (window.innerHeight + state.size)}px)`;
+  });
+  activeBubbles.forEach((state, id) => {
+    if(state.y < -state.size - 60){
+      state.el.remove();
+      activeBubbles.delete(id);
+    }
+  });
+  requestAnimationFrame(bubbleLoop);
+}
+
+function startBubbles(){
+  if(bubbleTimer) return;
+  animRunning = true;
+  requestAnimationFrame(bubbleLoop);
+  bubbleTimer = setInterval(() => {
+    if(activeBubbles.size < 7) spawnBubble();
+  }, 1400);
+  for(let i=0;i<3;i++) setTimeout(spawnBubble, i*400);
+}
+function stopBubbles(){
+  animRunning = false;
+  clearInterval(bubbleTimer);
+  bubbleTimer = null;
+}
+
+/* ---------------- Sound ---------------- */
+let audioCtx = null;
+function playPopTone(){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.18, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.26);
+  }catch(e){}
+}
+function speakName(name){
+  try{
+    if(!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(name);
+    u.rate = 0.85;
+    u.pitch = 1.25;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------------- Creature reveal ---------------- */
+const creatureModal = document.getElementById('creatureModal');
+function revealCreature(creature){
+  const isNew = !childProfile.reef.includes(creature.id);
+  if(isNew){
+    childProfile.reef.push(creature.id);
+    persistProfile();
+    updateReefBadge();
+  }
+  document.getElementById('newTag').classList.toggle('hidden', !isNew);
+  document.getElementById('creatureIconWrap').innerHTML = creatureSVG(creature);
+  document.getElementById('creatureName').textContent = creature.name;
+  document.getElementById('creatureFact').textContent = creature.fact;
+  creatureModal.classList.add('active');
+  speakName(creature.name);
+}
+document.getElementById('creatureCloseBtn').addEventListener('click', () => {
+  creatureModal.classList.remove('active');
+});
+
+/* ---------------- Reef screen ---------------- */
+function updateReefBadge(){
+  document.getElementById('reefBadge').textContent = childProfile.reef.length + '/' + CREATURES.length;
+}
+function renderReef(){
+  const grid = document.getElementById('reefGrid');
+  grid.innerHTML = '';
+  CREATURES.forEach(c => {
+    const found = childProfile.reef.includes(c.id);
+    const card = document.createElement('div');
+    card.className = 'sticker' + (found ? '' : ' locked');
+    card.innerHTML = `
+      <div class="icon-box">${found ? creatureSVG(c) : creatureSVG({...c, color:'#B9C4C8', accent:'#D9E2E4'})}</div>
+      <div class="s-name">${found ? c.name : '?'}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+document.getElementById('reefOpenBtn').addEventListener('click', () => {
+  stopBubbles();
+  renderReef();
+  showScreen('reefScreen');
+});
+document.getElementById('reefBackBtn').addEventListener('click', () => {
+  showScreen('homeScreen');
+  startBubbles();
+});
+
+/* ---------------- Resize safety ---------------- */
+window.addEventListener('resize', () => {
+  // future bubbles will use new dimensions automatically
+});
+
+</script>
+</body>
+</html>

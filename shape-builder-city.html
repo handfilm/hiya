@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Shape Builder City</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#BEE3F5;
+    --sky-deep:#8FCBEB;
+    --navy:#2B4C6F;
+    --navy-deep:#1D3650;
+    --concrete:#C7C2B8;
+    --brick:#D9573B;
+    --brick-dark:#B5432A;
+    --yellow:#F5B942;
+    --yellow-dark:#CE9527;
+    --green:#6FAE5E;
+    --white:#FFFDF9;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%; margin:0; overflow:hidden; touch-action:none;}
+  body{ font-family:'Quicksand',sans-serif; background:var(--sky); color:var(--navy-deep); display:flex; align-items:center; justify-content:center; user-select:none; }
+  h1,h2,h3,.display{ font-family:'Baloo 2',sans-serif; }
+  #app{ position:relative; width:100vw; height:100vh; max-width:900px; max-height:900px; overflow:hidden; }
+  .screen{ position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; padding:22px; opacity:0; transition:opacity .35s ease; }
+  .screen.active{ display:flex; opacity:1; }
+
+  button{ font-family:'Baloo 2',sans-serif; border:none; cursor:pointer; }
+  .btn{ background:var(--brick); color:var(--white); font-size:19px; font-weight:700; padding:14px 30px; border-radius:16px;
+    box-shadow:0 5px 0 var(--brick-dark); transition:transform .08s; }
+  .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 var(--brick-dark); }
+  .btn.secondary{ background:var(--navy); box-shadow:0 5px 0 var(--navy-deep); }
+  .btn.secondary:active{ box-shadow:0 1px 0 var(--navy-deep); }
+  .btn.ghost{ background:transparent; color:var(--navy-deep); box-shadow:none; text-decoration:underline; font-size:14px; padding:8px; font-family:'Quicksand'; font-weight:700; }
+
+  /* ---------- AUTH ---------- */
+  #authScreen{ background:radial-gradient(ellipse at 50% 0%, #E4F4FC, var(--sky) 70%); }
+  .logo-wrap{ text-align:center; margin-bottom:26px; }
+  .logo-wrap .ic{ font-size:66px; filter:drop-shadow(0 6px 0 rgba(0,0,0,.12)); }
+  .logo-wrap h1{ font-size:36px; margin:6px 0 4px; }
+  .logo-wrap p{ margin:0; font-weight:700; color:#3E6689; font-size:15px; }
+  .auth-actions{ display:flex; flex-direction:column; gap:12px; width:min(320px,80vw); }
+
+  /* ---------- SETUP ---------- */
+  #setupScreen{ background:radial-gradient(ellipse at 50% 0%, #E4F4FC, var(--sky) 70%); }
+  .setup-card{ background:var(--white); border-radius:22px; padding:26px 22px; width:min(360px,84vw); box-shadow:0 8px 0 rgba(0,0,0,.1); text-align:center; }
+  .setup-card h2{ margin:0 0 4px; font-size:24px; }
+  .setup-card .sub{ font-size:13px; color:#8390a0; margin-bottom:16px; font-weight:700; }
+  .avatar-row{ display:flex; justify-content:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+  .avatar-choice{ font-size:34px; background:var(--sky); border-radius:14px; width:58px; height:58px; display:flex; align-items:center; justify-content:center; border:3px solid transparent; }
+  .avatar-choice.selected{ border-color:var(--brick); background:#FFE3D8; transform:scale(1.08); }
+  #childName{ width:100%; padding:11px 14px; border-radius:12px; border:3px solid var(--concrete); font-family:'Quicksand'; font-weight:700; font-size:16px; text-align:center; margin-bottom:16px; color:var(--navy-deep); }
+  #childName:focus{ outline:none; border-color:var(--brick); }
+
+  /* ---------- HOME (level path + skyline) ---------- */
+  #homeScreen{ justify-content:flex-start;
+    background:
+      linear-gradient(180deg, #E4F4FC 0%, var(--sky) 55%, #A7D8ED 100%); }
+  .home-top{ width:100%; display:flex; align-items:center; justify-content:space-between; padding:4px 6px; }
+  .chef-badge{ display:flex; align-items:center; gap:8px; background:var(--white); padding:6px 14px 6px 6px; border-radius:999px; box-shadow:0 3px 0 rgba(0,0,0,.1);}
+  .chef-badge .av{ font-size:24px; background:var(--sky); border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; }
+  .chef-badge span{ font-weight:700; font-size:14px; }
+  .piece-count{ display:flex; align-items:center; gap:4px; background:var(--white); padding:8px 14px; border-radius:999px; font-weight:700; box-shadow:0 3px 0 rgba(0,0,0,.1); font-size:14px;}
+  .home-title{ text-align:center; font-size:22px; margin:10px 0 6px; }
+
+  .level-path{ flex:1; width:100%; overflow-y:auto; display:flex; flex-direction:column-reverse; align-items:center; gap:18px; padding:10px 10px 6px; }
+  .level-node{ display:flex; align-items:center; gap:12px; background:var(--white); border-radius:20px; padding:10px 16px; width:min(280px,84vw); box-shadow:0 5px 0 rgba(0,0,0,.1); position:relative; }
+  .level-node.locked{ filter:grayscale(1) brightness(.92); }
+  .level-node .lvl-icon{ font-size:38px; }
+  .level-node .lvl-info{ flex:1; }
+  .level-node .lvl-info .name{ font-family:'Baloo 2'; font-weight:700; font-size:16px; }
+  .level-node .lvl-info .stars{ font-size:13px; }
+  .level-node .lock-badge{ font-size:18px; }
+
+  .skyline-strip{ width:100%; height:96px; position:relative; border-top:3px dashed var(--navy); background:linear-gradient(180deg, transparent, rgba(255,255,255,.3)); display:flex; align-items:flex-end; gap:6px; padding:0 10px 4px; overflow-x:auto; }
+  .sky-piece{ position:relative; width:46px; height:60px; flex-shrink:0; }
+  .sky-piece .top{ position:absolute; top:0; left:4px; width:38px; height:16px; background:var(--yellow); clip-path:polygon(0 50%,50% 0,100% 50%,50% 100%); }
+  .sky-piece .front{ position:absolute; top:12px; left:4px; width:19px; height:48px; background:var(--brick); }
+  .sky-piece .side{ position:absolute; top:12px; left:23px; width:19px; height:48px; background:var(--brick-dark); }
+
+  /* ---------- BUILD SCREEN ---------- */
+  #buildScreen{ background:linear-gradient(180deg, var(--sky) 0%, var(--sky) 42%, var(--navy) 42%, var(--navy-deep) 100%); justify-content:flex-start; }
+  .build-top{ width:100%; display:flex; align-items:center; justify-content:space-between; padding:4px 6px; }
+  .back-btn{ background:var(--white); border-radius:999px; width:36px; height:36px; font-size:17px; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 0 rgba(0,0,0,.12); }
+  .progress-track{ flex:1; height:13px; background:rgba(255,255,255,.6); border-radius:999px; margin:0 10px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--yellow); width:0%; transition:width .35s ease; border-radius:999px; }
+  .build-label{ text-align:center; font-family:'Baloo 2'; font-size:17px; margin:4px 0; color:var(--white); min-height:24px;}
+
+  .stage{ position:relative; flex:1; width:100%; display:flex; align-items:center; justify-content:center; }
+  .template{ position:relative; width:280px; height:280px; }
+  .outline-slot{ position:absolute; border:3px dashed rgba(255,255,255,.55); box-sizing:border-box; }
+  .outline-slot.filled{ border-style:solid; border-color:transparent; }
+  .shape-circle{ border-radius:50%; }
+  .shape-triangle{ border:none !important; background:transparent !important; clip-path:polygon(50% 0,0 100%,100% 100%); }
+  .outline-slot.shape-triangle{ background:rgba(255,255,255,.14); }
+
+  .placed-block{ position:absolute; box-sizing:border-box; }
+
+  /* glossy block visual (shared across tray + placed) */
+  .glossy-block{
+    width:100%; height:100%; position:relative;
+    box-shadow:0 6px 0 rgba(0,0,0,.28), inset 0 3px 0 rgba(255,255,255,.55), inset 0 -6px 10px rgba(0,0,0,.12);
+  }
+  .glossy-block.shape-circle{ border-radius:50%; }
+  .glossy-block.shape-triangle{ clip-path:polygon(50% 0,0 100%,100% 100%); box-shadow:none; filter:drop-shadow(0 6px 0 rgba(0,0,0,.28)); }
+  .glossy-block::after{
+    content:""; position:absolute; top:8%; left:14%; width:36%; height:26%;
+    background:radial-gradient(circle, rgba(255,255,255,.8), rgba(255,255,255,0) 70%);
+    border-radius:50%; pointer-events:none;
+  }
+  .shape-triangle.glossy-block::after{ top:34%; left:32%; }
+
+  .glow-ring{ position:absolute; inset:-10px; border-radius:inherit; box-shadow:0 0 0 6px var(--yellow); opacity:0; pointer-events:none; }
+  .placed-block.success .glow-ring{ animation:glowPulse .6s ease-out forwards; }
+  @keyframes glowPulse{ 0%{opacity:1; transform:scale(.9);} 100%{opacity:0; transform:scale(1.35);} }
+  .placed-block.success .glossy-block{ animation:snapIn .35s ease; }
+  @keyframes snapIn{ 0%{transform:scale(.4) rotate(-12deg);} 60%{transform:scale(1.15) rotate(4deg);} 100%{transform:scale(1) rotate(0);} }
+
+  .tray{ width:100%; display:flex; justify-content:center; gap:16px; padding:10px 6px 18px; flex-wrap:wrap; }
+  .tray-item{ width:58px; height:58px; cursor:grab; touch-action:none; position:relative; }
+  .tray-item.used{ opacity:0; pointer-events:none; }
+  .tray-item.dragging{ position:fixed; z-index:60; pointer-events:none; transform:scale(1.15); }
+
+  .particle{ position:fixed; pointer-events:none; font-size:16px; animation:floatUp .75s ease-out forwards; }
+  @keyframes floatUp{ 0%{opacity:1; transform:translate(0,0) scale(.6) rotate(0);} 100%{opacity:0; transform:translate(var(--dx),-64px) scale(1.1) rotate(90deg);} }
+
+  /* ---------- RESULT ---------- */
+  #resultScreen{ background:radial-gradient(circle at 50% 25%, #E4F4FC, var(--sky)); }
+  .result-icon{ font-size:74px; margin-bottom:6px; filter:drop-shadow(0 6px 4px rgba(0,0,0,.2)); }
+  .stars-earned{ font-size:38px; letter-spacing:6px; margin:6px 0 16px; }
+  .result-msg{ font-family:'Baloo 2'; font-size:22px; margin-bottom:20px; text-align:center; }
+  .result-actions{ display:flex; gap:14px; }
+  .crane-drop{ animation:craneDrop .5s ease; }
+  @keyframes craneDrop{ 0%{transform:translateY(-40px); opacity:0;} 70%{transform:translateY(6px); opacity:1;} 100%{transform:translateY(0);} }
+
+  ::-webkit-scrollbar{ width:0; height:0; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- AUTH -->
+  <section id="authScreen" class="screen active">
+    <div class="logo-wrap">
+      <div class="ic">🏗️</div>
+      <h1>Shape Builder City</h1>
+      <p>Snap shapes together and grow your city!</p>
+    </div>
+    <div class="auth-actions">
+      <button class="btn" id="playGuestBtn">Start building!</button>
+      <button class="btn ghost" id="parentSignInBtn">Parent sign in</button>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setupScreen" class="screen">
+    <div class="setup-card">
+      <h2>Who's building today?</h2>
+      <div class="sub">Pick a hard hat &amp; type your name</div>
+      <div class="avatar-row" id="avatarRow"></div>
+      <input id="childName" maxlength="12" placeholder="Builder name">
+      <button class="btn" id="setupContinueBtn" style="width:100%;">Let's build!</button>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section id="homeScreen" class="screen">
+    <div class="home-top">
+      <div class="chef-badge"><span class="av" id="homeAvatar">👷</span><span id="homeName">Builder</span></div>
+      <div class="piece-count">🏙️ <span id="homePieces">0</span>/6</div>
+    </div>
+    <h2 class="home-title">Pick a build!</h2>
+    <div class="level-path" id="levelPath"></div>
+    <div class="skyline-strip" id="skylineStrip"></div>
+  </section>
+
+  <!-- BUILD SCREEN -->
+  <section id="buildScreen" class="screen">
+    <div class="build-top">
+      <button class="back-btn" id="buildBackBtn">←</button>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div style="font-size:20px" id="levelIconTop"></div>
+    </div>
+    <div class="build-label" id="buildLabel"></div>
+    <div class="stage">
+      <div class="template" id="template"></div>
+    </div>
+    <div class="tray" id="tray"></div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="resultScreen" class="screen">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="stars-earned" id="starsEarned"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="result-actions">
+      <button class="btn secondary" id="resultHomeBtn">City map</button>
+      <button class="btn" id="resultNextBtn">Next build</button>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+/* ============ FIREBASE (fill in your own config) ============ */
+const firebaseConfig = {
+  apiKey: "AIzaSyA9kOUaQK0V4s9ZNV1ezgYQnq_OBFpVoSo",
+  authDomain: "hiya-2cd78.firebaseapp.com",
+  projectId: "hiya-2cd78",
+  storageBucket: "hiya-2cd78.firebasestorage.app",
+  messagingSenderId: "473906193558",
+  appId: "1:473906193558:web:304cde07e050faaa308eb7"
+};
+let fbReady=false, auth=null, db=null, currentUid=null;
+try{
+  firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  db = firebase.firestore();
+  fbReady = true;
+}catch(e){ console.warn("Firebase not configured, using local storage fallback.", e); }
+
+/* ============ AUDIO CHIME (synthesized, no file) ============ */
+let actx = null;
+function playChime(){
+  try{
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    [880, 1320].forEach((freq, i)=>{
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, now + i*0.08);
+      gain.gain.exponentialRampToValueAtTime(0.18, now + i*0.08 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i*0.08 + 0.28);
+      osc.connect(gain).connect(actx.destination);
+      osc.start(now + i*0.08);
+      osc.stop(now + i*0.08 + 0.3);
+    });
+  }catch(e){ /* audio not available, fail silently */ }
+}
+
+/* ============ LEVEL DATA ============ */
+// template canvas is 280x280. shapes: {id,type,x,y,w,h,color}
+const COLORS = { navy:"#2B4C6F", brick:"#D9573B", yellow:"#F5B942", green:"#6FAE5E", concrete:"#8A8578" };
+const LEVELS = [
+  { id:"truck", name:"Truck", icon:"🚚",
+    shapes:[
+      {id:"body", type:"rect", x:40, y:120, w:150, h:64, color:COLORS.brick},
+      {id:"cab", type:"square", x:190, y:110, w:64, h:74, color:COLORS.navy},
+      {id:"wheel1", type:"circle", x:64, y:184, w:44, h:44, color:COLORS.concrete},
+      {id:"wheel2", type:"circle", x:190, y:184, w:44, h:44, color:COLORS.concrete}
+    ]},
+  { id:"house", name:"House", icon:"🏠",
+    shapes:[
+      {id:"roof", type:"triangle", x:60, y:40, w:160, h:90, color:COLORS.brick},
+      {id:"base", type:"square", x:75, y:130, w:130, h:110, color:COLORS.yellow},
+      {id:"door", type:"rect", x:120, y:190, w:40, h:50, color:COLORS.navy}
+    ]},
+  { id:"cat", name:"Cat", icon:"🐱",
+    shapes:[
+      {id:"ear1", type:"triangle", x:70, y:40, w:44, h:44, color:COLORS.concrete},
+      {id:"ear2", type:"triangle", x:166, y:40, w:44, h:44, color:COLORS.concrete},
+      {id:"head", type:"circle", x:80, y:70, w:120, h:120, color:COLORS.yellow},
+      {id:"body", type:"square", x:90, y:180, w:100, h:80, color:COLORS.yellow}
+    ]},
+  { id:"rocket", name:"Rocket", icon:"🚀",
+    shapes:[
+      {id:"nose", type:"triangle", x:105, y:30, w:70, h:70, color:COLORS.brick},
+      {id:"body", type:"rect", x:105, y:95, w:70, h:120, color:COLORS.concrete},
+      {id:"window", type:"circle", x:120, y:120, w:40, h:40, color:COLORS.navy},
+      {id:"fin1", type:"triangle", x:60, y:190, w:50, h:50, color:COLORS.brick},
+      {id:"fin2", type:"triangle", x:170, y:190, w:50, h:50, color:COLORS.brick}
+    ]},
+  { id:"boat", name:"Boat", icon:"⛵",
+    shapes:[
+      {id:"sail", type:"triangle", x:120, y:40, w:80, h:100, color:COLORS.navy},
+      {id:"mast", type:"rect", x:135, y:40, w:10, h:100, color:COLORS.concrete},
+      {id:"hull", type:"rect", x:60, y:180, w:170, h:50, color:COLORS.brick}
+    ]},
+  { id:"tree", name:"Tree", icon:"🌳",
+    shapes:[
+      {id:"foliage", type:"circle", x:65, y:30, w:150, h:150, color:COLORS.green},
+      {id:"trunk", type:"rect", x:120, y:170, w:40, h:80, color:COLORS.concrete}
+    ]}
+];
+const AVATARS = ["👷","👷‍♀️","🧑‍🔧","👦","👧"];
+
+/* ============ STATE ============ */
+let state = {
+  childName:"", avatar:"👷",
+  progress:{}, // { levelId: { stars, completed } }
+  currentLevel:null,
+  filledCount:0
+};
+
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* ============ PERSISTENCE ============ */
+function saveLocal(){
+  localStorage.setItem("shapeCityProfile", JSON.stringify({
+    childName:state.childName, avatar:state.avatar, progress:state.progress
+  }));
+}
+function loadLocal(){
+  const raw = localStorage.getItem("shapeCityProfile");
+  if(raw){
+    const d = JSON.parse(raw);
+    state.childName = d.childName || "";
+    state.avatar = d.avatar || "👷";
+    state.progress = d.progress || {};
+    return true;
+  }
+  return false;
+}
+async function saveProgressRemote(){
+  if(fbReady && currentUid){
+    try{
+      await db.collection("users").doc(currentUid).set({
+        childName:state.childName, avatar:state.avatar, progress:state.progress
+      }, {merge:true});
+    }catch(e){ console.warn("Firestore save failed, using local only.", e); }
+  }
+  saveLocal();
+}
+async function loadProgressRemote(){
+  if(fbReady && currentUid){
+    try{
+      const doc = await db.collection("users").doc(currentUid).get();
+      if(doc.exists){
+        const d = doc.data();
+        state.childName = d.childName || "";
+        state.avatar = d.avatar || "👷";
+        state.progress = d.progress || {};
+        return true;
+      }
+    }catch(e){ console.warn("Firestore load failed, falling back to local.", e); }
+  }
+  return loadLocal();
+}
+
+/* ============ AUTH ============ */
+document.getElementById("playGuestBtn").onclick = async ()=>{
+  if(fbReady){
+    try{
+      const cred = await auth.signInAnonymously();
+      currentUid = cred.user.uid;
+    }catch(e){ console.warn("Anonymous sign-in failed, continuing offline.", e); }
+  }
+  const hasProfile = await loadProgressRemote();
+  if(hasProfile && state.childName){ enterHome(); }
+  else{ showScreen("setupScreen"); }
+};
+document.getElementById("parentSignInBtn").onclick = ()=>{
+  alert("Parent sign-in would open an email/password flow here — hook up firebase.auth().signInWithEmailAndPassword() with your own UI.");
+};
+
+/* ============ SETUP ============ */
+function buildAvatarRow(){
+  const row = document.getElementById("avatarRow");
+  row.innerHTML = "";
+  AVATARS.forEach(a=>{
+    const el = document.createElement("div");
+    el.className = "avatar-choice" + (a===state.avatar ? " selected":"");
+    el.textContent = a;
+    el.onclick = ()=>{
+      state.avatar = a;
+      document.querySelectorAll(".avatar-choice").forEach(x=>x.classList.remove("selected"));
+      el.classList.add("selected");
+    };
+    row.appendChild(el);
+  });
+}
+buildAvatarRow();
+document.getElementById("setupContinueBtn").onclick = async ()=>{
+  const name = document.getElementById("childName").value.trim();
+  state.childName = name || "Builder";
+  await saveProgressRemote();
+  enterHome();
+};
+
+/* ============ HOME (level path + skyline) ============ */
+function completedCount(){
+  return Object.values(state.progress).filter(p=>p.completed).length;
+}
+function isUnlocked(idx){
+  if(idx===0) return true;
+  const prev = LEVELS[idx-1];
+  return !!(state.progress[prev.id] && state.progress[prev.id].completed);
+}
+function renderHome(){
+  document.getElementById("homeAvatar").textContent = state.avatar;
+  document.getElementById("homeName").textContent = state.childName;
+  document.getElementById("homePieces").textContent = completedCount();
+
+  const path = document.getElementById("levelPath");
+  path.innerHTML = "";
+  LEVELS.forEach((lvl, idx)=>{
+    const unlocked = isUnlocked(idx);
+    const prog = state.progress[lvl.id];
+    const node = document.createElement("div");
+    node.className = "level-node" + (unlocked ? "" : " locked");
+    node.innerHTML = `<span class="lvl-icon">${lvl.icon}</span>
+      <div class="lvl-info"><div class="name">${lvl.name}</div>
+      <div class="stars">${prog ? "⭐".repeat(prog.stars||0) : "Tap to build"}</div></div>
+      ${unlocked ? "" : '<span class="lock-badge">🔒</span>'}`;
+    if(unlocked){ node.onclick = ()=> startLevel(lvl.id); }
+    path.appendChild(node);
+  });
+
+  const strip = document.getElementById("skylineStrip");
+  strip.innerHTML = "";
+  LEVELS.forEach(lvl=>{
+    if(state.progress[lvl.id] && state.progress[lvl.id].completed){
+      const piece = document.createElement("div");
+      piece.className = "sky-piece";
+      piece.innerHTML = `<div class="top"></div><div class="front"></div><div class="side"></div>`;
+      strip.appendChild(piece);
+    }
+  });
+}
+function enterHome(){ renderHome(); showScreen("homeScreen"); }
+document.getElementById("resultHomeBtn").onclick = enterHome;
+
+/* ============ BUILD SCREEN ============ */
+function startLevel(id){
+  state.currentLevel = LEVELS.find(l=>l.id===id);
+  state.filledCount = 0;
+  showScreen("buildScreen");
+  setupBuildUI();
+}
+document.getElementById("buildBackBtn").onclick = enterHome;
+
+function shapeClass(type){
+  if(type==="circle") return "shape-circle";
+  if(type==="triangle") return "shape-triangle";
+  return ""; // square / rect need no extra class beyond default box
+}
+
+function setupBuildUI(){
+  const lvl = state.currentLevel;
+  document.getElementById("levelIconTop").textContent = lvl.icon;
+  document.getElementById("buildLabel").textContent = "Build the " + lvl.name + "!";
+  document.getElementById("progressFill").style.width = "0%";
+
+  const template = document.getElementById("template");
+  template.innerHTML = "";
+  lvl.shapes.forEach(s=>{
+    const slot = document.createElement("div");
+    slot.className = "outline-slot " + shapeClass(s.type);
+    slot.id = "slot-"+s.id;
+    slot.style.left = s.x+"px";
+    slot.style.top = s.y+"px";
+    slot.style.width = s.w+"px";
+    slot.style.height = s.h+"px";
+    template.appendChild(slot);
+  });
+
+  const tray = document.getElementById("tray");
+  tray.innerHTML = "";
+  // shuffle a copy for tray order so it's not visually 1:1 with template order
+  const shuffled = [...lvl.shapes].sort(()=>Math.random()-0.5);
+  shuffled.forEach(s=>{
+    const item = document.createElement("div");
+    item.className = "tray-item";
+    item.id = "tray-"+s.id;
+    item.dataset.shapeId = s.id;
+    item.innerHTML = `<div class="glossy-block ${shapeClass(s.type)}" style="background:${s.type==='triangle' ? 'transparent' : s.color}; ${s.type==='triangle' ? '' : ''}"></div>`;
+    if(s.type==="triangle"){
+      item.querySelector(".glossy-block").style.background = s.color;
+    }
+    enableDrag(item, template);
+    tray.appendChild(item);
+  });
+}
+
+function enableDrag(item, template){
+  let dragging=false;
+  item.addEventListener("pointerdown",(e)=>{
+    if(item.classList.contains("used")) return;
+    dragging=true;
+    item.setPointerCapture(e.pointerId);
+    item.classList.add("dragging");
+    moveGhost(e);
+  });
+  item.addEventListener("pointermove",(e)=>{ if(dragging) moveGhost(e); });
+  item.addEventListener("pointerup",(e)=>{
+    if(!dragging) return;
+    dragging=false;
+    item.classList.remove("dragging");
+    item.style.left=""; item.style.top="";
+    const tRect = template.getBoundingClientRect();
+    const within = e.clientX>tRect.left && e.clientX<tRect.right && e.clientY>tRect.top && e.clientY<tRect.bottom;
+    if(within){ tryPlace(item, template); }
+  });
+  function moveGhost(e){
+    item.style.left=(e.clientX-29)+"px";
+    item.style.top=(e.clientY-29)+"px";
+  }
+}
+
+function tryPlace(item, template){
+  const lvl = state.currentLevel;
+  const shapeId = item.dataset.shapeId;
+  const shapeDef = lvl.shapes.find(s=>s.id===shapeId);
+  const slot = document.getElementById("slot-"+shapeId);
+  if(slot.classList.contains("filled")) return;
+
+  slot.classList.add("filled");
+  const block = document.createElement("div");
+  block.className = "placed-block success";
+  block.style.left = shapeDef.x+"px";
+  block.style.top = shapeDef.y+"px";
+  block.style.width = shapeDef.w+"px";
+  block.style.height = shapeDef.h+"px";
+  block.innerHTML = `<div class="glossy-block ${shapeClass(shapeDef.type)}" style="background:${shapeDef.color};"></div><div class="glow-ring ${shapeClass(shapeDef.type)}"></div>`;
+  template.appendChild(block);
+
+  item.classList.add("used");
+  playChime();
+  spawnParticles(slot, shapeDef.color);
+
+  state.filledCount++;
+  document.getElementById("progressFill").style.width = (state.filledCount/lvl.shapes.length*100)+"%";
+  if(state.filledCount >= lvl.shapes.length){
+    setTimeout(finishLevel, 500);
+  }
+}
+
+function spawnParticles(target, color){
+  const rect = target.getBoundingClientRect();
+  const shapes = ["▲","●","■"];
+  for(let i=0;i<6;i++){
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.textContent = shapes[i%3];
+    p.style.color = color;
+    p.style.left = (rect.left+rect.width/2+(Math.random()*50-25))+"px";
+    p.style.top = (rect.top+rect.height/2+(Math.random()*30-15))+"px";
+    p.style.setProperty("--dx",(Math.random()*60-30)+"px");
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 800);
+  }
+}
+
+/* ============ FINISH / RESULT ============ */
+async function finishLevel(){
+  const lvl = state.currentLevel;
+  const prevStars = (state.progress[lvl.id] && state.progress[lvl.id].stars) || 0;
+  const stars = Math.max(prevStars, 3);
+  state.progress[lvl.id] = { stars, completed:true };
+  await saveProgressRemote();
+
+  document.getElementById("resultIcon").textContent = lvl.icon;
+  document.getElementById("resultIcon").classList.add("crane-drop");
+  document.getElementById("starsEarned").textContent = "⭐".repeat(stars);
+  document.getElementById("resultMsg").textContent = state.childName + " built a " + lvl.name + "!";
+  const nextIdx = LEVELS.findIndex(l=>l.id===lvl.id) + 1;
+  const nextBtn = document.getElementById("resultNextBtn");
+  if(nextIdx < LEVELS.length){
+    nextBtn.style.display = "inline-flex";
+    nextBtn.onclick = ()=> startLevel(LEVELS[nextIdx].id);
+  }else{
+    nextBtn.style.display = "none";
+  }
+  showScreen("resultScreen");
+}
+
+/* ============ BOOT ============ */
+window.addEventListener("load", ()=>{
+  if(fbReady){
+    auth.onAuthStateChanged(async (user)=>{
+      // Auth state observed; actual sign-in triggered by the Start button.
+    });
+  }
+});
+</script>
+</body>
+</html>

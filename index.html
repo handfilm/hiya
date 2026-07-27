@@ -95,6 +95,22 @@
   .c3{background:radial-gradient(circle at 35% 28%, #7FC4FF, var(--pop-blue));}
   .c4{background:radial-gradient(circle at 35% 28%, #D6ABF2, var(--lilac));}
   .c5{background:radial-gradient(circle at 35% 28%, #E9F787, var(--pop-lime));}
+  .c6{background:radial-gradient(circle at 35% 28%, #6FE0E8, #17A9B8);}
+  .c7{background:radial-gradient(circle at 35% 28%, #FFC46F, #F08A1C);}
+  .c8{background:radial-gradient(circle at 35% 28%, #9FD1FF, #3E7FE0);}
+  .c9{background:radial-gradient(circle at 35% 28%, #FFB4D6, #E8558F);}
+  .c10{background:radial-gradient(circle at 35% 28%, #C9F58A, #6FAE2C);}
+
+  /* ---------- Games section ---------- */
+  .section-divider{display:flex; align-items:center; gap:10px; margin:34px 0 14px; opacity:.85;}
+  .section-divider::before, .section-divider::after{content:''; flex:1; height:2px; background:rgba(58,46,68,.15); border-radius:2px;}
+  .section-divider span{font-family:'Baloo Da 2', sans-serif; font-weight:800; font-size:15px; color:var(--leaf-dark); white-space:nowrap;}
+  .flower-stop.game-stop{border:3px solid rgba(255,255,255,.6); position:relative;}
+  .game-badge{position:absolute; top:-8px; font-family:'Baloo Da 2', sans-serif; font-size:10.5px; font-weight:800;
+    background:var(--pop-red); color:#fff; padding:3px 9px; border-radius:20px; box-shadow:0 3px 0 var(--pop-red-dark);
+    letter-spacing:.3px;}
+  .flower-stop:nth-child(odd) .game-badge{left:60px;}
+  .flower-stop:nth-child(even) .game-badge{right:60px;}
 
   /* ---------- Activity screen ---------- */
   #activity{position:fixed; inset:0; background:var(--cream); z-index:10; display:none; flex-direction:column;}
@@ -316,6 +332,13 @@
   <div class="drawer-item" onclick="drawerGo('sentences')"><span class="di-icon">📝</span><span data-i18n="m_sentences">বাক্য পড়ি</span></div>
   <div class="drawer-item" onclick="drawerGo('videos')"><span class="di-icon">📺</span><span data-i18n="m_videos">ভিডিও কর্নার</span></div>
 
+  <div class="drawer-section-title" data-i18n="gamesTitle">🎮 মজার গেম</div>
+  <div class="drawer-item" onclick="launchGame('bubble-ocean.html')"><span class="di-icon">🫧</span><span data-i18n="m_bubbleocean">বাবল ওশেন</span></div>
+  <div class="drawer-item" onclick="launchGame('tiny-chef-kitchen.html')"><span class="di-icon">🍳</span><span data-i18n="m_tinychef">টাইনি শেফ কিচেন</span></div>
+  <div class="drawer-item" onclick="launchGame('sky-painter.html')"><span class="di-icon">🎨</span><span data-i18n="m_skypainter">স্কাই পেইন্টার</span></div>
+  <div class="drawer-item" onclick="launchGame('shape-builder-city.html')"><span class="di-icon">🧩</span><span data-i18n="m_shapebuilder">শেইপ বিল্ডার সিটি</span></div>
+  <div class="drawer-item" onclick="launchGame('melody-farm.html')"><span class="di-icon">🎵</span><span data-i18n="m_melodyfarm">মেলোডি ফার্ম</span></div>
+
   <div class="drawer-section-title" data-i18n="drawerSoon">শীঘ্রই আসছে</div>
   <div class="drawer-item soon"><span class="di-icon">🤖</span><span data-i18n="soon_bot">চ্যাট বন্ধুর সাথে child/parent মোড</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
   <div class="drawer-item soon"><span class="di-icon">🏆</span><span data-i18n="soon_badges">ব্যাজ ও অ্যাচিভমেন্ট</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
@@ -419,6 +442,35 @@
     <div class="flower-stop" data-module="videos" onclick="openActivity('videos')">
       <div class="flower-icon c1">📺</div>
       <div><h2 data-i18n="m_videos">ভিডিও কর্নার</h2><p data-i18n="d_videos">পছন্দের ছড়া ও গল্প দেখো</p></div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span data-i18n="gamesTitle">🎮 মজার গেম</span></div>
+  <div class="path">
+    <div class="flower-stop game-stop" data-module="bubbleocean" onclick="launchGame('bubble-ocean.html')">
+      <span class="game-badge" data-i18n="gameBadge">নতুন</span>
+      <div class="flower-icon c6">🫧</div>
+      <div><h2 data-i18n="m_bubbleocean">বাবল ওশেন</h2><p data-i18n="d_bubbleocean">বুদবুদ ফাটাও, সমুদ্রের বন্ধুদের চেনো</p></div>
+    </div>
+    <div class="flower-stop game-stop" data-module="tinychef" onclick="launchGame('tiny-chef-kitchen.html')">
+      <span class="game-badge" data-i18n="gameBadge">নতুন</span>
+      <div class="flower-icon c7">🍳</div>
+      <div><h2 data-i18n="m_tinychef">টাইনি শেফ কিচেন</h2><p data-i18n="d_tinychef">নিজে নিজে মজার খাবার রান্না করো</p></div>
+    </div>
+    <div class="flower-stop game-stop" data-module="skypainter" onclick="launchGame('sky-painter.html')">
+      <span class="game-badge" data-i18n="gameBadge">নতুন</span>
+      <div class="flower-icon c8">🎨</div>
+      <div><h2 data-i18n="m_skypainter">স্কাই পেইন্টার</h2><p data-i18n="d_skypainter">আকাশ জুড়ে রং দিয়ে ছবি আঁকো</p></div>
+    </div>
+    <div class="flower-stop game-stop" data-module="shapebuilder" onclick="launchGame('shape-builder-city.html')">
+      <span class="game-badge" data-i18n="gameBadge">নতুন</span>
+      <div class="flower-icon c9">🧩</div>
+      <div><h2 data-i18n="m_shapebuilder">শেইপ বিল্ডার সিটি</h2><p data-i18n="d_shapebuilder">আকৃতি দিয়ে গাড়ি-বাড়ি বানাও</p></div>
+    </div>
+    <div class="flower-stop game-stop" data-module="melodyfarm" onclick="launchGame('melody-farm.html')">
+      <span class="game-badge" data-i18n="gameBadge">নতুন</span>
+      <div class="flower-icon c10">🎵</div>
+      <div><h2 data-i18n="m_melodyfarm">মেলোডি ফার্ম</h2><p data-i18n="d_melodyfarm">খামারের প্রাণী দিয়ে গান বাজাও</p></div>
     </div>
   </div>
 </div>
@@ -527,6 +579,12 @@ const I18N = {
     m_multiplication:'নামতা শিখি', d_multiplication:'২ থেকে ১০ পর্যন্ত নামতা',
     m_sentences:'বাক্য পড়ি', d_sentences:'ছোট ছোট বাক্য পড়তে শেখো',
     m_videos:'ভিডিও কর্নার', d_videos:'পছন্দের ছড়া ও গল্প দেখো',
+    gamesTitle:'🎮 মজার গেম', gameBadge:'নতুন',
+    m_bubbleocean:'বাবল ওশেন', d_bubbleocean:'বুদবুদ ফাটাও, সমুদ্রের বন্ধুদের চেনো',
+    m_tinychef:'টাইনি শেফ কিচেন', d_tinychef:'নিজে নিজে মজার খাবার রান্না করো',
+    m_skypainter:'স্কাই পেইন্টার', d_skypainter:'আকাশ জুড়ে রং দিয়ে ছবি আঁকো',
+    m_shapebuilder:'শেইপ বিল্ডার সিটি', d_shapebuilder:'আকৃতি দিয়ে গাড়ি-বাড়ি বানাও',
+    m_melodyfarm:'মেলোডি ফার্ম', d_melodyfarm:'খামারের প্রাণী দিয়ে গান বাজাও',
     dashAgeLbl:'বয়স', dashStreamLbl:'স্ট্রিম', dashStarsLbl:'মোট স্টার',
     dashLevelTitle:'ক্লাস / লেভেল', dashLevelHint:'লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে',
     dashProgressTitle:'বিষয়ভিত্তিক অগ্রগতি', dashGalleryTitle:'আঁকা ছবির গ্যালারি', dashGalleryEmptyTxt:'এখনো কোনো ছবি নেই',
@@ -570,6 +628,12 @@ const I18N = {
     m_multiplication:'Times Tables', d_multiplication:'Tables from 2 to 10',
     m_sentences:'Sentence Reading', d_sentences:'Learn to read small sentences',
     m_videos:'Video Corner', d_videos:'Watch favourite rhymes and stories',
+    gamesTitle:'🎮 Fun Games', gameBadge:'New',
+    m_bubbleocean:'Bubble Ocean', d_bubbleocean:'Pop bubbles and meet sea friends',
+    m_tinychef:'Tiny Chef Kitchen', d_tinychef:'Cook fun little dishes all by yourself',
+    m_skypainter:'Sky Painter', d_skypainter:'Paint across the sky with glowing colours',
+    m_shapebuilder:'Shape Builder City', d_shapebuilder:'Build cars and houses out of shapes',
+    m_melodyfarm:'Melody Farm', d_melodyfarm:'Play music with the farm animals',
     dashAgeLbl:'Age', dashStreamLbl:'Stream', dashStarsLbl:'Total stars',
     dashLevelTitle:'Class / Level', dashLevelHint:"Changing the level will show modules suited to the child's age on the home screen",
     dashProgressTitle:'Progress by module', dashGalleryTitle:'Drawing gallery', dashGalleryEmptyTxt:'No pictures yet',
@@ -661,7 +725,9 @@ const LEVEL_LABELS = {playgroup:'প্লে-গ্রুপ', nursery:'না�
 const LEVEL_ORDER = ['playgroup','nursery','kg','class1'];
 const MODULE_LABELS = {letters:'বর্ণ বাগান', numbers:'সংখ্যা মৌমাছি', match:'মিলাও তো', draw:'আঁকার খাতা',
   animals:'প্রাণী জগৎ', words:'শব্দ পড়ি', mathgame:'যোগ-বিয়োগ', english:'ABC গার্ডেন',
-  multiplication:'নামতা শিখি', sentences:'বাক্য পড়ি'};
+  multiplication:'নামতা শিখি', sentences:'বাক্য পড়ি',
+  bubbleocean:'বাবল ওশেন', tinychef:'টাইনি শেফ কিচেন', skypainter:'স্কাই পেইন্টার',
+  shapebuilder:'শেইপ বিল্ডার সিটি', melodyfarm:'মেলোডি ফার্ম'};
 function streamLabel(key){ return t('stream_' + key) || STREAM_LABELS[key] || key; }
 // প্রতিটা মডিউল কোন কোন লেভেলে দেখানো হবে
 const MODULE_LEVELS = {
@@ -675,7 +741,13 @@ const MODULE_LEVELS = {
   english:['kg','class1'],
   multiplication:['class1'],
   sentences:['class1'],
-  videos:['playgroup','nursery','kg','class1']
+  videos:['playgroup','nursery','kg','class1'],
+  // games: age ranges taken from each game's target-age design brief
+  bubbleocean:['playgroup','nursery','kg'],
+  tinychef:['nursery','kg','class1'],
+  skypainter:['playgroup','nursery','kg','class1'],
+  shapebuilder:['nursery','kg','class1'],
+  melodyfarm:['playgroup','nursery','kg']
 };
 function filterHomeByLevel(){
   const level = (childData && childData.level) || 'playgroup';
@@ -946,6 +1018,16 @@ function openActivity(name){
   if(name==='videos') buildVideos(body);
   applyLanguage();
 }
+// ---- Games (standalone single-file apps) ----
+// Each game is its own complete app (own login/guest flow, own Firebase-backed
+// progress) sharing this project's Firebase config, so a child's stars/gallery/
+// unlocks are saved per game. They open in a new tab so this Garden stays open
+// in the background and the child can hop back with one tap.
+function launchGame(file){
+  closeDrawer();
+  window.open(file, '_blank');
+}
+
 function closeActivity(){
   document.getElementById('activity').classList.remove('open');
   window.speechSynthesis && window.speechSynthesis.cancel();
