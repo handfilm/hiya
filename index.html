@@ -187,6 +187,14 @@
 
   /* Video corner */
   .video-list{width:100%; max-width:480px;}
+  .video-section{margin-bottom:8px;}
+  .video-section-head{display:flex; align-items:center; gap:8px; margin:18px 0 10px;}
+  .video-section-head:first-child{margin-top:0;}
+  .video-tag{font-family:'Baloo Da 2', sans-serif; font-size:15px; color:var(--plum);}
+  .channel-badge{display:inline-flex; align-items:center; gap:6px; background:#fff; border-radius:20px;
+    padding:5px 12px 5px 6px; font-size:12px; font-weight:700; color:var(--plum); box-shadow:0 3px 8px rgba(0,0,0,.08); margin-left:auto;}
+  .channel-badge .ch-avatar{width:22px; height:22px; border-radius:50%; background:linear-gradient(180deg,#7FC4FF,var(--pop-blue));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:800;}
   .video-card{background:#fff; border-radius:20px; padding:12px; margin-bottom:14px; box-shadow:0 5px 14px rgba(0,0,0,.08);}
   .video-card h3{font-family:'Baloo Da 2', sans-serif; margin:0 0 8px; font-size:17px;}
   .video-card iframe{width:100%; aspect-ratio:16/9; border:none; border-radius:14px;}
@@ -889,12 +897,27 @@ const sentenceList = [
   {text:'আমরা একসাথে খেলি', emoji:'🤝'}
 ];
 
-/* Parent tip: add more curated videos here — {title, id} where id is the YouTube video ID.
-   These are from the Sisimpur (Bangla Sesame Street) channel, a safe children's education show. */
-const videoList = [
-  {title:'সিসিমপুর পরিবার - পর্ব ১', id:'M341Hd0Lzew'},
-  {title:'সিসিমপুর পরিবার - পর্ব ২', id:'djE_hSAA2wg'},
-  {title:'সিসিমপুরের মজার ঘটনা', id:'ZE-4Hm7u1es'}
+/* Parent tip: add more curated videos/playlists here.
+   - type:'video' → single video, id is the YouTube video ID
+   - type:'playlist' → a whole curated playlist embedded natively (full YouTube controls, native "up next"
+     queue), without embedding an entire channel page (YouTube does not allow channel pages to be framed) */
+const videoSections = [
+  {
+    tag:'সিসিমপুর', tagEn:'Sisimpur',
+    channel:'Sisimpur',
+    items:[
+      {type:'video', title:'সিসিমপুর পরিবার - পর্ব ১', id:'M341Hd0Lzew'},
+      {type:'video', title:'সিসিমপুর পরিবার - পর্ব ২', id:'djE_hSAA2wg'},
+      {type:'video', title:'সিসিমপুরের মজার ঘটনা', id:'ZE-4Hm7u1es'}
+    ]
+  },
+  {
+    tag:'Kids Diana Show', tagEn:'Kids Diana Show',
+    channel:'Kids Diana Show',
+    items:[
+      {type:'playlist', title:'Kids Diana Show — Playlist', listId:'PLsmeyw-Rsn1md2BhG8CmArhVJwiXqZi--'}
+    ]
+  }
 ];
 
 let drawGallery = []; // in-memory only for this session — each save creates a real downloadable PNG
@@ -1231,13 +1254,30 @@ function buildSentences(body){
 function buildVideos(body){
   body.innerHTML = `<div class="video-list" id="videoList"></div><div class="video-note" data-i18n="act_videoNote">শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না</div>`;
   const list = document.getElementById('videoList');
-  videoList.forEach(v=>{
-    const card = document.createElement('div');
-    card.className='video-card';
-    card.innerHTML = `<h3>${v.title}</h3>
-      <iframe src="https://www.youtube-nocookie.com/embed/${v.id}?modestbranding=1&rel=0" loading="lazy"
-        title="${v.title}" allowfullscreen></iframe>`;
-    list.appendChild(card);
+  videoSections.forEach(section=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'video-section';
+    const tagText = currentLang === 'en' ? (section.tagEn || section.tag) : section.tag;
+    const initial = (section.channel || '?').trim().charAt(0).toUpperCase();
+    wrap.innerHTML = `<div class="video-section-head">
+        <span class="video-tag">${tagText}</span>
+        <span class="channel-badge"><span class="ch-avatar">${initial}</span>${section.channel}</span>
+      </div>`;
+    section.items.forEach(v=>{
+      const card = document.createElement('div');
+      card.className = 'video-card';
+      // playlist → native YouTube playlist player (full controls + its own built-in "up next" queue,
+      // scoped to just this playlist — a whole channel page can't be embedded, this is the closest native
+      // equivalent that still can't wander outside curated content).
+      const src = v.type === 'playlist'
+        ? `https://www.youtube-nocookie.com/embed/videoseries?list=${v.listId}&modestbranding=1&rel=0`
+        : `https://www.youtube-nocookie.com/embed/${v.id}?modestbranding=1&rel=0`;
+      card.innerHTML = `<h3>${v.title}</h3>
+        <iframe src="${src}" loading="lazy"
+          title="${v.title}" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+      wrap.appendChild(card);
+    });
+    list.appendChild(wrap);
   });
 }
 
