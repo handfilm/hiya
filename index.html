@@ -167,9 +167,16 @@
   .topbar{display:flex; align-items:center; gap:12px; padding:16px 16px; color:#fff;
     background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
     backdrop-filter:blur(14px); border-bottom:1px solid var(--glass-brd-soft); box-shadow:0 10px 24px rgba(0,0,0,.3);}
-  .backBtn{background:var(--glass-hi); border:1px solid var(--glass-brd); color:#fff; font-size:22px; width:42px; height:42px;
-    border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s;}
+  .backBtn{background:var(--glass-hi); border:1px solid var(--glass-brd); color:#fff; font-size:24px; width:50px; height:50px;
+    border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:transform .15s; flex-shrink:0;}
   .backBtn:active{transform:scale(.9);}
+  .backBtn.labeled{width:auto; height:44px; padding:0 18px 0 14px; border-radius:26px; gap:8px; font-size:22px; font-family:'Baloo Da 2', sans-serif;}
+  .backBtn.labeled span{font-size:15px; font-weight:700;}
+  .listen-btn{margin-left:auto; background:linear-gradient(180deg,#FFDE85,var(--sun)); border:none; color:var(--ink-deep);
+    width:42px; height:42px; border-radius:50%; font-size:19px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 10px rgba(255,207,86,.4); flex-shrink:0;}
+  .listen-btn:active{transform:scale(.9);}
+  .topbar .stars{margin-left:10px;}
   .topbar h2{font-family:'Baloo Da 2', sans-serif; margin:0; font-size:20px;}
   .stars{margin-left:auto; font-size:16px; font-weight:700; background:linear-gradient(180deg,#FFE38A,var(--sun));
     color:var(--ink-deep); padding:7px 14px; border-radius:20px; box-shadow:0 4px 10px rgba(255,207,86,.4);}
@@ -177,8 +184,8 @@
 
   /* Big letter/number stage */
   .stage{
-    width:min(78vw, 260px); height:min(78vw,260px); border-radius:36px; display:flex; align-items:center; justify-content:center;
-    font-size:clamp(80px,26vw,140px); font-family:'Baloo Da 2', sans-serif; font-weight:800; color:#fff;
+    width:min(86vw, 320px); height:min(86vw,320px); border-radius:40px; display:flex; align-items:center; justify-content:center;
+    font-size:clamp(96px,32vw,180px); font-family:'Baloo Da 2', sans-serif; font-weight:800; color:#fff;
     box-shadow:0 18px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.14),
       inset 0 10px 16px rgba(255,255,255,.4), inset 0 -16px 24px rgba(0,0,0,.25);
     margin:10px 0 6px; transition: transform .12s ease; animation: floatY 4s ease-in-out infinite;
@@ -212,15 +219,31 @@
   .memo-card:active{transform:scale(.94);}
 
   /* Drawing */
-  .draw-wrap{width:100%; max-width:460px;}
-  canvas{width:100%; aspect-ratio:4/3; background:#fff; border-radius:20px; box-shadow:0 14px 34px rgba(0,0,0,.4), 0 0 0 1px var(--glass-brd); touch-action:none;}
+  .draw-wrap{width:100%; max-width:640px;}
+  canvas{width:100%; aspect-ratio:5/4; min-height:320px; background:#fff; border-radius:24px; box-shadow:0 14px 34px rgba(0,0,0,.4), 0 0 0 1px var(--glass-brd); touch-action:none;}
   .palette{display:flex; gap:10px; justify-content:center; margin:14px 0; flex-wrap:wrap;}
   .swatch{width:38px; height:38px; border-radius:50%; border:3px solid rgba(255,255,255,.7); box-shadow:0 4px 10px rgba(0,0,0,.35); cursor:pointer;}
   .swatch.active{box-shadow:0 0 0 3px var(--pop-lime), 0 4px 10px rgba(0,0,0,.35);}
-  .draw-tools{display:flex; gap:10px; justify-content:center;}
+  .swatch.custom-swatch{position:relative; display:flex; align-items:center; justify-content:center; font-size:16px; background:linear-gradient(135deg,#FF6A5C,#FFCF56,#2FD673,#3FA6FF,#B98CE0); overflow:hidden; cursor:pointer;}
+  .swatch.custom-swatch input[type=color]{position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; border:none; padding:0;}
+  .draw-tools{display:flex; gap:10px; justify-content:center; margin-top:6px;}
   .tool-btn{background:linear-gradient(180deg, #6EBBFF, var(--pop-blue)); border:none; padding:10px 18px; border-radius:20px; font-family:'Baloo Da 2',sans-serif;
     color:#fff; font-size:14px; cursor:pointer; box-shadow:0 4px 0 var(--pop-blue-dark), 0 8px 18px rgba(63,166,255,.3), inset 0 -5px 8px rgba(0,0,0,.12);}
   .tool-btn:active{transform:translateY(3px); box-shadow:none;}
+
+  /* Drawing toolbar: pen/eraser/shapes/emoji/undo row */
+  .tool-row{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:14px 0 10px;}
+  .tico{padding:9px 12px; font-size:19px; border-radius:16px; box-shadow:0 4px 0 var(--pop-blue-dark), inset 0 -5px 8px rgba(0,0,0,.12);}
+  .tico.active{background:linear-gradient(180deg, #FFDE85, var(--sun)); box-shadow:0 4px 0 #C99A1E, inset 0 -5px 8px rgba(0,0,0,.15);}
+  #rainbowBtn.active{background:linear-gradient(135deg,#FF6A5C,#FFCF56,#2FD673,#3FA6FF,#B98CE0); box-shadow:0 4px 0 #8b3fa8, 0 0 16px rgba(185,140,224,.6);}
+  .size-row{display:flex; gap:14px; justify-content:center; align-items:center; margin-bottom:10px;}
+  .size-dot{background:var(--glass-hi); border:1px solid var(--glass-brd); border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .size-dot span{display:block; border-radius:50%; background:#fff;}
+  .size-dot.active{background:linear-gradient(180deg, #FFDE85, var(--sun)); border-color:transparent;}
+  .emoji-pal{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:520px; margin:0 auto 12px; padding:10px;
+    background:var(--glass); border:1px solid var(--glass-brd-soft); border-radius:18px;}
+  .emoji-chip{font-size:24px; background:transparent; border:1px solid transparent; border-radius:10px; padding:4px 6px; cursor:pointer;}
+  .emoji-chip.active{background:var(--glass-hi); border-color:var(--glass-brd);}
 
   /* Word reading */
   .syll-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:14px 0 4px;}
@@ -255,6 +278,22 @@
   .gallery-item a{position:absolute; bottom:2px; right:2px; background:rgba(255,255,255,.9); border-radius:8px;
     font-size:11px; padding:2px 6px; text-decoration:none; color:var(--ink-deep);}
   .empty-note{opacity:.6; font-size:14px; margin-top:20px; text-align:center; color:var(--ink-dim);}
+
+  /* Rhymes */
+  .rhyme-list{display:grid; grid-template-columns:repeat(2,1fr); gap:14px; width:100%; max-width:480px;}
+  .rhyme-card{background:linear-gradient(155deg, var(--glass-hi), var(--glass)); border:1px solid var(--glass-brd); border-radius:22px;
+    padding:20px 10px; text-align:center; cursor:pointer; box-shadow:0 10px 24px rgba(0,0,0,.35); transition:transform .15s;}
+  .rhyme-card:active{transform:scale(.95);}
+  .rhyme-card-emoji{font-size:44px; margin-bottom:8px;}
+  .rhyme-card-title{font-family:'Baloo Da 2', sans-serif; font-size:15px; color:#fff;}
+  .rhyme-reader{width:100%; max-width:520px; display:flex; flex-direction:column; align-items:center; gap:6px;}
+  .rhyme-emoji-big{font-size:56px; margin-top:10px;}
+  .rhyme-title{font-size:20px; color:#fff; margin:2px 0 10px;}
+  .rhyme-lines{background:linear-gradient(155deg, var(--glass-hi), var(--glass)); border:1px solid var(--glass-brd);
+    border-radius:22px; padding:20px; width:100%; box-shadow:0 10px 24px rgba(0,0,0,.35);}
+  .rhyme-line{font-family:'Baloo Da 2', sans-serif; font-size:clamp(18px,5vw,24px); line-height:1.9; color:var(--ink-dim);}
+  .rhyme-word{display:inline-block; transition:all .15s ease; border-radius:8px; padding:1px 3px;}
+  .rhyme-word.active{background:linear-gradient(180deg,#FFDE85,var(--sun)); color:var(--ink-deep); font-weight:800; transform:scale(1.08);}
 
   /* Video corner */
   .video-list{width:100%; max-width:480px;}
@@ -511,6 +550,10 @@
       <div class="flower-icon c1">📺</div>
       <div><h2 data-i18n="m_videos">ভিডিও কর্নার</h2><p data-i18n="d_videos">পছন্দের ছড়া ও গল্প দেখো</p></div>
     </div>
+    <div class="flower-stop" data-module="rhymes" onclick="openActivity('rhymes')">
+      <div class="flower-icon c2">🎵</div>
+      <div><h2 data-i18n="m_rhymes">ছড়ার বাগান</h2><p data-i18n="d_rhymes">প্রিয় ছড়া শোনো ও পড়ো</p></div>
+    </div>
   </div>
 
   <div class="section-divider"><span data-i18n="gamesTitle">🎮 মজার গেম</span></div>
@@ -545,8 +588,9 @@
 
 <div id="activity">
   <div class="topbar">
-    <button class="backBtn" onclick="closeActivity()">←</button>
+    <button class="backBtn labeled" onclick="closeActivity()">← <span data-i18n="drawerHome">হোম</span></button>
     <h2 id="actTitle">শিরোনাম</h2>
+    <button class="listen-btn" onclick="speakActivityIntro()" title="শোনো">🔊</button>
     <div class="stars">⭐ <span id="starCount">0</span></div>
   </div>
   <div class="activity-body" id="actBody"></div>
@@ -555,7 +599,7 @@
 <!-- ---------- Parent dashboard ---------- -->
 <div id="dashboard">
   <div class="topbar">
-    <button class="backBtn" onclick="closeDashboard()">←</button>
+    <button class="backBtn labeled" onclick="closeDashboard()">← <span data-i18n="drawerHome">হোম</span></button>
     <h2 class="display" id="dashTitle" style="margin:0; font-size:20px;">প্যারেন্ট ড্যাশবোর্ড</h2>
   </div>
   <div class="dash-body">
@@ -651,6 +695,10 @@ const I18N = {
     m_multiplication:'নামতা শিখি', d_multiplication:'২ থেকে ১০ পর্যন্ত নামতা',
     m_sentences:'বাক্য পড়ি', d_sentences:'ছোট ছোট বাক্য পড়তে শেখো',
     m_videos:'ভিডিও কর্নার', d_videos:'পছন্দের ছড়া ও গল্প দেখো',
+    m_rhymes:'ছড়ার বাগান', d_rhymes:'প্রিয় ছড়া শোনো ও পড়ো',
+    rhyme_play:'▶️ শোনাও', rhyme_stop:'⏹️ থামাও', rhyme_backList:'← সব ছড়া', rhyme_listTitle:'তোমার প্রিয় ছড়া বেছে নাও',
+    rhyme_humpty:'হাম্পটি ডাম্পটি', rhyme_twinkle:'টুইঙ্কল টুইঙ্কল লিটল স্টার', rhyme_johnny:'জনি জনি',
+    rhyme_rain:'রেইন রেইন গো অ্যাওয়ে',
     gamesTitle:'🎮 মজার গেম', gameBadge:'নতুন',
     m_bubbleocean:'বাবল ওশেন', d_bubbleocean:'বুদবুদ ফাটাও, সমুদ্রের বন্ধুদের চেনো',
     m_tinychef:'টাইনি শেফ কিচেন', d_tinychef:'নিজে নিজে মজার খাবার রান্না করো',
@@ -704,6 +752,10 @@ const I18N = {
     m_multiplication:'Times Tables', d_multiplication:'Tables from 2 to 10',
     m_sentences:'Sentence Reading', d_sentences:'Learn to read small sentences',
     m_videos:'Video Corner', d_videos:'Watch favourite rhymes and stories',
+    m_rhymes:'Rhyme Garden', d_rhymes:'Listen to and follow along with favourite rhymes',
+    rhyme_play:'▶️ Play', rhyme_stop:'⏹️ Stop', rhyme_backList:'← All rhymes', rhyme_listTitle:'Pick a favourite rhyme',
+    rhyme_humpty:'Humpty Dumpty', rhyme_twinkle:'Twinkle Twinkle Little Star', rhyme_johnny:'Johnny Johnny',
+    rhyme_rain:'Rain Rain Go Away',
     gamesTitle:'🎮 Fun Games', gameBadge:'New',
     m_bubbleocean:'Bubble Ocean', d_bubbleocean:'Pop bubbles and meet sea friends',
     m_tinychef:'Tiny Chef Kitchen', d_tinychef:'Cook fun little dishes all by yourself',
@@ -965,7 +1017,7 @@ function openDashboard(){
   const modBox = document.getElementById('dashModuleStats');
   modBox.innerHTML = '';
   const stars = childData.stars || {};
-  const LEARNING_MODULE_KEYS = ['letters','numbers','match','draw','animals','words','mathgame','english','multiplication','sentences'];
+  const LEARNING_MODULE_KEYS = ['letters','numbers','match','draw','animals','words','mathgame','english','multiplication','sentences','rhymes'];
   LEARNING_MODULE_KEYS.forEach(key=>{
     const row = document.createElement('div');
     row.className = 'stat-row';
@@ -1128,7 +1180,13 @@ const animalList = [
   ['🐱','বিড়াল','মিঁয়াও করে'],['🐝','মৌমাছি','ভনভন করে']
 ];
 
+function speakActivityIntro(){
+  if(!window.currentModule) return;
+  const msg = t('d_' + window.currentModule);
+  if(currentLang === 'en'){ speakEn(msg); } else { speak(msg); }
+}
 function openActivity(name){
+  window.currentModule = name;
   document.getElementById('activity').classList.add('open');
   document.getElementById('actTitle').textContent = moduleLabel(name);
   const body = document.getElementById('actBody');
@@ -1144,6 +1202,7 @@ function openActivity(name){
   if(name==='multiplication') buildMultiplication(body);
   if(name==='sentences') buildSentences(body);
   if(name==='videos') buildVideos(body);
+  if(name==='rhymes') buildRhymes(body);
   applyLanguage();
 }
 // ---- Games (standalone single-file apps) ----
@@ -1506,6 +1565,152 @@ function buildVideos(body){
   });
 }
 
+/* ---------- Rhymes (with word-by-word highlight voice-over) ---------- */
+const rhymesList = [
+  {
+    key:'humpty', emoji:'🥚', titleKey:'rhyme_humpty',
+    text:"Humpty Dumpty sat on a wall,\nHumpty Dumpty had a great fall.\nAll the king's horses and all the king's men,\nCouldn't put Humpty together again."
+  },
+  {
+    key:'twinkle', emoji:'⭐', titleKey:'rhyme_twinkle',
+    text:"Twinkle, twinkle, little star,\nHow I wonder what you are!\nUp above the world so high,\nLike a diamond in the sky.\nTwinkle, twinkle, little star,\nHow I wonder what you are!"
+  },
+  {
+    key:'johnny', emoji:'🧒', titleKey:'rhyme_johnny',
+    text:"Johnny, Johnny! Yes, Papa?\nEating sugar? No, Papa.\nTelling lies? No, Papa.\nOpen your mouth! Ha ha ha!"
+  },
+  {
+    key:'rain', emoji:'🌧️', titleKey:'rhyme_rain',
+    text:"Rain, rain, go away,\nCome again another day.\nLittle Johnny wants to play,\nRain, rain, go away."
+  }
+];
+let rhymePlaying = false;
+function buildRhymes(body){
+  body.innerHTML = `
+    <div class="word-sub" style="margin-bottom:10px;" data-i18n="rhyme_listTitle">তোমার প্রিয় ছড়া বেছে নাও</div>
+    <div class="rhyme-list" id="rhymeList"></div>
+    <div class="rhyme-reader" id="rhymeReader" style="display:none;">
+      <button class="tool-btn" onclick="closeRhymeReader()" data-i18n="rhyme_backList">← সব ছড়া</button>
+      <div class="rhyme-emoji-big" id="rhymeEmoji">🥚</div>
+      <h3 class="display rhyme-title" id="rhymeTitle"></h3>
+      <div class="rhyme-lines" id="rhymeLines"></div>
+      <button class="say-btn" id="rhymePlayBtn" onclick="toggleRhymePlay()" data-i18n="rhyme_play">▶️ শোনাও</button>
+    </div>
+  `;
+  const list = document.getElementById('rhymeList');
+  rhymesList.forEach((r,i)=>{
+    const card = document.createElement('div');
+    card.className = 'rhyme-card';
+    card.innerHTML = `<div class="rhyme-card-emoji">${r.emoji}</div><div class="rhyme-card-title">${t(r.titleKey)}</div>`;
+    card.onclick = ()=>openRhymeReader(i);
+    list.appendChild(card);
+  });
+}
+let currentRhymeWords = [];
+function openRhymeReader(i){
+  const r = rhymesList[i];
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  rhymePlaying = false;
+  document.getElementById('rhymeList').style.display = 'none';
+  const reader = document.getElementById('rhymeReader');
+  reader.style.display = 'flex';
+  reader.dataset.idx = i;
+  document.getElementById('rhymeEmoji').textContent = r.emoji;
+  document.getElementById('rhymeTitle').textContent = t(r.titleKey);
+  const linesWrap = document.getElementById('rhymeLines');
+  linesWrap.innerHTML = '';
+  currentRhymeWords = [];
+  let wordIdx = 0;
+  r.text.split('\n').forEach(line=>{
+    const lineEl = document.createElement('div');
+    lineEl.className = 'rhyme-line';
+    line.split(/\s+/).filter(Boolean).forEach(w=>{
+      const span = document.createElement('span');
+      span.className = 'rhyme-word';
+      span.textContent = w + ' ';
+      span.dataset.idx = wordIdx++;
+      lineEl.appendChild(span);
+    });
+    linesWrap.appendChild(lineEl);
+  });
+  const btn = document.getElementById('rhymePlayBtn');
+  btn.innerHTML = '▶️ ' + t('rhyme_play').replace('▶️ ','');
+  applyLanguage();
+}
+function closeRhymeReader(){
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  rhymePlaying = false;
+  document.getElementById('rhymeReader').style.display = 'none';
+  document.getElementById('rhymeList').style.display = 'grid';
+}
+function clearRhymeHighlight(){
+  document.querySelectorAll('.rhyme-word.active').forEach(w=>w.classList.remove('active'));
+}
+function toggleRhymePlay(){
+  if(rhymePlaying){
+    window.speechSynthesis && window.speechSynthesis.cancel();
+    rhymePlaying = false;
+    clearRhymeHighlight();
+    return;
+  }
+  const i = Number(document.getElementById('rhymeReader').dataset.idx);
+  const r = rhymesList[i];
+  playRhyme(r);
+}
+function playRhyme(r){
+  try{
+    window.speechSynthesis.cancel();
+    clearRhymeHighlight();
+    // Compute {word, start, end} char offsets to match against boundary events
+    const words = [];
+    const re = /\S+/g; let m;
+    while((m = re.exec(r.text))){ words.push({start:m.index, end:m.index+m[0].length}); }
+    const wordEls = [...document.querySelectorAll('#rhymeLines .rhyme-word')];
+    const u = new SpeechSynthesisUtterance(r.text.replace(/\n/g, '. '));
+    u.lang = 'en-US';
+    if(enVoice) u.voice = enVoice;
+    u.rate = 0.72; u.pitch = 1.12; u.volume = 1;
+    let gotBoundary = false;
+    let fallbackTimer = null;
+    u.onboundary = (ev)=>{
+      if(ev.name && ev.name !== 'word') return;
+      gotBoundary = true;
+      const idx = words.findIndex(w => ev.charIndex >= w.start && ev.charIndex < w.end);
+      if(idx >= 0 && wordEls[idx]){
+        clearRhymeHighlight();
+        wordEls[idx].classList.add('active');
+        wordEls[idx].scrollIntoView({block:'nearest', behavior:'smooth'});
+      }
+    };
+    u.onstart = ()=>{
+      rhymePlaying = true;
+      document.getElementById('rhymePlayBtn').innerHTML = '⏹️ ' + t('rhyme_stop').replace('⏹️ ','');
+      // Fallback: some mobile browsers never fire boundary events — simulate timing instead.
+      setTimeout(()=>{
+        if(!gotBoundary && rhymePlaying){
+          let wi = 0;
+          const per = Math.max(260, 3200 / Math.max(words.length,1));
+          fallbackTimer = setInterval(()=>{
+            if(wi >= wordEls.length || !rhymePlaying){ clearInterval(fallbackTimer); return; }
+            clearRhymeHighlight();
+            wordEls[wi].classList.add('active');
+            wi++;
+          }, per);
+        }
+      }, 450);
+    };
+    u.onend = ()=>{
+      rhymePlaying = false;
+      if(fallbackTimer) clearInterval(fallbackTimer);
+      clearRhymeHighlight();
+      document.getElementById('rhymePlayBtn').innerHTML = '▶️ ' + t('rhyme_play').replace('▶️ ','');
+      bump(2, 'rhymes');
+      praise();
+    };
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
 /* ---------- Matching memory game ---------- */
 function buildMatch(body){
   const emojiSet = ['🍎','🍌','🍇','🍉','🥕','🌽','🍓','🍍'];
@@ -1551,10 +1756,28 @@ function buildMatch(body){
 }
 
 /* ---------- Drawing pad ---------- */
+const EMOJI_STICKERS = ['😀','😍','🥳','🐶','🐱','🦋','🐢','🦁','🌸','🌈','⭐','❤️','🎈','☀️','🍎','⚽','🚗','🌙'];
 function buildDraw(body){
   body.innerHTML = `
     <div class="draw-wrap">
       <canvas id="canvas"></canvas>
+      <div class="tool-row" id="toolRow">
+        <button class="tool-btn tico active" data-tool="pen" onclick="setDrawTool('pen')" title="পেন">✏️</button>
+        <button class="tool-btn tico" data-tool="eraser" onclick="setDrawTool('eraser')" title="ইরেজার">🧽</button>
+        <button class="tool-btn tico" data-tool="square" onclick="setDrawTool('square')" title="বর্গক্ষেত্র">⬜</button>
+        <button class="tool-btn tico" data-tool="rect" onclick="setDrawTool('rect')" title="আয়তক্ষেত্র">▭</button>
+        <button class="tool-btn tico" data-tool="circle" onclick="setDrawTool('circle')" title="বৃত্ত">⚪</button>
+        <button class="tool-btn tico" data-tool="emoji" onclick="setDrawTool('emoji')" title="ইমোজি">😊</button>
+        <button class="tool-btn tico" id="rainbowBtn" onclick="toggleRainbow()" title="রংধনু ব্রাশ">🌈</button>
+        <button class="tool-btn tico" onclick="undoDraw()" title="আনডু">↩️</button>
+      </div>
+      <div class="emoji-pal" id="emojiPal" style="display:none;"></div>
+      <div class="size-row" id="sizeRow">
+        <button class="size-dot" data-size="4" onclick="setBrushSize(4)"><span style="width:8px;height:8px;"></span></button>
+        <button class="size-dot active" data-size="10" onclick="setBrushSize(10)"><span style="width:14px;height:14px;"></span></button>
+        <button class="size-dot" data-size="18" onclick="setBrushSize(18)"><span style="width:20px;height:20px;"></span></button>
+        <button class="size-dot" data-size="30" onclick="setBrushSize(30)"><span style="width:28px;height:28px;"></span></button>
+      </div>
       <div class="palette" id="palette"></div>
       <div class="draw-tools">
         <button class="tool-btn" style="background:var(--coral); box-shadow:0 4px 0 #d9583f;" onclick="saveToGallery()">💾 <span data-i18n="draw_save">সেভ করো</span></button>
@@ -1567,42 +1790,153 @@ function buildDraw(body){
   `;
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
+  let drawing = false, color = COLORS[0], tool = 'pen', brushSize = 10, rainbow = false;
+  let strokeStart = null, shapeSnapshot = null, history = [];
   function resize(){
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width; canvas.height = rect.height;
     ctx.fillStyle = '#fff'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    history = [];
   }
   resize();
   window.addEventListener('resize', resize, {once:false});
-  let drawing = false, color = COLORS[0];
+
+  // ---- Colour palette + custom colour picker ----
   const pal = document.getElementById('palette');
-  COLORS.concat(['#3A2E44']).forEach((c,i)=>{
+  COLORS.concat(['#3A2E44','#FFFFFF']).forEach((c,i)=>{
     const s = document.createElement('div');
     s.className='swatch' + (i===0?' active':'');
     s.style.background = c;
     s.onclick = ()=>{ color = c; [...pal.children].forEach(x=>x.classList.remove('active')); s.classList.add('active'); };
     pal.appendChild(s);
   });
+  const customWrap = document.createElement('label');
+  customWrap.className = 'swatch custom-swatch';
+  customWrap.title = 'নিজের রং বেছে নাও';
+  customWrap.innerHTML = `🎨<input type="color" id="customColor" value="#7A5CFF">`;
+  pal.appendChild(customWrap);
+  document.getElementById('customColor').addEventListener('input', (e)=>{
+    color = e.target.value;
+    [...pal.children].forEach(x=>x.classList.remove('active'));
+    customWrap.classList.add('active');
+  });
+
+  // ---- Brush size ----
+  window.setBrushSize = function(size){
+    brushSize = size;
+    document.querySelectorAll('.size-dot').forEach(d=>d.classList.toggle('active', Number(d.dataset.size)===size));
+  };
+
+  // ---- Tool switching ----
+  window.setDrawTool = function(name){
+    tool = name;
+    document.querySelectorAll('#toolRow [data-tool]').forEach(b=>b.classList.toggle('active', b.dataset.tool===name));
+    document.getElementById('emojiPal').style.display = (name==='emoji') ? 'flex' : 'none';
+  };
+  window.toggleRainbow = function(){
+    rainbow = !rainbow;
+    document.getElementById('rainbowBtn').classList.toggle('active', rainbow);
+  };
+
+  // ---- Emoji stickers ----
+  let currentEmoji = EMOJI_STICKERS[0];
+  const emojiPal = document.getElementById('emojiPal');
+  EMOJI_STICKERS.forEach((em,i)=>{
+    const b = document.createElement('button');
+    b.className = 'emoji-chip' + (i===0?' active':'');
+    b.textContent = em;
+    b.onclick = ()=>{ currentEmoji = em; [...emojiPal.children].forEach(x=>x.classList.remove('active')); b.classList.add('active'); setDrawTool('emoji'); };
+    emojiPal.appendChild(b);
+  });
+
+  // ---- Undo history ----
+  function pushHistory(){
+    try{
+      history.push(ctx.getImageData(0,0,canvas.width,canvas.height));
+      if(history.length > 15) history.shift();
+    }catch(e){}
+  }
+  window.undoDraw = function(){
+    if(!history.length) return;
+    ctx.putImageData(history.pop(), 0, 0);
+  };
+
   function pos(e){
     const rect = canvas.getBoundingClientRect();
     const t = e.touches ? e.touches[0] : e;
     return {x: t.clientX - rect.left, y: t.clientY - rect.top};
   }
-  function start(e){ drawing = true; const p = pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); }
+  function randomColor(){ return COLORS[Math.floor(Math.random()*COLORS.length)]; }
+
+  function drawShapePreview(t, s, c){
+    ctx.strokeStyle = color; ctx.lineWidth = brushSize; ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.beginPath();
+    if(t === 'square'){
+      const side = Math.max(Math.abs(c.x-s.x), Math.abs(c.y-s.y));
+      const sx = c.x < s.x ? s.x - side : s.x;
+      const sy = c.y < s.y ? s.y - side : s.y;
+      ctx.strokeRect(sx, sy, side, side);
+    } else if(t === 'rect'){
+      ctx.strokeRect(Math.min(s.x,c.x), Math.min(s.y,c.y), Math.abs(c.x-s.x), Math.abs(c.y-s.y));
+    } else if(t === 'circle'){
+      const rx = Math.abs(c.x-s.x)/2, ry = Math.abs(c.y-s.y)/2;
+      const cx = (s.x+c.x)/2, cy = (s.y+c.y)/2;
+      ctx.ellipse(cx, cy, Math.max(rx,1), Math.max(ry,1), 0, 0, Math.PI*2);
+      ctx.stroke();
+    }
+  }
+
+  function start(e){
+    const p = pos(e);
+    if(tool === 'emoji'){
+      pushHistory();
+      ctx.font = `${brushSize*3.4}px sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(currentEmoji, p.x, p.y);
+      bump(1, 'draw');
+      e.preventDefault();
+      return;
+    }
+    drawing = true;
+    pushHistory();
+    strokeStart = p;
+    if(tool === 'square' || tool === 'rect' || tool === 'circle'){
+      shapeSnapshot = ctx.getImageData(0,0,canvas.width,canvas.height);
+    } else {
+      if(rainbow && tool === 'pen') color = randomColor();
+      ctx.beginPath(); ctx.moveTo(p.x,p.y);
+    }
+    e.preventDefault();
+  }
   function move(e){
     if(!drawing) return;
     const p = pos(e);
-    ctx.lineTo(p.x,p.y); ctx.strokeStyle = color; ctx.lineWidth = 10; ctx.lineCap='round'; ctx.lineJoin='round';
-    ctx.stroke(); e.preventDefault();
+    if(tool === 'square' || tool === 'rect' || tool === 'circle'){
+      if(shapeSnapshot) ctx.putImageData(shapeSnapshot, 0, 0);
+      drawShapePreview(tool, strokeStart, p);
+    } else {
+      ctx.lineTo(p.x,p.y);
+      ctx.strokeStyle = (tool === 'eraser') ? '#ffffff' : color;
+      ctx.lineWidth = (tool === 'eraser') ? brushSize * 2.4 : brushSize;
+      ctx.lineCap='round'; ctx.lineJoin='round';
+      ctx.stroke();
+    }
+    e.preventDefault();
   }
-  function end(){ if(drawing){ drawing=false; bump(1, 'draw'); } }
+  function end(){
+    if(drawing){
+      drawing = false;
+      shapeSnapshot = null;
+      bump(1, 'draw');
+    }
+  }
   canvas.addEventListener('mousedown', start);
   canvas.addEventListener('mousemove', move);
   window.addEventListener('mouseup', end);
   canvas.addEventListener('touchstart', start, {passive:false});
   canvas.addEventListener('touchmove', move, {passive:false});
   canvas.addEventListener('touchend', end);
-  window.clearCanvas = function(){ ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height); };
+  window.clearCanvas = function(){ pushHistory(); ctx.fillStyle='#fff'; ctx.fillRect(0,0,canvas.width,canvas.height); };
   window.saveToGallery = function(){
     const dataUrl = canvas.toDataURL('image/png');
     // সবসময় লোকাল ডাউনলোড লিংক হিসেবে রাখা হয় — সাথে সাথে সেভ হয়, কোনো ইন্টারনেট লাগে না
