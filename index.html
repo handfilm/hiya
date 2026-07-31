@@ -246,6 +246,9 @@
   .emoji-chip.active{background:var(--glass-hi); border-color:var(--glass-brd);}
 
   /* Word reading */
+  .syllabus-badge{font-family:'Hind Siliguri', sans-serif; font-size:11.5px; font-weight:700;
+    color:var(--leaf-dark); background:rgba(47,214,115,.14); border:1px solid rgba(47,214,115,.4);
+    border-radius:14px; padding:4px 10px; white-space:nowrap;}
   .syll-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:14px 0 4px;}
   .syll{font-family:'Baloo Da 2', sans-serif; font-weight:800; font-size:clamp(30px,9vw,46px); color:#fff;
     padding:10px 18px; border-radius:16px; box-shadow:0 8px 18px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.3); cursor:pointer;}
@@ -590,6 +593,7 @@
   <div class="topbar">
     <button class="backBtn labeled" onclick="closeActivity()">← <span data-i18n="drawerHome">হোম</span></button>
     <h2 id="actTitle">শিরোনাম</h2>
+    <span id="actSyllabusBadge" class="syllabus-badge" style="display:none;"></span>
     <button class="listen-btn" onclick="speakActivityIntro()" title="শোনো">🔊</button>
     <div class="stars">⭐ <span id="starCount">0</span></div>
   </div>
@@ -643,6 +647,10 @@
 <script src="https://bot.handsandhead.com/chat-widget.js"></script>
 
 <div class="praise" id="praise">দারুণ হয়েছে! 🎉</div>
+
+<!-- ---------- Curriculum content: rhymes, letters, words, videos, syllabus tags ----------
+     Kept in its own file so content can grow without touching app logic below. -->
+<script src="content-data.js"></script>
 
 <script>
 // ================= Firebase setup =================
@@ -1103,82 +1111,12 @@ function speak(text, opts){
 
 const COLORS = ['#FF6B6B','#22C55E','#2E9CFF','#FFCF56','#B98CE0','#FF9F43','#C6F135'];
 
-const letters = [
-  // স্বরবর্ণ (১১টি)
-  ['অ','অজগর'],['আ','আম'],['ই','ইলিশ'],['ঈ','ঈগল'],['উ','উট'],['ঊ','ঊষা'],
-  ['ঋ','ঋষি'],['এ','একতারা'],['ঐ','ঐরাবত'],['ও','ওল'],['ঔ','ঔষধ'],
-  // ব্যঞ্জনবর্ণ (৩৯টি)
-  ['ক','কলম'],['খ','খরগোশ'],['গ','গরু'],['ঘ','ঘড়ি'],['ঙ','কাঙারু'],
-  ['চ','চাঁদ'],['ছ','ছাতা'],['জ','জাহাজ'],['ঝ','ঝুড়ি'],['ঞ','বিজ্ঞান'],
-  ['ট','টমেটো'],['ঠ','ঠোঁট'],['ড','ডাব'],['ঢ','ঢোল'],['ণ','বাণ'],
-  ['ত','তাল'],['থ','থালা'],['দ','দই'],['ধ','ধান'],['ন','নদী'],
-  ['প','পাখি'],['ফ','ফুল'],['ব','বই'],['ভ','ভালুক'],['ম','মাছ'],
-  ['য','যমুনা'],['র','রথ'],['ল','লাল'],['শ','শাক'],['ষ','ষাঁড়'],
-  ['স','সাপ'],['হ','হাতি'],['ড়','বড়ই'],['ঢ়','আষাঢ়'],['য়','নয়'],['ৎ','সৎ']
-];
-
-const wordList = [
-  {word:'মা', syll:['মা'], emoji:'👩'},
-  {word:'বাবা', syll:['বা','বা'], emoji:'👨'},
-  {word:'আম', syll:['আ','ম'], emoji:'🥭'},
-  {word:'জল', syll:['জ','ল'], emoji:'💧'},
-  {word:'ফল', syll:['ফ','ল'], emoji:'🍎'},
-  {word:'কলা', syll:['ক','লা'], emoji:'🍌'},
-  {word:'মাছ', syll:['মা','ছ'], emoji:'🐟'},
-  {word:'হাত', syll:['হা','ত'], emoji:'✋'},
-  {word:'বই', syll:['ব','ই'], emoji:'📚'},
-  {word:'টমেটো', syll:['ট','মে','টো'], emoji:'🍅'}
-];
-
-const englishLetters = [
-  ['A','Apple','🍎'],['B','Ball','⚽'],['C','Cat','🐱'],['D','Dog','🐶'],['E','Elephant','🐘'],
-  ['F','Fish','🐟'],['G','Goat','🐐'],['H','Hat','🎩'],['I','Ice cream','🍦'],['J','Jug','🫙'],
-  ['K','Kite','🪁'],['L','Lion','🦁'],['M','Moon','🌙'],['N','Nest','🪺'],['O','Orange','🍊'],
-  ['P','Parrot','🦜'],['Q','Queen','👑'],['R','Rabbit','🐇'],['S','Sun','☀️'],['T','Tiger','🐯'],
-  ['U','Umbrella','☂️'],['V','Van','🚐'],['W','Watch','⌚'],['X','Xylophone','🎼'],['Y','Yak','🐂'],['Z','Zebra','🦓']
-];
-
-const sentenceList = [
-  {text:'মা আমাকে ভালোবাসে', emoji:'❤️'},
-  {text:'আমি স্কুলে যাই', emoji:'🎒'},
-  {text:'সূর্য পূর্ব দিকে ওঠে', emoji:'🌅'},
-  {text:'আমরা বই পড়ি', emoji:'📖'},
-  {text:'বাবা অফিসে যান', emoji:'💼'},
-  {text:'পাখিরা আকাশে ওড়ে', emoji:'🐦'},
-  {text:'আমার একটা লাল বল আছে', emoji:'🔴'},
-  {text:'আমরা একসাথে খেলি', emoji:'🤝'}
-];
-
-/* Parent tip: add more curated videos/playlists here.
-   - type:'video' → single video, id is the YouTube video ID
-   - type:'playlist' → a whole curated playlist embedded natively (full YouTube controls, native "up next"
-     queue), without embedding an entire channel page (YouTube does not allow channel pages to be framed) */
-const videoSections = [
-  {
-    tag:'সিসিমপুর', tagEn:'Sisimpur',
-    channel:'Sisimpur',
-    items:[
-      {type:'video', title:'সিসিমপুর পরিবার - পর্ব ১', id:'M341Hd0Lzew'},
-      {type:'video', title:'সিসিমপুর পরিবার - পর্ব ২', id:'djE_hSAA2wg'},
-      {type:'video', title:'সিসিমপুরের মজার ঘটনা', id:'ZE-4Hm7u1es'}
-    ]
-  },
-  {
-    tag:'Kids Diana Show', tagEn:'Kids Diana Show',
-    channel:'Kids Diana Show',
-    items:[
-      {type:'playlist', title:'Kids Diana Show — Playlist', listId:'PLsmeyw-Rsn1md2BhG8CmArhVJwiXqZi--'}
-    ]
-  }
-];
+// NOTE: letters, wordList, englishLetters, sentenceList, videoSections,
+// animalList and SYLLABUS_TAGS now live in content-data.js (loaded via
+// <script src="content-data.js"> before this script tag). Add new rhymes,
+// words, or syllabus tags there — this file should stay logic-only.
 
 let drawGallery = []; // in-memory only for this session — each save creates a real downloadable PNG
-
-const animalList = [
-  ['🦁','সিংহ','গর্জন করে'],['🐄','গরু','হাম্বা ডাকে'],['🐘','হাতি','বড় শুঁড় আছে'],
-  ['🐦','পাখি','কিচিরমিচির করে'],['🐸','ব্যাঙ','ঘ্যাঙঘ্যাঙ ডাকে'],['🐕','কুকুর','ঘেউঘেউ করে'],
-  ['🐱','বিড়াল','মিঁয়াও করে'],['🐝','মৌমাছি','ভনভন করে']
-];
 
 function speakActivityIntro(){
   if(!window.currentModule) return;
@@ -1189,6 +1127,16 @@ function openActivity(name){
   window.currentModule = name;
   document.getElementById('activity').classList.add('open');
   document.getElementById('actTitle').textContent = moduleLabel(name);
+  // Syllabus badge: only shown once SYLLABUS_TAGS[name].source has actually
+  // been filled in (see content-data.js) — never show it speculatively.
+  const badge = document.getElementById('actSyllabusBadge');
+  const tag = (typeof SYLLABUS_TAGS !== 'undefined') && SYLLABUS_TAGS[name];
+  if(tag && tag.source){
+    badge.textContent = '✓ ' + tag.source;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
   const body = document.getElementById('actBody');
   body.innerHTML = '';
   if(name==='letters') buildLetters(body);
@@ -1565,25 +1513,9 @@ function buildVideos(body){
   });
 }
 
-/* ---------- Rhymes (with word-by-word highlight voice-over) ---------- */
-const rhymesList = [
-  {
-    key:'humpty', emoji:'🥚', titleKey:'rhyme_humpty',
-    text:"Humpty Dumpty sat on a wall,\nHumpty Dumpty had a great fall.\nAll the king's horses and all the king's men,\nCouldn't put Humpty together again."
-  },
-  {
-    key:'twinkle', emoji:'⭐', titleKey:'rhyme_twinkle',
-    text:"Twinkle, twinkle, little star,\nHow I wonder what you are!\nUp above the world so high,\nLike a diamond in the sky.\nTwinkle, twinkle, little star,\nHow I wonder what you are!"
-  },
-  {
-    key:'johnny', emoji:'🧒', titleKey:'rhyme_johnny',
-    text:"Johnny, Johnny! Yes, Papa?\nEating sugar? No, Papa.\nTelling lies? No, Papa.\nOpen your mouth! Ha ha ha!"
-  },
-  {
-    key:'rain', emoji:'🌧️', titleKey:'rhyme_rain',
-    text:"Rain, rain, go away,\nCome again another day.\nLittle Johnny wants to play,\nRain, rain, go away."
-  }
-];
+/* ---------- Rhymes (with word-by-word highlight voice-over) ----------
+   rhymesList itself now lives in content-data.js — see the note there
+   about adding Bangla chora alongside the current English-only rhymes. */
 let rhymePlaying = false;
 function buildRhymes(body){
   body.innerHTML = `
