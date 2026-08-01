@@ -622,6 +622,22 @@
         <option value="kg" data-i18n="level_kg">কেজি (KG)</option>
         <option value="class1" data-i18n="level_class1">ক্লাস ১ (Standard 1)</option>
       </select>
+      <p style="font-size:13px; opacity:.6; margin:14px 0 10px;" data-i18n="dashTermHint">এই টার্মে কতটুকু শেখা হয়েছে তার উপর ভিত্তি করে অক্ষর/সংখ্যা মডিউলে দেখানো কনটেন্টের পরিমাণ ঠিক হবে</p>
+      <select class="field" id="dashTermSelect" style="margin-bottom:0;" onchange="handleTermChange(this.value)">
+        <option value="midTerm" data-i18n="term_midTerm">মিড টার্ম / অর্ধবার্ষিক</option>
+        <option value="finalTerm" data-i18n="term_finalTerm">ফাইনাল টার্ম / বার্ষিক</option>
+      </select>
+    </div>
+    <div class="dash-card" id="curriculumCard">
+      <h3 data-i18n="dashCurriculumTitle">📘 স্কুল সিলেবাস</h3>
+      <p style="font-size:13px; opacity:.6; margin:0 0 10px;" data-i18n="dashCurriculumHint">তোমার স্কুলের প্রকৃত সিলেবাস অনুযায়ী কোন টার্মে কোন বিষয়ে কী পড়ানো হয় দেখো</p>
+      <div class="select-row" style="margin-bottom:10px;">
+        <select class="field" id="currLevelSelect" style="margin-bottom:0;" onchange="onCurriculumLevelChange()"></select>
+        <select class="field" id="currTermSelect" style="margin-bottom:0;" onchange="onCurriculumTermChange()"></select>
+      </div>
+      <select class="field" id="currSubjectSelect" onchange="renderCurriculumContent()"></select>
+      <div id="curriculumContent"></div>
+      <div class="empty-note" id="curriculumEmpty" style="display:none;" data-i18n="dashCurriculumEmpty">এই লেভেলের সিলেবাস এখনো যোগ করা হয়নি</div>
     </div>
     <div class="dash-card">
       <h3 data-i18n="dashProgressTitle">বিষয়ভিত্তিক অগ্রগতি</h3>
@@ -706,7 +722,14 @@ const I18N = {
     m_rhymes:'ছড়ার বাগান', d_rhymes:'প্রিয় ছড়া শোনো ও পড়ো',
     rhyme_play:'▶️ শোনাও', rhyme_stop:'⏹️ থামাও', rhyme_backList:'← সব ছড়া', rhyme_listTitle:'তোমার প্রিয় ছড়া বেছে নাও',
     rhyme_humpty:'হাম্পটি ডাম্পটি', rhyme_twinkle:'টুইঙ্কল টুইঙ্কল লিটল স্টার', rhyme_johnny:'জনি জনি',
-    rhyme_rain:'রেইন রেইন গো অ্যাওয়ে',
+    rhyme_rain:'রেইন রেইন গো অ্যাওয়ে', rhyme_syllabusBadge:'সিলেবাসে আছে',
+    rhyme_noSyllabusMatch:'এই ক্লাসের জন্য এখনো নির্দিষ্ট ছড়া যোগ হয়নি — পুরো তালিকা দেখানো হচ্ছে',
+    rhyme_baabaa:'বা বা ব্ল্যাক শিপ', rhyme_jackjill:'জ্যাক অ্যান্ড জিল', rhyme_onetwo:'ওয়ান টু বাকল মাই শু',
+    rhyme_pussycat:'পুসি ক্যাট পুসি ক্যাট', rhyme_tenfingers:'টেন লিটল ফিঙ্গারস', rhyme_cobbler:'কবলার কবলার',
+    rhyme_teddybear:'টেডি বিয়ার টেডি বিয়ার', rhyme_dingdong:'ডিং ডং বেল', rhyme_thirtydays:'থার্টি ডেজ হ্যাভ সেপ্টেম্বর',
+    rhyme_jackhorner:'লিটল জ্যাক হর্নার', rhyme_peterpumpkin:'পিটার পিটার পাম্পকিন ইটার', rhyme_byebaby:'বাই বেবি বান্টিং',
+    rhyme_enginenine:'এঞ্জিন এঞ্জিন নাম্বার নাইন', rhyme_aresleeping:'আর ইউ স্লিপিং',
+    rhyme_hattima:'হাট্টিমা টিম টিম', rhyme_chadmama:'আয় আয় চাঁদ মামা',
     gamesTitle:'🎮 মজার গেম', gameBadge:'নতুন',
     m_bubbleocean:'বাবল ওশেন', d_bubbleocean:'বুদবুদ ফাটাও, সমুদ্রের বন্ধুদের চেনো',
     m_tinychef:'টাইনি শেফ কিচেন', d_tinychef:'নিজে নিজে মজার খাবার রান্না করো',
@@ -715,6 +738,10 @@ const I18N = {
     m_melodyfarm:'মেলোডি ফার্ম', d_melodyfarm:'খামারের প্রাণী দিয়ে গান বাজাও',
     dashAgeLbl:'বয়স', dashStreamLbl:'স্ট্রিম', dashStarsLbl:'মোট স্টার',
     dashLevelTitle:'ক্লাস / লেভেল', dashLevelHint:'লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে',
+    dashTermHint:'এই টার্মে কতটুকু শেখা হয়েছে তার উপর ভিত্তি করে অক্ষর/সংখ্যা মডিউলে দেখানো কনটেন্টের পরিমাণ ঠিক হবে',
+    term_midTerm:'মিড টার্ম / অর্ধবার্ষিক', term_finalTerm:'ফাইনাল টার্ম / বার্ষিক',
+    dashCurriculumTitle:'📘 স্কুল সিলেবাস', dashCurriculumHint:'তোমার স্কুলের প্রকৃত সিলেবাস অনুযায়ী কোন টার্মে কোন বিষয়ে কী পড়ানো হয় দেখো',
+    dashCurriculumEmpty:'এই লেভেলের সিলেবাস এখনো যোগ করা হয়নি',
     dashProgressTitle:'বিষয়ভিত্তিক অগ্রগতি', dashGalleryTitle:'আঁকা ছবির গ্যালারি', dashGalleryEmptyTxt:'এখনো কোনো ছবি নেই',
     dashGamesTitle:'🎮 গেম অগ্রগতি', dashGameNotPlayed:'এখনো খেলা হয়নি',
     appTitleChild:'{name}র বাগান',
@@ -763,7 +790,14 @@ const I18N = {
     m_rhymes:'Rhyme Garden', d_rhymes:'Listen to and follow along with favourite rhymes',
     rhyme_play:'▶️ Play', rhyme_stop:'⏹️ Stop', rhyme_backList:'← All rhymes', rhyme_listTitle:'Pick a favourite rhyme',
     rhyme_humpty:'Humpty Dumpty', rhyme_twinkle:'Twinkle Twinkle Little Star', rhyme_johnny:'Johnny Johnny',
-    rhyme_rain:'Rain Rain Go Away',
+    rhyme_rain:'Rain Rain Go Away', rhyme_syllabusBadge:'In syllabus',
+    rhyme_noSyllabusMatch:'No rhymes mapped for this class yet — showing the full list',
+    rhyme_baabaa:'Baa Baa Black Sheep', rhyme_jackjill:'Jack and Jill', rhyme_onetwo:'One Two Buckle My Shoe',
+    rhyme_pussycat:'Pussy Cat Pussy Cat', rhyme_tenfingers:'Ten Little Fingers', rhyme_cobbler:'Cobbler Cobbler',
+    rhyme_teddybear:'Teddy Bear Teddy Bear', rhyme_dingdong:'Ding Dong Bell', rhyme_thirtydays:'Thirty Days Have September',
+    rhyme_jackhorner:'Little Jack Horner', rhyme_peterpumpkin:'Peter Peter Pumpkin-Eater', rhyme_byebaby:'Bye Baby Bunting',
+    rhyme_enginenine:'Engine Engine Number Nine', rhyme_aresleeping:'Are You Sleeping',
+    rhyme_hattima:'Hattima Tim Tim', rhyme_chadmama:'Aay Aay Chad Mama',
     gamesTitle:'🎮 Fun Games', gameBadge:'New',
     m_bubbleocean:'Bubble Ocean', d_bubbleocean:'Pop bubbles and meet sea friends',
     m_tinychef:'Tiny Chef Kitchen', d_tinychef:'Cook fun little dishes all by yourself',
@@ -772,6 +806,10 @@ const I18N = {
     m_melodyfarm:'Melody Farm', d_melodyfarm:'Play music with the farm animals',
     dashAgeLbl:'Age', dashStreamLbl:'Stream', dashStarsLbl:'Total stars',
     dashLevelTitle:'Class / Level', dashLevelHint:"Changing the level will show modules suited to the child's age on the home screen",
+    dashTermHint:"How much has been taught this term decides how much content shows in the letters/numbers modules",
+    term_midTerm:'Mid Term / Half-Yearly', term_finalTerm:'Final Term / Annual',
+    dashCurriculumTitle:'📘 School Syllabus', dashCurriculumHint:'See exactly what your school teaches, by term and subject, from the real syllabus',
+    dashCurriculumEmpty:'Syllabus for this level has not been added yet',
     dashProgressTitle:'Progress by module', dashGalleryTitle:'Drawing gallery', dashGalleryEmptyTxt:'No pictures yet',
     dashGamesTitle:'🎮 Game progress', dashGameNotPlayed:'Not played yet',
     appTitleChild:"{name}'s Garden",
@@ -968,6 +1006,7 @@ auth.onAuthStateChanged(async (user)=>{
   const doc = await db.collection('users').doc(user.uid).get();
   if(doc.exists && doc.data().childName){
     childData = doc.data();
+    if(!childData.term) childData.term = 'midTerm'; // accounts created before term existed
     showHome();
   } else {
     document.getElementById('setupScreen').style.display='flex';
@@ -982,7 +1021,7 @@ function handleSetupSubmit(){
   const level = document.getElementById('setupLevel').value;
   const errEl = document.getElementById('setupError');
   if(!name || !age){ errEl.textContent = t('err_setupRequired'); return; }
-  childData = { childName:name, childAge:Number(age), stream, level, stars:{}, totalStars:0, galleryUrls:[] };
+  childData = { childName:name, childAge:Number(age), stream, level, term:'midTerm', stars:{}, totalStars:0, galleryUrls:[] };
   db.collection('users').doc(currentUser.uid).set(childData)
     .then(()=>{ document.getElementById('setupScreen').style.display='none'; showHome(); })
     .catch(()=>{ errEl.textContent = t('err_setupSave'); });
@@ -1013,6 +1052,73 @@ function persistProgress(){
   }, 800);
 }
 
+// ================= Curriculum (syllabus) browser =================
+// Renders CURRICULUM[level][term][subject] (from content-data.js) into
+// readable HTML. Written generically so it works whether a subject is a
+// simple {topics:[...]} list (nursery/kg/class1) or a richer nested object
+// (playgroup's shape) — new levels/subjects need no code changes, only data.
+function labelizeKey(key){
+  return key.replace(/([A-Z])/g, ' $1').replace(/^./, s=>s.toUpperCase()).replace(/_/g,' ');
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function renderCurriculumNode(node){
+  if(Array.isArray(node)){
+    return '<ul class="curr-list">' + node.map(item=>`<li>${escapeHtml(item)}</li>`).join('') + '</ul>';
+  }
+  if(node && typeof node === 'object'){
+    return Object.entries(node).map(([k,v])=>
+      `<div class="curr-field"><strong>${escapeHtml(labelizeKey(k))}:</strong> ${renderCurriculumNode(v)}</div>`
+    ).join('');
+  }
+  return `<span>${escapeHtml(node)}</span>`;
+}
+function curriculumLevels(){
+  return LEVEL_ORDER.filter(lv => CURRICULUM && CURRICULUM[lv]);
+}
+function initCurriculumBrowser(){
+  const levelSel = document.getElementById('currLevelSelect');
+  const levels = curriculumLevels();
+  levelSel.innerHTML = levels.map(lv=>`<option value="${lv}">${LEVEL_LABELS[lv]||lv}</option>`).join('');
+  const preferred = (childData && childData.level && levels.includes(childData.level)) ? childData.level : levels[0];
+  levelSel.value = preferred;
+  onCurriculumLevelChange();
+}
+function onCurriculumLevelChange(){
+  const level = document.getElementById('currLevelSelect').value;
+  const termSel = document.getElementById('currTermSelect');
+  const terms = Object.keys((CURRICULUM && CURRICULUM[level]) || {});
+  termSel.innerHTML = terms.map(tm=>{
+    const label = (CURRICULUM_TERM_LABELS[tm] && CURRICULUM_TERM_LABELS[tm][currentLang]) || tm;
+    return `<option value="${tm}">${label}</option>`;
+  }).join('');
+  onCurriculumTermChange();
+}
+function onCurriculumTermChange(){
+  const level = document.getElementById('currLevelSelect').value;
+  const term = document.getElementById('currTermSelect').value;
+  const subjSel = document.getElementById('currSubjectSelect');
+  const subjects = Object.keys((CURRICULUM[level] && CURRICULUM[level][term]) || {});
+  subjSel.innerHTML = subjects.map(sub=>`<option value="${sub}">${SUBJECT_LABELS[sub]||labelizeKey(sub)}</option>`).join('');
+  renderCurriculumContent();
+}
+function renderCurriculumContent(){
+  const level = document.getElementById('currLevelSelect').value;
+  const term = document.getElementById('currTermSelect').value;
+  const subject = document.getElementById('currSubjectSelect').value;
+  const box = document.getElementById('curriculumContent');
+  const emptyNote = document.getElementById('curriculumEmpty');
+  const data = CURRICULUM[level] && CURRICULUM[level][term] && CURRICULUM[level][term][subject];
+  if(!data){
+    box.innerHTML = '';
+    emptyNote.style.display = 'block';
+    return;
+  }
+  emptyNote.style.display = 'none';
+  box.innerHTML = renderCurriculumNode(data);
+}
+
 // ================= Parent dashboard =================
 function openDashboard(){
   if(!childData) return;
@@ -1021,7 +1127,9 @@ function openDashboard(){
   document.getElementById('dashStream').textContent = streamLabel(childData.stream) || childData.stream;
   document.getElementById('dashTotalStars').textContent = '⭐ ' + (childData.totalStars||0);
   document.getElementById('dashLevelSelect').value = childData.level || 'playgroup';
+  document.getElementById('dashTermSelect').value = childData.term || 'midTerm';
   document.getElementById('dashTitle').textContent = t('drawerDashboard');
+  initCurriculumBrowser();
   const modBox = document.getElementById('dashModuleStats');
   modBox.innerHTML = '';
   const stars = childData.stars || {};
@@ -1055,6 +1163,19 @@ function handleLevelChange(newLevel){
   childData.level = newLevel;
   if(currentUser) db.collection('users').doc(currentUser.uid).update({level:newLevel}).catch(e=>console.error('level save failed', e));
   filterHomeByLevel();
+}
+// Term (mid/final) doesn't change which modules are visible on Home (that's
+// level's job) — it changes how much content INSIDE a module is shown
+// (e.g. letters A–L in midTerm vs A–Z by finalTerm). So this just persists
+// the term and, if an activity is currently open, re-renders it against the
+// new term's syllabus range.
+function handleTermChange(newTerm){
+  if(!childData) return;
+  childData.term = newTerm;
+  if(currentUser) db.collection('users').doc(currentUser.uid).update({term:newTerm}).catch(e=>console.error('term save failed', e));
+  if(window.currentModule && document.getElementById('activity').classList.contains('open')){
+    openActivity(window.currentModule);
+  }
 }
 
 let stars = 0;
@@ -1094,8 +1215,35 @@ function pickVoices(){
 pickVoices();
 if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = pickVoices;
 
+// ---- Sound diagnostics ----
+// Root cause of "no sound anywhere in the app": every speak() call was
+// wrapped in try{}catch(e){} with the error swallowed, so a device with no
+// TTS engine/voices installed (common on stripped-down Android WebViews)
+// fails completely silently — nothing plays and nothing tells the parent
+// why. This surfaces that state once, with an actionable message, instead
+// of leaving it looking like a random bug.
+let soundWarned = false;
+function warnNoSound(){
+  if(soundWarned) return;
+  soundWarned = true;
+  const el = document.createElement('div');
+  el.id = 'soundWarning';
+  el.style.cssText = 'position:fixed; left:12px; right:12px; bottom:12px; z-index:9999; background:#FFF3CD; color:#7a5b00; border:1px solid #E8C468; border-radius:12px; padding:10px 14px; font-size:13px; box-shadow:0 4px 14px rgba(0,0,0,.15);';
+  el.innerHTML = '🔇 এই ডিভাইসে ভয়েস (Text-to-Speech) পাওয়া যাচ্ছে না, তাই কোনো শব্দ শোনা যাচ্ছে না। Android-এ Settings → System → Languages → Text-to-speech output থেকে "Google Text-to-Speech" ইনস্টল/চালু আছে কিনা দেখুন। <span style="float:right; cursor:pointer; font-weight:700;" onclick="document.getElementById(\'soundWarning\').remove()">✕</span>';
+  document.body.appendChild(el);
+}
+function checkSoundAvailable(){
+  if(!window.speechSynthesis){ warnNoSound(); return; }
+  setTimeout(()=>{
+    const voices = window.speechSynthesis.getVoices();
+    if(!voices || !voices.length) warnNoSound();
+  }, 1200);
+}
+checkSoundAvailable();
+
 function speak(text, opts){
   try{
+    if(!window.speechSynthesis){ warnNoSound(); return; }
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'bn-BD';
     if(bnVoice) u.voice = bnVoice;
@@ -1104,9 +1252,10 @@ function speak(text, opts){
     u.rate = (opts && opts.rate) || 0.78;
     u.pitch = (opts && opts.pitch) || 1.04;
     u.volume = 1;
+    u.onerror = warnNoSound;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
-  }catch(e){}
+  }catch(e){ warnNoSound(); }
 }
 
 const COLORS = ['#FF6B6B','#22C55E','#2E9CFF','#FFCF56','#B98CE0','#FF9F43','#C6F135'];
@@ -1171,15 +1320,20 @@ function closeActivity(){
 /* ---------- Letters ---------- */
 function buildLetters(body){
   let idx = 0;
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const ranges = (typeof getSyllabusRanges === 'function') ? getSyllabusRanges(level, term) : null;
+  const ceiling = ranges ? ranges.banglaLetterCeiling : letters.length - 1;
+  const activeLetters = letters.slice(0, ceiling + 1);
   body.innerHTML = `
-    <div class="stage" id="letterStage" style="background:${COLORS[0]}">${letters[0][0]}</div>
-    <div class="word-label" id="letterWord">${letters[0][1]}</div>
-    <div class="word-sub">তে ${letters[0][1]}</div>
+    <div class="stage" id="letterStage" style="background:${COLORS[0]}">${activeLetters[0][0]}</div>
+    <div class="word-label" id="letterWord">${activeLetters[0][1]}</div>
+    <div class="word-sub">তে ${activeLetters[0][1]}</div>
     <button class="say-btn" onclick="sayLetter()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="letterGrid"></div>
   `;
   const grid = document.getElementById('letterGrid');
-  letters.forEach((l,i)=>{
+  activeLetters.forEach((l,i)=>{
     const b = document.createElement('button');
     b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = l[0];
     b.onclick = ()=>showLetter(i);
@@ -1188,21 +1342,25 @@ function buildLetters(body){
   window.showLetter = function(i){
     idx = i;
     const stage = document.getElementById('letterStage');
-    stage.textContent = letters[i][0];
+    stage.textContent = activeLetters[i][0];
     stage.style.background = COLORS[i%COLORS.length];
     stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
-    document.getElementById('letterWord').textContent = letters[i][1];
-    speak(letters[i][0] + ', ' + letters[i][1]);
+    document.getElementById('letterWord').textContent = activeLetters[i][1];
+    speak(activeLetters[i][0] + ', ' + activeLetters[i][1]);
     bump(1, 'letters');
   };
-  window.sayLetter = function(){ speak(letters[idx][0] + ', ' + letters[idx][1]); };
+  window.sayLetter = function(){ speak(activeLetters[idx][0] + ', ' + activeLetters[idx][1]); };
 }
 
 /* ---------- Numbers ---------- */
 function buildNumbers(body){
   let n = 1;
   const level = (childData && childData.level) || 'playgroup';
-  const maxNum = {playgroup:10, nursery:20, kg:50, class1:100}[level] || 20;
+  const term = (childData && childData.term) || 'midTerm';
+  const ranges = (typeof getSyllabusRanges === 'function') ? getSyllabusRanges(level, term) : null;
+  // Falls back to the old level-only defaults if a syllabus number range
+  // couldn't be parsed for this level/term.
+  const maxNum = (ranges && ranges.numberMax) || {playgroup:10, nursery:20, kg:50, class1:100}[level] || 20;
   body.innerHTML = `
     <div class="stage" id="numStage" style="background:${COLORS[0]}">${digitsOf(1)}</div>
     <div id="beeRow" style="font-size:26px; letter-spacing:3px; margin:8px 0 4px; min-height:40px; max-width:280px; text-align:center;"></div>
@@ -1368,15 +1526,20 @@ function buildMath(body){
 /* ---------- English alphabet (ABC গার্ডেন) ---------- */
 function buildEnglish(body){
   let idx = 0;
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const ranges = (typeof getSyllabusRanges === 'function') ? getSyllabusRanges(level, term) : null;
+  const ceiling = ranges ? ranges.englishLetterCeiling : englishLetters.length - 1;
+  const activeLetters = englishLetters.slice(0, ceiling + 1);
   body.innerHTML = `
-    <div class="stage" id="engStage" style="background:${COLORS[0]}; font-size:clamp(60px,18vw,110px);">${englishLetters[0][2]}</div>
+    <div class="stage" id="engStage" style="background:${COLORS[0]}; font-size:clamp(60px,18vw,110px);">${activeLetters[0][2]}</div>
     <div class="word-label" id="engLetter">A</div>
     <div class="word-sub" id="engWord">Apple</div>
     <button class="say-btn" onclick="sayEng()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="engGrid"></div>
   `;
   const grid = document.getElementById('engGrid');
-  englishLetters.forEach((l,i)=>{
+  activeLetters.forEach((l,i)=>{
     const b = document.createElement('button');
     b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = l[0];
     b.onclick = ()=>showEng(i);
@@ -1385,27 +1548,29 @@ function buildEnglish(body){
   window.showEng = function(i){
     idx = i;
     const stage = document.getElementById('engStage');
-    stage.textContent = englishLetters[i][2];
+    stage.textContent = activeLetters[i][2];
     stage.style.background = COLORS[i%COLORS.length];
     stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
-    document.getElementById('engLetter').textContent = englishLetters[i][0];
-    document.getElementById('engWord').textContent = englishLetters[i][1];
-    speakEn(englishLetters[i][0] + ', for ' + englishLetters[i][1]);
+    document.getElementById('engLetter').textContent = activeLetters[i][0];
+    document.getElementById('engWord').textContent = activeLetters[i][1];
+    speakEn(activeLetters[i][0] + ', for ' + activeLetters[i][1]);
     bump(1, 'english');
   };
-  window.sayEng = function(){ speakEn(englishLetters[idx][0] + ', for ' + englishLetters[idx][1]); };
+  window.sayEng = function(){ speakEn(activeLetters[idx][0] + ', for ' + activeLetters[idx][1]); };
 }
 function speakEn(text, opts){
   try{
+    if(!window.speechSynthesis){ warnNoSound(); return; }
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'en-US';
     if(enVoice) u.voice = enVoice;
     u.rate = (opts && opts.rate) || 0.8;
     u.pitch = (opts && opts.pitch) || 1.03;
     u.volume = 1;
+    u.onerror = warnNoSound;
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
-  }catch(e){}
+  }catch(e){ warnNoSound(); }
 }
 
 // ---- Warm welcome + simple navigation instructions ----
@@ -1421,19 +1586,25 @@ window.speakWelcome = speakWelcome;
 
 /* ---------- নামতা (multiplication tables, ২-১০) ---------- */
 function buildMultiplication(body){
-  let table = 2;
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const ranges = (typeof getSyllabusRanges === 'function') ? getSyllabusRanges(level, term) : null;
+  // Falls back to the full 2–10 range if this level/term doesn't name
+  // specific tables in CURRICULUM (e.g. earlier levels before multiplication starts).
+  const tableSet = (ranges && ranges.tables) || [2,3,4,5,6,7,8,9,10];
+  let table = tableSet[0];
   body.innerHTML = `
     <div class="mode-toggle" id="tableTabs" style="flex-wrap:wrap; justify-content:center;"></div>
     <div id="tableList" style="width:100%; max-width:360px;"></div>
   `;
   const tabs = document.getElementById('tableTabs');
-  for(let t=2;t<=10;t++){
+  tableSet.forEach((t,ti)=>{
     const btn = document.createElement('button');
-    btn.className = 'mode-btn' + (t===2?' active':'');
+    btn.className = 'mode-btn' + (ti===0?' active':'');
     btn.textContent = digitsOf(t);
     btn.onclick = ()=>{ table=t; [...tabs.children].forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderTable(); };
     tabs.appendChild(btn);
-  }
+  });
   function renderTable(){
     const list = document.getElementById('tableList');
     list.innerHTML = '';
@@ -1530,10 +1701,37 @@ function buildRhymes(body){
     </div>
   `;
   const list = document.getElementById('rhymeList');
-  rhymesList.forEach((r,i)=>{
+  // Rhymes named in this level+term's syllabus (CURRICULUM) are shown first
+  // with a small syllabus checkmark. rhymesList itself is still a fixed
+  // small library (see the content-data.js note on growing it) — this just
+  // surfaces whichever of those already match what's actually being taught
+  // this term, instead of showing them in a fixed unordered list always.
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const syllabusTitles = (typeof curriculumRhymeTitles === 'function') ? curriculumRhymeTitles(level, term) : [];
+  function titlesMatch(a, b){
+    a = a.toLowerCase().replace(/[^a-z0-9\u0980-\u09FF]+/g,' ').trim();
+    b = b.toLowerCase().replace(/[^a-z0-9\u0980-\u09FF]+/g,' ').trim();
+    return a === b || a.includes(b) || b.includes(a);
+  }
+  const order = rhymesList.map((r,i)=>({r,i, matched: syllabusTitles.some(st => titlesMatch(t(r.titleKey), st))}));
+  // Show ONLY the rhymes named in this level+term's syllabus (as chosen on
+  // the parent dashboard) — no longer mixed in with the whole library.
+  // Falls back to showing everything if this level+term has no matches yet
+  // so the module never renders completely empty.
+  const matchedOnly = order.filter(o => o.matched);
+  const toShow = matchedOnly.length ? matchedOnly : order;
+  if(!matchedOnly.length){
+    const note = document.createElement('div');
+    note.className = 'word-sub';
+    note.style.cssText = 'margin-bottom:10px; opacity:.7;';
+    note.textContent = t('rhyme_noSyllabusMatch') || 'এই ক্লাসের জন্য এখনো নির্দিষ্ট ছড়া যোগ হয়নি — পুরো তালিকা দেখানো হচ্ছে';
+    list.parentNode.insertBefore(note, list);
+  }
+  toShow.forEach(({r,i,matched})=>{
     const card = document.createElement('div');
     card.className = 'rhyme-card';
-    card.innerHTML = `<div class="rhyme-card-emoji">${r.emoji}</div><div class="rhyme-card-title">${t(r.titleKey)}</div>`;
+    card.innerHTML = `<div class="rhyme-card-emoji">${r.emoji}</div><div class="rhyme-card-title">${t(r.titleKey)}</div>${matched ? '<div class="rhyme-card-badge" style="font-size:11px; opacity:.7; margin-top:2px;">✓ '+t('rhyme_syllabusBadge')+'</div>' : ''}`;
     card.onclick = ()=>openRhymeReader(i);
     list.appendChild(card);
   });
@@ -1598,10 +1796,14 @@ function playRhyme(r){
     const re = /\S+/g; let m;
     while((m = re.exec(r.text))){ words.push({start:m.index, end:m.index+m[0].length}); }
     const wordEls = [...document.querySelectorAll('#rhymeLines .rhyme-word')];
+    // Bangla chora (hattima, chadmama, etc.) were being forced through the
+    // English voice, which is why those specific rhymes stayed silent/
+    // garbled — detect the script per-rhyme instead of always using en-US.
+    const isBangla = /[\u0980-\u09FF]/.test(r.text);
     const u = new SpeechSynthesisUtterance(r.text.replace(/\n/g, '. '));
-    u.lang = 'en-US';
-    if(enVoice) u.voice = enVoice;
-    u.rate = 0.72; u.pitch = 1.12; u.volume = 1;
+    u.lang = isBangla ? 'bn-BD' : 'en-US';
+    if(isBangla){ if(bnVoice) u.voice = bnVoice; } else { if(enVoice) u.voice = enVoice; }
+    u.rate = isBangla ? 0.78 : 0.72; u.pitch = isBangla ? 1.04 : 1.12; u.volume = 1;
     let gotBoundary = false;
     let fallbackTimer = null;
     u.onboundary = (ev)=>{
@@ -1639,8 +1841,10 @@ function playRhyme(r){
       bump(2, 'rhymes');
       praise();
     };
+    u.onerror = ()=>{ rhymePlaying = false; warnNoSound(); };
+    if(!window.speechSynthesis){ warnNoSound(); return; }
     window.speechSynthesis.speak(u);
-  }catch(e){}
+  }catch(e){ warnNoSound(); }
 }
 
 /* ---------- Matching memory game ---------- */

@@ -254,6 +254,19 @@ select.field option{ color:#111; }
 .dash-card h3{ text-shadow:0 0 14px rgba(63,235,201,.4); }
 .stat-row{ border-bottom:1px solid rgba(255,255,255,.08) !important; color:var(--text-mid); }
 
+/* ---------- 8b. Curriculum (syllabus) browser ---------- */
+#curriculumContent{ margin-top:10px; }
+.curr-field{
+  padding:10px 12px; margin-bottom:8px; border-radius:12px;
+  background:rgba(255,255,255,.04); border:1px solid var(--glass-border);
+  font-size:13.5px; line-height:1.55; color:var(--text-mid);
+}
+.curr-field strong{ color:var(--aurora-teal); display:block; margin-bottom:4px; font-size:12.5px; letter-spacing:.02em; opacity:.9; }
+.curr-list{ margin:0; padding-left:18px; }
+.curr-list li{ margin-bottom:4px; color:var(--text-mid); }
+#curriculumCard .select-row{ display:flex; gap:8px; }
+#curriculumCard .select-row .field{ flex:1; }
+
 /* ---------- 9. Menu drawer ---------- */
 .drawer{
   background:linear-gradient(180deg, var(--night-2), var(--night-1)) !important;
