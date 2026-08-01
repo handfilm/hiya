@@ -649,6 +649,12 @@
       <div id="dashModuleStats"></div>
     </div>
     <div class="dash-card">
+      <h3 data-i18n="dashWeakTitle">🎯 আরেকটু অনুশীলন দরকার</h3>
+      <p style="font-size:13px; opacity:.6; margin:0 0 10px;" data-i18n="dashWeakHint">যেসব জিনিস কয়েকবার ভুল হয়েছে সেগুলো এখানে দেখাচ্ছে — এগুলো নিজে থেকেই আবার মডিউলে হালকা করে ফিরে আসবে</p>
+      <div id="dashWeakSpots"></div>
+      <div class="empty-note" id="dashWeakEmpty" style="display:none;" data-i18n="dashWeakEmptyTxt">এখন পর্যন্ত কোনো দুর্বল জায়গা পাওয়া যায়নি — দারুণ চলছে! 🎉</div>
+    </div>
+    <div class="dash-card">
       <h3 data-i18n="dashGamesTitle">🎮 গেম অগ্রগতি</h3>
       <div id="dashGameStats"></div>
     </div>
@@ -758,6 +764,9 @@ const I18N = {
     dashCurriculumEmpty:'এই লেভেলের সিলেবাস এখনো যোগ করা হয়নি',
     dashProgressTitle:'বিষয়ভিত্তিক অগ্রগতি', dashGalleryTitle:'আঁকা ছবির গ্যালারি', dashGalleryEmptyTxt:'এখনো কোনো ছবি নেই',
     dashGamesTitle:'🎮 গেম অগ্রগতি', dashGameNotPlayed:'এখনো খেলা হয়নি',
+    dashWeakTitle:'🎯 আরেকটু অনুশীলন দরকার',
+    dashWeakHint:'যেসব জিনিস কয়েকবার ভুল হয়েছে সেগুলো এখানে দেখাচ্ছে — এগুলো নিজে থেকেই আবার মডিউলে হালকা করে ফিরে আসবে',
+    dashWeakEmptyTxt:'এখন পর্যন্ত কোনো দুর্বল জায়গা পাওয়া যায়নি — দারুণ চলছে! 🎉',
     appTitleChild:'{name}র বাগান',
     act_listen:'শোনো', act_listenWord:'পুরো শব্দ শোনো', act_listenSentence:'বাক্যটা শোনো',
     act_matchHint:'দুটো একই ছবি খুঁজে বের করো', act_videoNote:'শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না',
@@ -772,6 +781,7 @@ const I18N = {
     draw_saved:'ছবিটা সেভ হয়েছে! 🖼️', draw_imgAlt:'ছবি', draw_savedImgAlt:'সেভ করা ছবি',
     praiseDefault:'দারুণ হয়েছে! 🎉', praiseMatchWin:'সব মিলিয়ে ফেলেছ! তুমি সেরা! 🏆',
     num_subIntro:'{n}টা মৌমাছি গুনো!', num_subMemorize:'{n} সংখ্যাটা মনে রাখো!',
+    recall_prompt:"কোনটা '{x}'?", recall_tryAgain:'আরেকবার দেখো তো!',
     btnHowTo:'কীভাবে খেলব?',
     welcomeMsg:'{name}, আমাদের ছোট্ট বাগানে স্বাগতম। প্রতিটা ফুলে আলতো করে চাপ দিলেই একটা নতুন খেলা খুলে যাবে। যেকোনো সময় এই বোতামে চাপলে আমি আবার বলে দেব। চলো, শুরু করি!',
     welcomeDefaultName:'সোনামণি'
@@ -835,6 +845,9 @@ const I18N = {
     dashCurriculumEmpty:'Syllabus for this level has not been added yet',
     dashProgressTitle:'Progress by module', dashGalleryTitle:'Drawing gallery', dashGalleryEmptyTxt:'No pictures yet',
     dashGamesTitle:'🎮 Game progress', dashGameNotPlayed:'Not played yet',
+    dashWeakTitle:'🎯 Could use more practice',
+    dashWeakHint:"Things that have been missed a few times show up here — they'll quietly resurface in their module on their own",
+    dashWeakEmptyTxt:'No weak spots yet — going great! 🎉',
     appTitleChild:"{name}'s Garden",
     act_listen:'Listen', act_listenWord:'Listen to word', act_listenSentence:'Listen to sentence',
     act_matchHint:'Find the two matching pictures', act_videoNote:'Only curated videos are shown — nothing else will be suggested',
@@ -849,6 +862,7 @@ const I18N = {
     draw_saved:'Picture saved! 🖼️', draw_imgAlt:'Picture', draw_savedImgAlt:'Saved picture',
     praiseDefault:'Great job! 🎉', praiseMatchWin:"You matched them all! You're the best! 🏆",
     num_subIntro:'Count {n} bees!', num_subMemorize:'Remember the number {n}!',
+    recall_prompt:"Which one is '{x}'?", recall_tryAgain:'Take another look!',
     btnHowTo:'How do I play?',
     welcomeMsg:"Welcome to our little garden, {name}. Gently tap any flower below to open a game. Tap this button anytime if you'd like me to say this again. Let's begin!",
     welcomeDefaultName:'friend'
@@ -1032,6 +1046,7 @@ auth.onAuthStateChanged(async (user)=>{
   if(doc.exists && doc.data().childName){
     childData = doc.data();
     if(!childData.term) childData.term = 'midTerm'; // accounts created before term existed
+    if(!childData.weakSpots) childData.weakSpots = {}; // accounts created before weakness-tracking existed
     showHome();
   } else {
     document.getElementById('setupScreen').style.display='flex';
@@ -1046,7 +1061,7 @@ function handleSetupSubmit(){
   const level = document.getElementById('setupLevel').value;
   const errEl = document.getElementById('setupError');
   if(!name || !age){ errEl.textContent = t('err_setupRequired'); return; }
-  childData = { childName:name, childAge:Number(age), stream, level, term:'midTerm', stars:{}, totalStars:0, galleryUrls:[] };
+  childData = { childName:name, childAge:Number(age), stream, level, term:'midTerm', stars:{}, totalStars:0, galleryUrls:[], weakSpots:{} };
   db.collection('users').doc(currentUser.uid).set(childData)
     .then(()=>{ document.getElementById('setupScreen').style.display='none'; showHome(); })
     .catch(()=>{ errEl.textContent = t('err_setupSave'); });
@@ -1072,7 +1087,7 @@ function persistProgress(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
     db.collection('users').doc(currentUser.uid).update({
-      stars: childData.stars, totalStars: childData.totalStars
+      stars: childData.stars, totalStars: childData.totalStars, weakSpots: childData.weakSpots || {}
     }).catch(e=>console.error('progress save failed', e));
   }, 800);
 }
@@ -1175,6 +1190,23 @@ function openDashboard(){
     row.innerHTML = `<span>${moduleLabel(g.id)}</span><span>${data ? g.summarize(data) : t('dashGameNotPlayed')}</span>`;
     gameBox.appendChild(row);
   });
+  const weakBox = document.getElementById('dashWeakSpots');
+  weakBox.innerHTML = '';
+  const weakSpots = childData.weakSpots || {};
+  const weakRows = [];
+  Object.keys(weakSpots).forEach(mk=>{
+    Object.entries(weakSpots[mk]).forEach(([itemKey, count])=>{
+      if(count > 0) weakRows.push({ module: mk, item: itemKey, count });
+    });
+  });
+  weakRows.sort((a,b)=> b.count - a.count);
+  document.getElementById('dashWeakEmpty').style.display = weakRows.length ? 'none' : 'block';
+  weakRows.slice(0, 12).forEach(r=>{
+    const row = document.createElement('div');
+    row.className = 'stat-row';
+    row.innerHTML = `<span>${moduleLabel(r.module)} — ${escapeHtml(r.item)}</span><span>${r.count}×</span>`;
+    weakBox.appendChild(row);
+  });
   const gal = document.getElementById('dashGallery');
   gal.innerHTML = '';
   const urls = childData.galleryUrls || [];
@@ -1221,6 +1253,100 @@ function praise(msg){
   p.textContent = msg || t('praiseDefault');
   p.classList.add('show');
   setTimeout(()=>p.classList.remove('show'), 1100);
+}
+
+/* ================= Weakness-tracking (Priority 1) =================
+   childData.weakSpots shape: { moduleKey: { itemKey: missCount } }.
+   itemKey is whatever the calling module chooses (a letter glyph, a
+   word, a number as string, the math mode 'add'/'sub', etc) — just needs
+   to be stable so misses on the same item accumulate. A correct recall
+   nudges the count back down (logHit) instead of instantly clearing it,
+   so a single lucky guess doesn't erase a real pattern of struggle. */
+function getWeakMap(moduleKey){
+  return (childData && childData.weakSpots && childData.weakSpots[moduleKey]) || {};
+}
+function isWeak(moduleKey, itemKey){
+  return (getWeakMap(moduleKey)[String(itemKey)] || 0) > 0;
+}
+function logMiss(moduleKey, itemKey){
+  if(!childData) return;
+  childData.weakSpots = childData.weakSpots || {};
+  childData.weakSpots[moduleKey] = childData.weakSpots[moduleKey] || {};
+  const k = String(itemKey);
+  childData.weakSpots[moduleKey][k] = (childData.weakSpots[moduleKey][k]||0) + 1;
+  persistProgress();
+}
+function logHit(moduleKey, itemKey){
+  if(!childData || !childData.weakSpots || !childData.weakSpots[moduleKey]) return;
+  const k = String(itemKey);
+  const cur = childData.weakSpots[moduleKey][k];
+  if(cur){ childData.weakSpots[moduleKey][k] = Math.max(0, cur - 1); persistProgress(); }
+}
+
+/* ---------- Shared "gentle recall check" for browse-and-tap modules
+   (letters/numbers/animals/words) that otherwise have no built-in
+   right/wrong signal. Fires occasionally (every RECALL_EVERY taps in a
+   module), asks the child to pick the right item among 3 choices, and
+   logs a hit/miss so Priority-1 resurfacing has real data. Deliberately
+   low-pressure: no visible score, no penalty beyond a soft "try again",
+   matching the app's warm tone rather than feeling like a test. ---------- */
+const RECALL_EVERY = 4;
+const recallTapCounts = {};
+function ensureRecallOverlay(){
+  let el = document.getElementById('recallOverlay');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'recallOverlay';
+    el.className = 'recall-overlay';
+    el.innerHTML = `<div class="recall-card">
+      <div class="recall-prompt" id="recallPrompt"></div>
+      <div class="recall-options" id="recallOptions"></div>
+    </div>`;
+    document.body.appendChild(el);
+  }
+  return el;
+}
+// items: array of anything; getKey(item) -> stable string id for weakSpots;
+// getLabel(item) -> what shows on the option button (emoji/glyph/digits);
+// getPromptLabel(item) -> the word/name used in "কোনটা '{x}'?" and spoken aloud.
+function maybeRecallCheck(moduleKey, items, getKey, getLabel, getPromptLabel){
+  if(!items || items.length < 3) return;
+  recallTapCounts[moduleKey] = (recallTapCounts[moduleKey]||0) + 1;
+  if(recallTapCounts[moduleKey] < RECALL_EVERY) return;
+  recallTapCounts[moduleKey] = 0;
+  const targetIdx = Math.floor(Math.random()*items.length);
+  const target = items[targetIdx];
+  const pool = items.filter((_,i)=>i!==targetIdx);
+  const distractors = [];
+  while(distractors.length < 2 && pool.length){
+    distractors.push(pool.splice(Math.floor(Math.random()*pool.length), 1)[0]);
+  }
+  if(distractors.length < 2) return; // not enough items to build a fair quiz
+  const options = [target, ...distractors].sort(()=>Math.random()-0.5);
+  const overlay = ensureRecallOverlay();
+  document.getElementById('recallPrompt').textContent = t('recall_prompt').replace('{x}', getPromptLabel(target));
+  const optBox = document.getElementById('recallOptions');
+  optBox.innerHTML = '';
+  let answered = false;
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'ans-btn recall-opt';
+    b.textContent = getLabel(opt);
+    b.onclick = ()=>{
+      if(answered) return;
+      if(opt===target){
+        answered = true;
+        b.classList.add('correct'); logHit(moduleKey, getKey(target)); bump(1, moduleKey); praise();
+        setTimeout(()=>overlay.classList.remove('show'), 700);
+      } else {
+        b.classList.add('wrong'); logMiss(moduleKey, getKey(target));
+        setTimeout(()=>b.classList.remove('wrong'), 500);
+      }
+    };
+    optBox.appendChild(b);
+  });
+  try{ speak(getPromptLabel(target)); }catch(e){}
+  overlay.classList.add('show');
 }
 /* ---------- Speech: pick the warmest available voice, speak slowly & softly ---------- */
 let bnVoice = null, enVoice = null;
@@ -1402,7 +1528,7 @@ function buildLetters(body){
   const grid = document.getElementById('letterGrid');
   activeLetters.forEach((l,i)=>{
     const b = document.createElement('button');
-    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = l[0];
+    b.className='mini-btn' + (isWeak('letters', l[0]) ? ' weak' : ''); b.style.background = COLORS[i%COLORS.length]; b.textContent = l[0];
     b.onclick = ()=>showLetter(i);
     grid.appendChild(b);
   });
@@ -1415,6 +1541,7 @@ function buildLetters(body){
     document.getElementById('letterWord').textContent = activeLetters[i][1];
     speak(activeLetters[i][0] + ', ' + activeLetters[i][1]);
     bump(1, 'letters');
+    maybeRecallCheck('letters', activeLetters, l=>l[0], l=>l[0], l=>l[0]);
   };
   window.sayLetter = function(){ speak(activeLetters[idx][0] + ', ' + activeLetters[idx][1]); };
 }
@@ -1435,10 +1562,11 @@ function buildNumbers(body){
     <button class="say-btn" onclick="sayNum()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="numGrid"></div>
   `;
+  const numItems = []; for(let i=1;i<=maxNum;i++) numItems.push(i);
   const grid = document.getElementById('numGrid');
   for(let i=1;i<=maxNum;i++){
     const b = document.createElement('button');
-    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = digitsOf(i);
+    b.className='mini-btn' + (isWeak('numbers', i) ? ' weak' : ''); b.style.background = COLORS[i%COLORS.length]; b.textContent = digitsOf(i);
     b.onclick = ()=>showNum(i);
     grid.appendChild(b);
   }
@@ -1453,6 +1581,7 @@ function buildNumbers(body){
     document.getElementById('numSub').textContent = t('num_subMemorize').replace('{n}', digitsOf(i));
     speak(bnDigitsOf(i));
     bump(1, 'numbers');
+    maybeRecallCheck('numbers', numItems, x=>x, x=>digitsOf(x), x=>digitsOf(x));
   };
   window.sayNum = function(){ speak(bnDigitsOf(n)); };
 }
@@ -1480,7 +1609,7 @@ function buildAnimals(body){
   const grid = document.getElementById('aniGrid');
   activeAnimals.forEach((a,i)=>{
     const b = document.createElement('button');
-    b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = a[0];
+    b.className='mini-btn' + (isWeak('animals', a[1]) ? ' weak' : ''); b.style.background = COLORS[i%COLORS.length]; b.textContent = a[0];
     b.onclick = ()=>showAni(i);
     grid.appendChild(b);
   });
@@ -1494,6 +1623,7 @@ function buildAnimals(body){
     document.getElementById('aniSub').textContent = activeAnimals[i][2];
     speak(activeAnimals[i][1] + ' ' + activeAnimals[i][2]);
     bump(1, 'animals');
+    maybeRecallCheck('animals', activeAnimals, a=>a[1], a=>a[0], a=>a[1]);
   };
   window.sayAni = function(){ speak(activeAnimals[idx][1] + ' ' + activeAnimals[idx][2]); };
 }
@@ -1523,7 +1653,7 @@ function buildWords(body){
   const list = document.getElementById('wordCardList');
   activeWords.forEach((w,i)=>{
     const c = document.createElement('div');
-    c.className = 'word-card' + (i===0?' active':'');
+    c.className = 'word-card' + (i===0?' active':'') + (isWeak('words', w.word) ? ' weak' : '');
     c.innerHTML = `<div class="emo">${w.emoji}</div><div class="txt">${w.word}</div>`;
     c.onclick = ()=>showWord(i);
     list.appendChild(c);
@@ -1545,6 +1675,7 @@ function buildWords(body){
     });
     speak(activeWords[i].word);
     bump(1, 'words');
+    maybeRecallCheck('words', activeWords, w=>w.word, w=>w.emoji, w=>w.word);
   };
   window.sayWholeWord = function(){ speak(activeWords[idx].word); };
 }
@@ -1674,10 +1805,10 @@ function buildMath(body){
       btn.className='ans-btn'; btn.textContent = v;
       btn.onclick = ()=>{
         if(v===correct){
-          btn.classList.add('correct'); bump(2, 'mathgame'); praise();
+          btn.classList.add('correct'); bump(2, 'mathgame'); logHit('mathgame', mode); praise();
           setTimeout(newProblem, 700);
         } else {
-          btn.classList.add('wrong');
+          btn.classList.add('wrong'); logMiss('mathgame', mode);
           setTimeout(()=>btn.classList.remove('wrong'), 500);
         }
       };
