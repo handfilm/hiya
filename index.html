@@ -502,6 +502,7 @@
   <div class="sub" data-i18n="headerSub">খেলো, আঁকো, শেখো — নিজের মতো করে</div>
   <div class="home-topbar">
     <button class="pill-btn" onclick="speakWelcome()">🔊 <span data-i18n="btnHowTo">কীভাবে খেলব?</span></button>
+    <button class="pill-btn" id="muteToggleBtn" onclick="toggleMute()"></button>
     <button class="pill-btn" onclick="openDashboard()">📊 <span data-i18n="drawerDashboard">প্যারেন্ট ড্যাশবোর্ড</span></button>
     <button class="pill-btn" onclick="handleLogout()">🚪 <span data-i18n="btnLogout">লগআউট</span></button>
   </div>
@@ -556,6 +557,10 @@
     <div class="flower-stop" data-module="rhymes" onclick="openActivity('rhymes')">
       <div class="flower-icon c2">🎵</div>
       <div><h2 data-i18n="m_rhymes">ছড়ার বাগান</h2><p data-i18n="d_rhymes">প্রিয় ছড়া শোনো ও পড়ো</p></div>
+    </div>
+    <div class="flower-stop" data-module="syllabus" onclick="openActivity('syllabus')">
+      <div class="flower-icon c3">📘</div>
+      <div><h2 data-i18n="m_syllabus">আমার ক্লাস</h2><p data-i18n="d_syllabus">অঙ্ক, ইংরেজি, বিজ্ঞান — সব বিষয় এক জায়গায়</p></div>
     </div>
   </div>
 
@@ -720,6 +725,15 @@ const I18N = {
     m_sentences:'বাক্য পড়ি', d_sentences:'ছোট ছোট বাক্য পড়তে শেখো',
     m_videos:'ভিডিও কর্নার', d_videos:'পছন্দের ছড়া ও গল্প দেখো',
     m_rhymes:'ছড়ার বাগান', d_rhymes:'প্রিয় ছড়া শোনো ও পড়ো',
+    m_syllabus:'আমার ক্লাস', d_syllabus:'অঙ্ক, ইংরেজি, বিজ্ঞান — তোমার ক্লাসের সব বিষয় এখানে',
+    syllabus_hint:'▶️ চিহ্নে চাপ দিলে সেই পড়া খুলবে, 🔊 চিহ্নে চাপ দিলে নামটা শোনাবে',
+    syllabus_empty:'এই ক্লাসের সিলেবাস এখনো যোগ করা হয়নি',
+    m_scienceExtra:'ঋতু ও প্রকৃতি', d_scienceExtra:'ঋতু, আবহাওয়া, মাস, রংধনু চেনো',
+    m_islam:'ইসলাম শিক্ষা', d_islam:'পাঠের ছোট্ট গল্প শোনো',
+    m_socialStudies:'সমাজ ও সাধারণ জ্ঞান', d_socialStudies:'আমাদের চারপাশের গল্প শোনো',
+    m_computer:'কম্পিউটার', d_computer:'কম্পিউটার সম্পর্কে ছোট্ট কথা শোনো',
+    m_moralEducation:'নৈতিক শিক্ষা', d_moralEducation:'ভালো গুণের ছোট্ট গল্প শোনো',
+    muteOn:'🔇 নিঃশব্দ', muteOff:'🔊 শব্দ চালু',
     rhyme_play:'▶️ শোনাও', rhyme_stop:'⏹️ থামাও', rhyme_backList:'← সব ছড়া', rhyme_listTitle:'তোমার প্রিয় ছড়া বেছে নাও',
     rhyme_humpty:'হাম্পটি ডাম্পটি', rhyme_twinkle:'টুইঙ্কল টুইঙ্কল লিটল স্টার', rhyme_johnny:'জনি জনি',
     rhyme_rain:'রেইন রেইন গো অ্যাওয়ে', rhyme_syllabusBadge:'সিলেবাসে আছে',
@@ -788,6 +802,15 @@ const I18N = {
     m_sentences:'Sentence Reading', d_sentences:'Learn to read small sentences',
     m_videos:'Video Corner', d_videos:'Watch favourite rhymes and stories',
     m_rhymes:'Rhyme Garden', d_rhymes:'Listen to and follow along with favourite rhymes',
+    m_syllabus:'My Class', d_syllabus:'Math, English, Science — every subject for your class in one place',
+    syllabus_hint:'Tap ▶️ topics to open that activity, tap 🔊 topics to hear the name',
+    syllabus_empty:'No syllabus added for this class yet',
+    m_scienceExtra:'Seasons & Nature', d_scienceExtra:'Learn seasons, weather, months, rainbow',
+    m_islam:'Islamic Studies', d_islam:'Listen to a short lesson note',
+    m_socialStudies:'Social Studies', d_socialStudies:'Listen to short notes about our world',
+    m_computer:'Computer', d_computer:'Listen to a short note about computers',
+    m_moralEducation:'Moral Education', d_moralEducation:'Listen to a short story about good values',
+    muteOn:'🔇 Mute', muteOff:'🔊 Sound On',
     rhyme_play:'▶️ Play', rhyme_stop:'⏹️ Stop', rhyme_backList:'← All rhymes', rhyme_listTitle:'Pick a favourite rhyme',
     rhyme_humpty:'Humpty Dumpty', rhyme_twinkle:'Twinkle Twinkle Little Star', rhyme_johnny:'Johnny Johnny',
     rhyme_rain:'Rain Rain Go Away', rhyme_syllabusBadge:'In syllabus',
@@ -851,6 +874,8 @@ function applyLanguage(){
   const submitBtn = document.getElementById('authSubmitBtn');
   if(submitBtn) submitBtn.textContent = isSignupMode ? t('btnSignup') : t('btnLogin');
   updateAppTitle();
+  const muteBtn = document.getElementById('muteToggleBtn');
+  if(muteBtn) muteBtn.textContent = t(audioMuted ? 'muteOn' : 'muteOff');
   if(childData && document.getElementById('dashboard').classList.contains('open')) openDashboard();
 }
 function setLanguage(lang){
@@ -1241,7 +1266,43 @@ function checkSoundAvailable(){
 }
 checkSoundAvailable();
 
-function speak(text, opts){
+// ---- Priority 1: mute toggle + audio-file-first playback ----
+// audioMuted persists in localStorage (this is a real static-site file,
+// not a sandboxed Claude artifact, so localStorage is fine here).
+let audioMuted = (function(){ try{ return localStorage.getItem('kb_muted')==='1'; }catch(e){ return false; } })();
+let currentAudioEl = null;
+function toggleMute(){
+  audioMuted = !audioMuted;
+  try{ localStorage.setItem('kb_muted', audioMuted ? '1' : '0'); }catch(e){}
+  if(audioMuted){
+    window.speechSynthesis && window.speechSynthesis.cancel();
+    if(currentAudioEl){ currentAudioEl.pause(); currentAudioEl = null; }
+  }
+  const btn = document.getElementById('muteToggleBtn');
+  if(btn) btn.textContent = t(audioMuted ? 'muteOn' : 'muteOff');
+}
+// Plays a pre-generated natural-voice audio file for `audioKey` if one has
+// been added to AUDIO_MAP (content-data.js) — this is the natural-voice
+// path from Priority 1. Returns true if it played (or would have, if not
+// muted), so the caller knows NOT to also fall back to speechSynthesis.
+function tryPlayAudio(audioKey, onEndCb){
+  if(!audioKey) return false;
+  const url = (typeof AUDIO_MAP !== 'undefined') && AUDIO_MAP[audioKey];
+  if(!url) return false;
+  if(currentAudioEl){ currentAudioEl.pause(); currentAudioEl = null; }
+  if(audioMuted) return true; // key exists, so this content is "handled" — just silently skip while muted
+  try{
+    const a = new Audio(url);
+    currentAudioEl = a;
+    if(onEndCb) a.onended = onEndCb;
+    a.onerror = ()=>{ warnNoSound(); };
+    a.play();
+    return true;
+  }catch(e){ return false; }
+}
+function speak(text, opts, audioKey){
+  if(tryPlayAudio(audioKey)) return;
+  if(audioMuted) return;
   try{
     if(!window.speechSynthesis){ warnNoSound(); return; }
     const u = new SpeechSynthesisUtterance(text);
@@ -1300,6 +1361,12 @@ function openActivity(name){
   if(name==='sentences') buildSentences(body);
   if(name==='videos') buildVideos(body);
   if(name==='rhymes') buildRhymes(body);
+  if(name==='syllabus') buildSyllabusModule(body);
+  if(name==='scienceExtra') buildScienceExtra(body);
+  if(name==='islam') buildIslam(body);
+  if(name==='socialStudies') buildSocialStudies(body);
+  if(name==='computer') buildComputer(body);
+  if(name==='moralEducation') buildMoralEducation(body);
   applyLanguage();
 }
 // ---- Games (standalone single-file apps) ----
@@ -1393,15 +1460,25 @@ function buildNumbers(body){
 /* ---------- Animals ---------- */
 function buildAnimals(body){
   let idx = 0;
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const blob = (typeof curriculumScienceTopicsBlob === 'function') ? curriculumScienceTopicsBlob(level, term) : '';
+  const wantsPet = /pet animal/.test(blob);
+  const wantsWild = /wild animal/.test(blob);
+  let activeAnimals = animalList;
+  if(wantsPet || wantsWild){
+    const filtered = animalList.filter(a => a[3]==='general' || (wantsPet && a[3]==='pet') || (wantsWild && a[3]==='wild'));
+    if(filtered.length) activeAnimals = filtered;
+  }
   body.innerHTML = `
-    <div class="stage" id="aniStage" style="background:${COLORS[0]}">${animalList[0][0]}</div>
-    <div class="word-label" id="aniWord">${animalList[0][1]}</div>
-    <div class="word-sub" id="aniSub">${animalList[0][2]}</div>
+    <div class="stage" id="aniStage" style="background:${COLORS[0]}">${activeAnimals[0][0]}</div>
+    <div class="word-label" id="aniWord">${activeAnimals[0][1]}</div>
+    <div class="word-sub" id="aniSub">${activeAnimals[0][2]}</div>
     <button class="say-btn" onclick="sayAni()">🔊 <span data-i18n="act_listen">শোনো</span></button>
     <div class="grid-nav" id="aniGrid"></div>
   `;
   const grid = document.getElementById('aniGrid');
-  animalList.forEach((a,i)=>{
+  activeAnimals.forEach((a,i)=>{
     const b = document.createElement('button');
     b.className='mini-btn'; b.style.background = COLORS[i%COLORS.length]; b.textContent = a[0];
     b.onclick = ()=>showAni(i);
@@ -1410,28 +1487,41 @@ function buildAnimals(body){
   window.showAni = function(i){
     idx=i;
     const stage = document.getElementById('aniStage');
-    stage.textContent = animalList[i][0];
+    stage.textContent = activeAnimals[i][0];
     stage.style.background = COLORS[i%COLORS.length];
     stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
-    document.getElementById('aniWord').textContent = animalList[i][1];
-    document.getElementById('aniSub').textContent = animalList[i][2];
-    speak(animalList[i][1] + ' ' + animalList[i][2]);
+    document.getElementById('aniWord').textContent = activeAnimals[i][1];
+    document.getElementById('aniSub').textContent = activeAnimals[i][2];
+    speak(activeAnimals[i][1] + ' ' + activeAnimals[i][2]);
     bump(1, 'animals');
   };
-  window.sayAni = function(){ speak(animalList[idx][1] + ' ' + animalList[idx][2]); };
+  window.sayAni = function(){ speak(activeAnimals[idx][1] + ' ' + activeAnimals[idx][2]); };
 }
 
 /* ---------- Word reading ---------- */
 function buildWords(body){
   let idx = 0;
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const blob = (typeof curriculumScienceTopicsBlob === 'function') ? curriculumScienceTopicsBlob(level, term) : '';
+  const tagPatterns = {
+    fruit: /fruit/, vegetable: /vegetable/, body: /body part/,
+    family: /family/, classroom: /classroom object/, fish: /\bfish\b/
+  };
+  const wantedTags = Object.keys(tagPatterns).filter(tag => tagPatterns[tag].test(blob));
+  let activeWords = wordList;
+  if(wantedTags.length){
+    const filtered = wordList.filter(w => w.tag==='general' || wantedTags.includes(w.tag));
+    if(filtered.length) activeWords = filtered;
+  }
   body.innerHTML = `
-    <div class="stage" id="wordStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${wordList[0].emoji}</div>
+    <div class="stage" id="wordStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${activeWords[0].emoji}</div>
     <div class="syll-row" id="syllRow"></div>
     <button class="say-btn" onclick="sayWholeWord()">🔊 <span data-i18n="act_listenWord">পুরো শব্দ শোনো</span></button>
     <div class="word-card-list" id="wordCardList"></div>
   `;
   const list = document.getElementById('wordCardList');
-  wordList.forEach((w,i)=>{
+  activeWords.forEach((w,i)=>{
     const c = document.createElement('div');
     c.className = 'word-card' + (i===0?' active':'');
     c.innerHTML = `<div class="emo">${w.emoji}</div><div class="txt">${w.word}</div>`;
@@ -1442,26 +1532,105 @@ function buildWords(body){
     idx = i;
     [...list.children].forEach((c,ci)=>c.classList.toggle('active', ci===i));
     const stage = document.getElementById('wordStage');
-    stage.textContent = wordList[i].emoji;
+    stage.textContent = activeWords[i].emoji;
     stage.style.background = COLORS[i%COLORS.length];
     stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
     const row = document.getElementById('syllRow');
     row.innerHTML = '';
-    wordList[i].syll.forEach((s, si)=>{
+    activeWords[i].syll.forEach((s, si)=>{
       const b = document.createElement('div');
       b.className = 'syll'; b.style.background = COLORS[(i+si)%COLORS.length]; b.textContent = s;
       b.onclick = ()=>{ speak(s, {rate:0.65, pitch:1.06}); };
       row.appendChild(b);
     });
-    speak(wordList[i].word);
+    speak(activeWords[i].word);
     bump(1, 'words');
   };
-  window.sayWholeWord = function(){ speak(wordList[idx].word); };
+  window.sayWholeWord = function(){ speak(activeWords[idx].word); };
 }
+
+/* ---------- Science extras (seasons/weather/months/day-night/meal
+   time/rainbow) — same card/grid pattern as buildWords, filtered by
+   whichever tags this term's science topics actually mention. ---------- */
+function buildScienceExtra(body){
+  let idx = 0;
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const blob = (typeof curriculumScienceTopicsBlob === 'function') ? curriculumScienceTopicsBlob(level, term) : '';
+  const wantedTags = (typeof SCIENCE_EXTRA_TAG_MATCH !== 'undefined')
+    ? Object.keys(SCIENCE_EXTRA_TAG_MATCH).filter(tag => SCIENCE_EXTRA_TAG_MATCH[tag].test(blob))
+    : [];
+  let active = (typeof scienceExtraList !== 'undefined') ? scienceExtraList : [];
+  if(wantedTags.length){
+    const filtered = active.filter(w => wantedTags.includes(w.tag));
+    if(filtered.length) active = filtered;
+  }
+  if(!active.length){ body.innerHTML = `<div class="word-sub">${t('syllabus_empty')}</div>`; return; }
+  body.innerHTML = `
+    <div class="stage" id="sciStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${active[0].emoji}</div>
+    <div class="word-label" id="sciWord">${active[0].word}</div>
+    <div class="word-sub" id="sciSub">${active[0].sub}</div>
+    <button class="say-btn" onclick="saySci()">🔊 <span data-i18n="act_listen">শোনো</span></button>
+    <div class="word-card-list" id="sciCardList"></div>
+  `;
+  const list = document.getElementById('sciCardList');
+  active.forEach((w,i)=>{
+    const c = document.createElement('div');
+    c.className = 'word-card' + (i===0?' active':'');
+    c.innerHTML = `<div class="emo">${w.emoji}</div><div class="txt">${w.word}</div>`;
+    c.onclick = ()=>showSci(i);
+    list.appendChild(c);
+  });
+  window.showSci = function(i){
+    idx = i;
+    [...list.children].forEach((c,ci)=>c.classList.toggle('active', ci===i));
+    const stage = document.getElementById('sciStage');
+    stage.textContent = active[i].emoji;
+    stage.style.background = COLORS[i%COLORS.length];
+    stage.classList.remove('pop'); void stage.offsetWidth; stage.classList.add('pop');
+    document.getElementById('sciWord').textContent = active[i].word;
+    document.getElementById('sciSub').textContent = active[i].sub;
+    speak(active[i].word + '। ' + active[i].sub);
+    bump(1, 'scienceExtra');
+  };
+  window.saySci = function(){ speak(active[idx].word + '। ' + active[idx].sub); };
+}
+
+/* ---------- Generic lesson-card module (Islam / Social Studies /
+   Computer / Moral Education) — reads LESSON_CONTENT[subjectKey], shows
+   each chapter as a tappable card with its short note, read aloud on tap.
+   Deliberately simple (title + 1-2 sentences), not full lesson content —
+   see hand-off doc, Priority 2, for why this is scoped modestly. ---------- */
+function buildLessonModule(body, subjectKey){
+  const items = (typeof LESSON_CONTENT !== 'undefined' && LESSON_CONTENT[subjectKey]) || [];
+  if(!items.length){ body.innerHTML = `<div class="word-sub">${t('syllabus_empty')}</div>`; return; }
+  body.innerHTML = `<div class="word-sub" style="margin-bottom:8px;">${t('d_' + subjectKey)}</div><div id="lessonCardList"></div>`;
+  const wrap = document.getElementById('lessonCardList');
+  items.forEach((it, i)=>{
+    const c = document.createElement('div');
+    c.className = 'dash-card';
+    c.style.marginBottom = '10px';
+    c.style.cursor = 'pointer';
+    c.innerHTML = `<h3 style="margin:0 0 6px;">${escapeHtml(it.title)}</h3><div class="word-sub">${escapeHtml(it.note)}</div>`;
+    c.onclick = ()=>{ speak(it.note); bump(1, subjectKey); };
+    wrap.appendChild(c);
+  });
+}
+function buildIslam(body){ buildLessonModule(body, 'islam'); }
+function buildSocialStudies(body){ buildLessonModule(body, 'socialStudies'); }
+function buildComputer(body){ buildLessonModule(body, 'computer'); }
+function buildMoralEducation(body){ buildLessonModule(body, 'moralEducation'); }
 
 /* ---------- Addition & subtraction ---------- */
 function buildMath(body){
   let mode = 'add';
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const ranges = (typeof getSyllabusRanges === 'function') ? getSyllabusRanges(level, term) : null;
+  // Cap the biggest number a problem can use at what this term's syllabus
+  // actually covers (e.g. playgroup midTerm tops out at 10) instead of
+  // always drawing from a fixed 1–14 range regardless of class.
+  const numMax = (ranges && ranges.numberMax) ? Math.max(4, ranges.numberMax) : 10;
   body.innerHTML = `
     <div class="mode-toggle">
       <button class="mode-btn active" id="modeAdd" onclick="setMathMode('add')">➕ <span data-i18n="math_add">যোগ</span></button>
@@ -1472,13 +1641,14 @@ function buildMath(body){
   `;
   let a,b,correct;
   function newProblem(){
+    const half = Math.max(2, Math.floor(numMax/2));
     if(mode==='add'){
-      a = 1 + Math.floor(Math.random()*6);
-      b = 1 + Math.floor(Math.random()*6);
-      if(a+b>10){ b = Math.max(1,10-a); }
+      a = 1 + Math.floor(Math.random()*half);
+      b = 1 + Math.floor(Math.random()*half);
+      if(a+b>numMax){ b = Math.max(1,numMax-a); }
       correct = a+b;
     } else {
-      a = 2 + Math.floor(Math.random()*8);
+      a = 2 + Math.floor(Math.random()*(numMax-1));
       b = 1 + Math.floor(Math.random()*(a-1));
       correct = a-b;
     }
@@ -1494,7 +1664,7 @@ function buildMath(body){
     const opts = new Set([correct]);
     while(opts.size<3){
       const d = correct + (Math.floor(Math.random()*5)-2);
-      if(d>=0 && d<=14) opts.add(d);
+      if(d>=0 && d<=numMax+4) opts.add(d);
     }
     const arr = [...opts].sort(()=>Math.random()-0.5);
     const ansBox = document.getElementById('ansOptions');
@@ -1558,7 +1728,9 @@ function buildEnglish(body){
   };
   window.sayEng = function(){ speakEn(activeLetters[idx][0] + ', for ' + activeLetters[idx][1]); };
 }
-function speakEn(text, opts){
+function speakEn(text, opts, audioKey){
+  if(tryPlayAudio(audioKey)) return;
+  if(audioMuted) return;
   try{
     if(!window.speechSynthesis){ warnNoSound(); return; }
     const u = new SpeechSynthesisUtterance(text);
@@ -1779,8 +1951,10 @@ function clearRhymeHighlight(){
 function toggleRhymePlay(){
   if(rhymePlaying){
     window.speechSynthesis && window.speechSynthesis.cancel();
+    if(currentAudioEl){ currentAudioEl.pause(); currentAudioEl = null; }
     rhymePlaying = false;
     clearRhymeHighlight();
+    document.getElementById('rhymePlayBtn').innerHTML = '▶️ ' + t('rhyme_play').replace('▶️ ','');
     return;
   }
   const i = Number(document.getElementById('rhymeReader').dataset.idx);
@@ -1788,6 +1962,44 @@ function toggleRhymePlay(){
   playRhyme(r);
 }
 function playRhyme(r){
+  if(audioMuted) return;
+  // Priority 1: if a natural-voice recording exists for this rhyme, play
+  // that instead of speechSynthesis. Highlighting falls back to the same
+  // equal-duration timer used below (no per-word boundary events from an
+  // <audio> file) — good enough until someone hand-authors real timestamps
+  // per rhyme (see hand-off doc, Priority 1 note on highlight sync).
+  const audioUrl = (typeof AUDIO_MAP !== 'undefined') && AUDIO_MAP[r.key];
+  if(audioUrl){
+    try{
+      if(currentAudioEl){ currentAudioEl.pause(); currentAudioEl = null; }
+      clearRhymeHighlight();
+      const wordEls = [...document.querySelectorAll('#rhymeLines .rhyme-word')];
+      const a = new Audio(audioUrl);
+      currentAudioEl = a;
+      rhymePlaying = true;
+      document.getElementById('rhymePlayBtn').innerHTML = '⏹️ ' + t('rhyme_stop').replace('⏹️ ','');
+      a.onloadedmetadata = ()=>{
+        let wi = 0;
+        const per = Math.max(260, (a.duration*1000) / Math.max(wordEls.length,1));
+        const timer = setInterval(()=>{
+          if(wi >= wordEls.length || !rhymePlaying){ clearInterval(timer); return; }
+          clearRhymeHighlight();
+          wordEls[wi].classList.add('active');
+          wi++;
+        }, per);
+      };
+      a.onended = ()=>{
+        rhymePlaying = false;
+        clearRhymeHighlight();
+        document.getElementById('rhymePlayBtn').innerHTML = '▶️ ' + t('rhyme_play').replace('▶️ ','');
+        bump(2, 'rhymes');
+        praise();
+      };
+      a.onerror = ()=>{ rhymePlaying = false; warnNoSound(); };
+      a.play();
+      return;
+    }catch(e){ warnNoSound(); /* fall through to speechSynthesis below */ }
+  }
   try{
     window.speechSynthesis.cancel();
     clearRhymeHighlight();
@@ -1845,6 +2057,135 @@ function playRhyme(r){
     if(!window.speechSynthesis){ warnNoSound(); return; }
     window.speechSynthesis.speak(u);
   }catch(e){ warnNoSound(); }
+}
+
+/* ---------- My Class (full subject-by-subject syllabus browser) ----------
+   Unlike the fixed-content modules above (letters/numbers/rhymes/etc.),
+   this one reads CURRICULUM[level][term] directly and shows EVERY subject
+   the school syllabus lists for that class/term — including subjects that
+   don't have their own dedicated activity yet (Science, Social Studies,
+   Computer, Islam, Moral Education for class1). Tap a topic chip to hear
+   it read aloud (auto-detects Bangla vs English per chip). This is the
+   same CURRICULUM data already browsable in the Parent Dashboard's
+   "স্কুল সিলেবাস" card, surfaced here for the child too. */
+function flattenSubjectFields(node, fieldKey){
+  const out = [];
+  if(Array.isArray(node)){
+    node.forEach(v => out.push(...flattenSubjectFields(v, fieldKey)));
+    return out;
+  }
+  if(node && typeof node === 'object'){
+    Object.entries(node).forEach(([k,v]) => out.push(...flattenSubjectFields(v, k)));
+    return out;
+  }
+  if(node != null && String(node).trim()) out.push({text:String(node), fieldKey: fieldKey||''});
+  return out;
+}
+// Normalizes a title for loose matching (used to find a curriculum rhyme
+// title inside the app's actual rhymesList, same normalization buildRhymes
+// already uses for its own syllabus-badge matching).
+function normTitle(s){
+  return String(s).toLowerCase().replace(/[^a-z0-9\u0980-\u09FF]+/g,' ').trim();
+}
+function findRhymeIndexByTitle(title){
+  const nt = normTitle(title);
+  if(!nt) return -1;
+  return rhymesList.findIndex(r=>{
+    const rt = normTitle(t(r.titleKey));
+    return rt===nt || rt.includes(nt) || nt.includes(rt);
+  });
+}
+// Fuzzy-matches a CURRICULUM topic line against LESSON_CONTENT[subjectKey]
+// titles, same normalize+includes approach as findRhymeIndexByTitle —
+// only an actual match unlocks a ▶️ chip for that subject/topic.
+function findLessonIndexByTitle(subjectKey, title){
+  const items = (typeof LESSON_CONTENT !== 'undefined' && LESSON_CONTENT[subjectKey]) || [];
+  const nt = normTitle(title);
+  if(!nt) return -1;
+  return items.findIndex(it=>{
+    const lt = normTitle(it.title);
+    return lt===nt || lt.includes(nt) || nt.includes(lt);
+  });
+}
+// Decides whether a topic line actually has real interactive content
+// somewhere else in the app, and if so, which module (+ which specific
+// item for rhymes/lessons). Only routes to modules that truly cover that
+// exact content — everything else (grammar chapters, drawing tasks,
+// chapters with no matching LESSON_CONTENT entry yet, etc.) gets no route,
+// and the chip stays a "listen to the topic name" chip instead of
+// pretending to open something that isn't built yet.
+function routeForSyllabusTopic(subject, fieldKey, text){
+  const fk = (fieldKey||'').toLowerCase();
+  const low = text.toLowerCase();
+  if(fk.includes('rhyme') || fk.includes('chora')){
+    return findRhymeIndexByTitle(text) >= 0 ? {module:'rhymes', rhymeTitle:text} : null;
+  }
+  if(/times\s*table/.test(low)) return {module:'multiplication'};
+  if(subject==='bangla' && /borno|shorborno/.test(fk)) return {module:'letters'};
+  if(subject==='bangla' && fk.includes('sonkha')) return {module:'numbers'};
+  if(subject==='english' && fk.includes('letter')) return {module:'english'};
+  if((subject==='mathematics'||subject==='elementaryMathematics') && /number/.test(fk)) return {module:'numbers'};
+  if(subject==='science' || subject==='primaryScience'){
+    if(/pet animal|wild animal/.test(low)) return {module:'animals'};
+    if(/\bfruit|vegetable|body part|about family|classroom object|\bfish\b/.test(low)) return {module:'words'};
+    if(typeof SCIENCE_EXTRA_TAG_MATCH !== 'undefined'){
+      const hasExtraTag = Object.values(SCIENCE_EXTRA_TAG_MATCH).some(re => re.test(low));
+      if(hasExtraTag) return {module:'scienceExtra'};
+    }
+  }
+  if(['islam','socialStudies','computer','moralEducation'].includes(subject)){
+    const idx = findLessonIndexByTitle(subject, text);
+    if(idx >= 0) return {module:subject, lessonIndex:idx};
+  }
+  return null;
+}
+function openSyllabusTopic(route, text){
+  if(!route){
+    const isBangla = /[\u0980-\u09FF]/.test(text);
+    if(isBangla) speak(text); else speakEn(text);
+    return;
+  }
+  if(route.module === 'rhymes'){
+    const idx = findRhymeIndexByTitle(route.rhymeTitle);
+    openActivity('rhymes');
+    if(idx >= 0) setTimeout(()=>openRhymeReader(idx), 30);
+    return;
+  }
+  openActivity(route.module);
+}
+function buildSyllabusModule(body){
+  const level = (childData && childData.level) || 'playgroup';
+  const term = (childData && childData.term) || 'midTerm';
+  const termData = CURRICULUM[level] && CURRICULUM[level][term];
+  if(!termData || !Object.keys(termData).length){
+    body.innerHTML = `<div class="word-sub">${t('syllabus_empty') || 'এই ক্লাসের সিলেবাস এখনো যোগ করা হয়নি'}</div>`;
+    return;
+  }
+  body.innerHTML = `
+    <div class="word-sub" style="margin-bottom:10px;">${t('syllabus_hint') || '▶️ যেসব টপিকে অ্যাক্টিভিটি আছে সেগুলো খুলবে, বাকিগুলো 🔊 চাপ দিলে নাম শোনাবে'}</div>
+    <div id="syllabusSubjects"></div>
+  `;
+  const wrap = document.getElementById('syllabusSubjects');
+  Object.keys(termData).forEach(sub=>{
+    const label = SUBJECT_LABELS[sub] || labelizeKey(sub);
+    const items = flattenSubjectFields(termData[sub], '');
+    if(!items.length) return;
+    const card = document.createElement('div');
+    card.className = 'dash-card';
+    card.style.marginBottom = '12px';
+    const chipsHtml = items.map((item, i)=>{
+      const route = routeForSyllabusTopic(sub, item.fieldKey, item.text);
+      const icon = route ? '▶️' : '🔊';
+      return `<span class="syllabus-chip${route?' syllabus-chip-link':''}" data-idx="${i}">${icon} ${escapeHtml(item.text)}</span>`;
+    }).join('');
+    card.innerHTML = `<h3 style="margin:0 0 8px;">${escapeHtml(label)}</h3><div>${chipsHtml}</div>`;
+    card.querySelectorAll('.syllabus-chip').forEach((el,i)=>{
+      const item = items[i];
+      const route = routeForSyllabusTopic(sub, item.fieldKey, item.text);
+      el.onclick = ()=> openSyllabusTopic(route, item.text);
+    });
+    wrap.appendChild(card);
+  });
 }
 
 /* ---------- Matching memory game ---------- */

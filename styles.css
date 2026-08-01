@@ -264,6 +264,13 @@ select.field option{ color:#111; }
 .curr-field strong{ color:var(--aurora-teal); display:block; margin-bottom:4px; font-size:12.5px; letter-spacing:.02em; opacity:.9; }
 .curr-list{ margin:0; padding-left:18px; }
 .curr-list li{ margin-bottom:4px; color:var(--text-mid); }
+.syllabus-chip{
+  display:inline-block; margin:4px 6px 0 0; padding:7px 12px; border-radius:14px;
+  background:var(--glass-bg-hi) !important; color:var(--text-hi) !important;
+  border:1px solid var(--glass-border); font-size:13px; line-height:1.4; cursor:pointer;
+}
+.syllabus-chip:active{ background:var(--aurora-teal) !important; color:#06221c !important; }
+.syllabus-chip-link{ border-color:var(--aurora-teal) !important; box-shadow:0 0 0 1px rgba(63,235,201,.25) inset; }
 #curriculumCard .select-row{ display:flex; gap:8px; }
 #curriculumCard .select-row .field{ flex:1; }
 

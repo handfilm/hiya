@@ -46,17 +46,21 @@ const letters = [
   ['স','সাপ'],['হ','হাতি'],['ড়','বড়ই'],['ঢ়','আষাঢ়'],['য়','নয়'],['ৎ','সৎ']
 ];
 
+// 4th field = topic tag, matched against CURRICULUM science/primaryScience
+// topics (e.g. "Fruits", "Body Parts", "About family", "Classroom objects")
+// so the words module can show only the words relevant to what's actually
+// being taught this term — same pattern as animalList's pet/wild/general tag.
 const wordList = [
-  {word:'মা', syll:['মা'], emoji:'👩'},
-  {word:'বাবা', syll:['বা','বা'], emoji:'👨'},
-  {word:'আম', syll:['আ','ম'], emoji:'🥭'},
-  {word:'জল', syll:['জ','ল'], emoji:'💧'},
-  {word:'ফল', syll:['ফ','ল'], emoji:'🍎'},
-  {word:'কলা', syll:['ক','লা'], emoji:'🍌'},
-  {word:'মাছ', syll:['মা','ছ'], emoji:'🐟'},
-  {word:'হাত', syll:['হা','ত'], emoji:'✋'},
-  {word:'বই', syll:['ব','ই'], emoji:'📚'},
-  {word:'টমেটো', syll:['ট','মে','টো'], emoji:'🍅'}
+  {word:'মা', syll:['মা'], emoji:'👩', tag:'family'},
+  {word:'বাবা', syll:['বা','বা'], emoji:'👨', tag:'family'},
+  {word:'আম', syll:['আ','ম'], emoji:'🥭', tag:'fruit'},
+  {word:'জল', syll:['জ','ল'], emoji:'💧', tag:'general'},
+  {word:'ফল', syll:['ফ','ল'], emoji:'🍎', tag:'fruit'},
+  {word:'কলা', syll:['ক','লা'], emoji:'🍌', tag:'fruit'},
+  {word:'মাছ', syll:['মা','ছ'], emoji:'🐟', tag:'fish'},
+  {word:'হাত', syll:['হা','ত'], emoji:'✋', tag:'body'},
+  {word:'বই', syll:['ব','ই'], emoji:'📚', tag:'classroom'},
+  {word:'টমেটো', syll:['ট','মে','টো'], emoji:'🍅', tag:'vegetable'}
 ];
 
 const englishLetters = [
@@ -111,6 +115,117 @@ const animalList = [
   ['🐦','পাখি','কিচিরমিচির করে','general'], ['🐸','ব্যাঙ','ঘ্যাঙঘ্যাঙ ডাকে','wild'], ['🐕','কুকুর','ঘেউঘেউ করে','pet'],
   ['🐱','বিড়াল','মিঁয়াও করে','pet'], ['🐝','মৌমাছি','ভনভন করে','general']
 ];
+
+/* ---------- Science extras: seasons, weather, months, day/night, meal
+   time, rainbow — flashcard content for CURRICULUM science topics that
+   previously had no matching module (only read aloud via 🔊). Same
+   {emoji, word, sub, tag} shape as wordList so buildScienceExtra can reuse
+   the same card/grid rendering pattern as buildWords. `tag` is matched
+   against the science topic text in routeForSyllabusTopic — keep tags in
+   sync with the exact CURRICULUM wording ("Day and Night", "12 Months",
+   "Meal time", "Six seasons", "Rainbow", "Weather"). Content here is plain
+   factual vocabulary (season/month names, weather words), not quoted from
+   any single source, so no wording-verification risk like the chora. */
+const scienceExtraList = [
+  // দিন-রাত
+  {emoji:'☀️', word:'দিন', sub:'সূর্য ওঠে, চারদিক আলো হয়ে যায়', tag:'daynight'},
+  {emoji:'🌙', word:'রাত', sub:'চাঁদ-তারা দেখা যায়, আমরা ঘুমাই', tag:'daynight'},
+  // ছয় ঋতু
+  {emoji:'☀️', word:'গ্রীষ্ম', sub:'খুব গরম থাকে', tag:'season'},
+  {emoji:'🌧️', word:'বর্ষা', sub:'অনেক বৃষ্টি হয়', tag:'season'},
+  {emoji:'🍂', word:'শরৎ', sub:'নীল আকাশে সাদা মেঘ', tag:'season'},
+  {emoji:'🌾', word:'হেমন্ত', sub:'নতুন ধান ঘরে ওঠে', tag:'season'},
+  {emoji:'❄️', word:'শীত', sub:'ঠান্ডা লাগে, লেপ-কাঁথা লাগে', tag:'season'},
+  {emoji:'🌸', word:'বসন্ত', sub:'ফুল ফোটে, ঋতুরাজ বলা হয়', tag:'season'},
+  // আবহাওয়া
+  {emoji:'🌤️', word:'রোদ', sub:'আকাশ পরিষ্কার, সূর্যের আলো', tag:'weather'},
+  {emoji:'🌧️', word:'বৃষ্টি', sub:'আকাশ থেকে পানি পড়ে', tag:'weather'},
+  {emoji:'☁️', word:'মেঘ', sub:'আকাশে ভাসমান পানির কণা', tag:'weather'},
+  {emoji:'🌬️', word:'ঝড়', sub:'জোরে বাতাস বয়', tag:'weather'},
+  {emoji:'🌫️', word:'কুয়াশা', sub:'শীতের সকালে চারদিক ঝাপসা', tag:'weather'},
+  // ১২ মাস (বাংলা)
+  {emoji:'📅', word:'বৈশাখ', sub:'বাংলা নববর্ষের মাস', tag:'month'},
+  {emoji:'📅', word:'জ্যৈষ্ঠ', sub:'মধু মাস, অনেক ফল পাকে', tag:'month'},
+  {emoji:'📅', word:'আষাঢ়', sub:'বর্ষা শুরুর মাস', tag:'month'},
+  {emoji:'📅', word:'শ্রাবণ', sub:'ভারী বৃষ্টির মাস', tag:'month'},
+  {emoji:'📅', word:'ভাদ্র', sub:'শরৎ শুরুর মাস', tag:'month'},
+  {emoji:'📅', word:'আশ্বিন', sub:'পূজার মাস', tag:'month'},
+  {emoji:'📅', word:'কার্তিক', sub:'হেমন্তের শুরু', tag:'month'},
+  {emoji:'📅', word:'অগ্রহায়ণ', sub:'নবান্নের মাস', tag:'month'},
+  {emoji:'📅', word:'পৌষ', sub:'শীতের শুরু, পিঠার মাস', tag:'month'},
+  {emoji:'📅', word:'মাঘ', sub:'সবচেয়ে ঠান্ডার মাস', tag:'month'},
+  {emoji:'📅', word:'ফাল্গুন', sub:'বসন্তের শুরু', tag:'month'},
+  {emoji:'📅', word:'চৈত্র', sub:'বছরের শেষ মাস, গরম শুরু', tag:'month'},
+  // খাবারের সময়
+  {emoji:'🍳', word:'সকালের নাস্তা', sub:'ঘুম থেকে উঠে প্রথম খাবার', tag:'mealtime'},
+  {emoji:'🍛', word:'দুপুরের খাবার', sub:'দিনের প্রধান খাবার', tag:'mealtime'},
+  {emoji:'🍪', word:'বিকেলের নাস্তা', sub:'খেলার আগে হালকা খাবার', tag:'mealtime'},
+  {emoji:'🍽️', word:'রাতের খাবার', sub:'ঘুমানোর আগে শেষ খাবার', tag:'mealtime'},
+  // রংধনু
+  {emoji:'🔴', word:'লাল', sub:'রংধনুর প্রথম রং', tag:'rainbow'},
+  {emoji:'🟠', word:'কমলা', sub:'রংধনুর দ্বিতীয় রং', tag:'rainbow'},
+  {emoji:'🟡', word:'হলুদ', sub:'রংধনুর তৃতীয় রং', tag:'rainbow'},
+  {emoji:'🟢', word:'সবুজ', sub:'রংধনুর চতুর্থ রং', tag:'rainbow'},
+  {emoji:'🔵', word:'আকাশি', sub:'রংধনুর পঞ্চম রং', tag:'rainbow'},
+  {emoji:'🔷', word:'নীল', sub:'রংধনুর ষষ্ঠ রং', tag:'rainbow'},
+  {emoji:'🟣', word:'বেগুনি', sub:'রংধনুর সপ্তম রং', tag:'rainbow'}
+];
+// Maps a scienceExtraList `tag` to the CURRICULUM phrase(s) that should
+// unlock it — used by routeForSyllabusTopic (index.html) so a chip only
+// turns ▶️ when its exact topic is actually covered here.
+const SCIENCE_EXTRA_TAG_MATCH = {
+  daynight: /day\s*and\s*night/i,
+  season:   /season/i,
+  weather:  /weather/i,
+  month:    /month/i,
+  mealtime: /meal\s*time/i,
+  rainbow:  /rainbow/i
+};
+
+/* ---------- Lesson-card content for class1 subjects that have no
+   vocabulary/activity shape (Islam, Social Studies, Computer, Moral
+   Education) — CURRICULUM only lists chapter/lesson titles for these, so
+   each entry here is a short (1–2 sentence) plain, factual note plus the
+   read-aloud text, scoped modestly per the hand-off notes rather than
+   full lesson content. `title` must match the CURRICULUM topic wording
+   closely enough for findLessonIndexByTitle's fuzzy match to work — only
+   chapters listed here get a ▶️ chip in আমার ক্লাস, everything else stays
+   🔊. IMPORTANT: this is a scaffold, not verified against the actual
+   textbook — especially the Islam entries should be checked against the
+   real NCTB book before relying on them for anything beyond a placeholder
+   read-aloud note. Extend this array the same way as new chapters are
+   confirmed. */
+const LESSON_CONTENT = {
+  islam: [
+    {
+      title: 'Chapter I, Unit 1: Allah the Almighty',
+      note: 'আল্লাহ আমাদের সবার সৃষ্টিকর্তা। তিনি একজন, তাঁর কোনো শরিক নেই। আমরা তাঁকেই ভালোবাসি ও তাঁর কাছে প্রার্থনা করি।'
+    },
+    {
+      title: 'Chapter II, Unit 1: The Prophet Hazrat Muhammad (S.A.W)',
+      note: 'হযরত মুহাম্মদ (সা.) আল্লাহর প্রিয় নবী। তিনি সবাইকে সততা, ভালোবাসা ও ভালো ব্যবহার শিখিয়েছেন।'
+    },
+    {
+      title: 'Chapter II, Unit 3: Honesty (a story based on Hadith)',
+      note: 'সততা মানে সবসময় সত্য কথা বলা। ইসলামে সততাকে সবচেয়ে ভালো গুণগুলোর একটি বলা হয়েছে।'
+    }
+  ],
+  socialStudies: [
+    { title: 'Lesson 2: Our Family', note: 'পরিবারে আমরা বাবা-মা, ভাই-বোন ও অন্য স্বজনদের নিয়ে একসাথে থাকি। সবাই একে অপরকে সাহায্য করে।' },
+    { title: 'Lesson 7: Our School', note: 'বিদ্যালয় হলো সেই জায়গা যেখানে আমরা শিক্ষকদের কাছে পড়াশোনা শিখি ও বন্ধুদের সাথে খেলি।' },
+    { title: 'Lesson 8: Bangladesh — Our Motherland', note: 'বাংলাদেশ আমাদের মাতৃভূমি। এর রাজধানীর নাম ঢাকা, আর জাতীয় পতাকা সবুজের মধ্যে লাল বৃত্ত।' },
+    { title: 'Lesson 19: Day and Night', note: 'পৃথিবী নিজের অক্ষে ঘোরে বলে দিন ও রাত হয় — সূর্যের আলো থাকলে দিন, না থাকলে রাত।' }
+  ],
+  computer: [
+    { title: 'Chapter 1: Computer, a Smart Machine', note: 'কম্পিউটার একটি স্মার্ট যন্ত্র, যা আমাদের নির্দেশ অনুযায়ী কাজ করে — লেখা, ছবি আঁকা, খেলা সবই করা যায়।' },
+    { title: 'Chapter 2: Parts of a Computer', note: 'কম্পিউটারের প্রধান অংশ: মনিটর (স্ক্রিন), কি-বোর্ড, মাউস আর সিপিইউ (CPU)।' },
+    { title: 'Chapter 4: About the Keyboard', note: 'কি-বোর্ড দিয়ে আমরা লেখা টাইপ করি — এতে অক্ষর, সংখ্যা ও বিশেষ চিহ্নের বোতাম থাকে।' }
+  ],
+  moralEducation: [
+    { title: 'Look for Values — Ch 2: A Good Friend', note: 'একজন ভালো বন্ধু সবসময় সত্য কথা বলে, বিপদে পাশে থাকে আর অন্যকে সাহায্য করে।' },
+    { title: 'More Values — Ch 4: Doing Things for My Family', note: 'পরিবারের ছোট ছোট কাজে সাহায্য করা — যেমন ঘর গোছানো — একটা ভালো অভ্যাস।' }
+  ]
+};
 
 /* ==========================================================================
    CURRICULUM — real school syllabus, structured as:
@@ -468,6 +583,21 @@ const CURRICULUM_TERM_LABELS = {
   finalTerm: { bn: 'ফাইনাল টার্ম / বার্ষিক', en: 'Final Term / Annual' }
 };
 
+/* ---------- AUDIO_MAP — natural-voice audio lookup (Priority 1) ----------
+   Populate this once you've generated/recorded natural audio for a piece
+   of content (see hand-off doc, "Option A — pre-generate audio once, host
+   as static files"). Key = a stable content key (rhyme `key`, or
+   `letter:অ`, `word:মা`, `animal:সিংহ`, etc — pick one consistent scheme
+   as you add files), value = the hosted URL (GitHub Pages static file or
+   Drive direct-link). index.html's speakSmart()/playRhyme() check this
+   FIRST and only fall back to robotic speechSynthesis when a key is
+   missing — so filling this in gradually, rhyme by rhyme, immediately
+   improves that content with zero code changes. Empty for now: no audio
+   has been generated/hosted yet, this is just the wiring. */
+const AUDIO_MAP = {
+  // 'humpty': 'https://yourdomain.com/audio/rhymes/humpty.mp3',
+};
+
 /* ---------- Rhymes (with word-by-word highlight voice-over) ----------
    NOTE for content growth: this list is currently English-only (Humpty
    Dumpty, Twinkle Twinkle, Johnny Johnny, Rain Rain). Per the product
@@ -668,6 +798,16 @@ function curriculumBanglaLetterCeiling(level, term){
   const byLevel = BANGLA_LETTER_CEILING[level];
   if(!byLevel) return null;
   return (byLevel[term] != null) ? byLevel[term] : null;
+}
+
+// Shared by animal/word filtering below: the science (or primaryScience,
+// for class1) topic list as one lowercase blob, so simple substring checks
+// like "pet animal" / "fruit" can decide what's relevant this term.
+function curriculumScienceTopicsBlob(level, term){
+  const termData = CURRICULUM[level] && CURRICULUM[level][term];
+  if(!termData) return '';
+  const topics = (termData.science && termData.science.topics) || (termData.primaryScience && termData.primaryScience.topics) || [];
+  return topics.join(' | ').toLowerCase();
 }
 
 // Single entry point activity modules call — always returns usable numbers
