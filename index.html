@@ -694,8 +694,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-const storage = firebase.storage();
+const storage = firebase.storage(); // kept for now; gallery uploads below use R2 instead
 const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+// ================= R2 asset Worker (audio + gallery images) =================
+// Firebase Auth/Firestore above are unchanged. Only file storage (drawings)
+// moves here — Firebase Storage is no longer written to for new uploads.
+// See r2-worker/SETUP.md for deploying this Worker.
+const R2_UPLOAD_ENDPOINT = "https://khukir-bagan-assets.himon.workers.dev/upload/gallery";
 
 let currentUser = null;
 let childData = null; // { name, age, stream, stars:{}, totalStars, galleryUrls:[] }
@@ -2552,14 +2558,22 @@ function buildDraw(body){
     renderGallery();
     bump(3, 'draw');
     praise(t('draw_saved'));
-    // Firebase Storage-এ আপলোড করে স্থায়ীভাবে গ্যালারিতে রাখা হয় (লগইন করা থাকলে)
+    // R2 (via Worker)-এ আপলোড করে স্থায়ীভাবে গ্যালারিতে রাখা হয় (লগইন করা থাকলে)।
+    // Firestore-এ URL সেভ করার অংশ আগের মতোই আছে — শুধু ফাইল কোথায় যায় সেটা বদলেছে।
     if(currentUser){
       canvas.toBlob(async (blob)=>{
         try{
-          const path = `users/${currentUser.uid}/gallery/${Date.now()}.png`;
-          const ref = storage.ref(path);
-          await ref.put(blob);
-          const url = await ref.getDownloadURL();
+          const idToken = await currentUser.getIdToken();
+          const res = await fetch(R2_UPLOAD_ENDPOINT, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'image/png'
+            },
+            body: blob
+          });
+          if(!res.ok) throw new Error(`upload failed: ${res.status}`);
+          const { url } = await res.json();
           childData.galleryUrls = childData.galleryUrls || [];
           childData.galleryUrls.push(url);
           await db.collection('users').doc(currentUser.uid).update({ galleryUrls: childData.galleryUrls });

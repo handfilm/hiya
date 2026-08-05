@@ -585,17 +585,20 @@ const CURRICULUM_TERM_LABELS = {
 
 /* ---------- AUDIO_MAP — natural-voice audio lookup (Priority 1) ----------
    Populate this once you've generated/recorded natural audio for a piece
-   of content (see hand-off doc, "Option A — pre-generate audio once, host
-   as static files"). Key = a stable content key (rhyme `key`, or
-   `letter:অ`, `word:মা`, `animal:সিংহ`, etc — pick one consistent scheme
-   as you add files), value = the hosted URL (GitHub Pages static file or
-   Drive direct-link). index.html's speakSmart()/playRhyme() check this
-   FIRST and only fall back to robotic speechSynthesis when a key is
-   missing — so filling this in gradually, rhyme by rhyme, immediately
-   improves that content with zero code changes. Empty for now: no audio
-   has been generated/hosted yet, this is just the wiring. */
+   of content. Key = a stable content key (rhyme `key`, or `letter:অ`,
+   `word:মা`, `animal:সিংহ`, etc — pick one consistent scheme as you add
+   files), value = the hosted URL. index.html's speakSmart()/playRhyme()
+   check this FIRST and only fall back to robotic speechSynthesis when a
+   key is missing — so filling this in gradually, rhyme by rhyme,
+   immediately improves that content with zero code changes.
+
+   Files are hosted in Cloudflare R2 (see r2-worker/SETUP.md): push a file
+   with `wrangler r2 object put khukir-bagan-assets/audio/rhymes/humpty.mp3
+   --file ./humpty.mp3` then point the URL at your deployed Worker
+   (or custom domain). Empty for now: no audio has been generated/hosted
+   yet, this is just the wiring. */
 const AUDIO_MAP = {
-  // 'humpty': 'https://yourdomain.com/audio/rhymes/humpty.mp3',
+  // humpty: 'https://khukir-bagan-assets.YOUR-SUBDOMAIN.workers.dev/audio/rhymes/humpty.mp3',
 };
 
 /* ---------- Rhymes (with word-by-word highlight voice-over) ----------
