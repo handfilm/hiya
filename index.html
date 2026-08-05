@@ -15,46 +15,46 @@
     /* legacy variable names kept — referenced directly inline in the HTML/JS below,
        repointed to the new palette so nothing breaks. */
     --cream:#FFF6E0;
-    --coral:#FF6B35;
-    --plum:#FFF3D6;
+    --coral:#FF3B4E;
+    --plum:#FFE3EC;
 
-    /* ============ SUNSHINE ORCHARD — orange & lime, glossy 3D kid palette ============ */
-    --bg-0:#1f1300;
-    --bg-1:#3a1f00;
-    --bg-2:#5c3300;
-    --bg-3:#7a4a00;
+    /* ============ RUBY CARNIVAL — red & candy-color, glossy 3D kid palette (no browns) ============ */
+    --bg-0:#170826;
+    --bg-1:#3a0d3e;
+    --bg-2:#6e0f2e;
+    --bg-3:#9c1030;
 
-    --ink:#FFF8EC;
-    --ink-dim:rgba(255,248,236,.7);
-    --ink-faint:rgba(255,248,236,.42);
-    --ink-deep:#33210a;
+    --ink:#FFF3F6;
+    --ink-dim:rgba(255,243,246,.7);
+    --ink-faint:rgba(255,243,246,.42);
+    --ink-deep:#2a0e22;
 
-    --glass:rgba(255,255,255,.07);
-    --glass-hi:rgba(255,255,255,.14);
-    --glass-brd:rgba(255,220,150,.22);
-    --glass-brd-soft:rgba(255,220,150,.1);
+    --glass:rgba(255,255,255,.08);
+    --glass-hi:rgba(255,255,255,.16);
+    --glass-brd:rgba(255,140,170,.28);
+    --glass-brd-soft:rgba(255,140,170,.12);
 
-    --sun:#FFB300;
-    --leaf:#8BC34A;
-    --leaf-dark:#C6FF00;
-    --sky:#FFA000;
-    --lilac:#FF7043;
+    --sun:#FFC400;
+    --leaf:#00E0A8;
+    --leaf-dark:#7CFF6B;
+    --sky:#FF2D55;
+    --lilac:#FF3D68;
 
-    --pop-lime:#CDF33B; --pop-lime-dark:#8FC300;
-    --pop-red:#FF6B4A;  --pop-red-dark:#E6491F;
-    --pop-green:#8BC34A; --pop-green-dark:#558B2F;
-    --pop-blue:#FFA726; --pop-blue-dark:#EF6C00;
+    --pop-lime:#7CFF6B; --pop-lime-dark:#2FBF4C;
+    --pop-red:#FF3B4E;  --pop-red-dark:#D6112B;
+    --pop-green:#00E0A8; --pop-green-dark:#00A67D;
+    --pop-blue:#4EA8FF; --pop-blue-dark:#1E6FE0;
 
-    --shadow-deep: 0 20px 50px rgba(60,20,0,.45);
+    --shadow-deep: 0 20px 50px rgba(120,10,45,.5);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
   html,body{margin:0; padding:0; width:100%; height:100%; overflow-x:hidden;}
   body{
     font-family:'Hind Siliguri', sans-serif;
     background:
-      radial-gradient(1100px 620px at 12% -8%, rgba(198,255,0,.20), transparent 55%),
-      radial-gradient(900px 560px at 108% 4%, rgba(255,167,38,.22), transparent 55%),
-      radial-gradient(1000px 700px at 50% 118%, rgba(255,107,53,.16), transparent 55%),
+      radial-gradient(1100px 620px at 12% -8%, rgba(255,59,78,.28), transparent 55%),
+      radial-gradient(900px 560px at 108% 4%, rgba(255,45,85,.26), transparent 55%),
+      radial-gradient(1000px 700px at 50% 118%, rgba(214,17,43,.22), transparent 55%),
       linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 45%, var(--bg-2) 78%, var(--bg-3) 100%);
     background-attachment:fixed;
     min-height:100vh;
@@ -81,8 +81,8 @@
   #fireflyCanvas{position:absolute; inset:0; width:100%; height:100%;}
   .cloud{position:absolute; opacity:.9; animation: drift 60s linear infinite;}
   .sun{position:absolute; top:18px; right:24px; width:70px; height:70px; border-radius:50%;
-    background: radial-gradient(circle at 34% 32%, #FFF3C4, var(--sun) 55%, rgba(255,179,0,0) 78%);
-    box-shadow:0 0 60px 18px rgba(255,179,0,.5), 0 0 120px 40px rgba(198,255,0,.18);
+    background: radial-gradient(circle at 34% 32%, #FFF3C4, var(--sun) 55%, rgba(255,59,78,0) 78%);
+    box-shadow:0 0 60px 18px rgba(255,59,78,.5), 0 0 120px 40px rgba(255,45,85,.22);
     animation: pulse 4s ease-in-out infinite, spinSun 22s linear infinite;}
   @keyframes spinSun{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(12deg);}}
   @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
@@ -93,44 +93,71 @@
     position:fixed; inset:0; z-index:999; overflow:hidden;
     display:flex; align-items:center; justify-content:center;
     background:
-      radial-gradient(900px 600px at 20% 10%, rgba(198,255,0,.22), transparent 55%),
-      radial-gradient(800px 560px at 85% 90%, rgba(255,167,38,.24), transparent 55%),
+      radial-gradient(900px 600px at 20% 10%, rgba(255,45,85,.30), transparent 55%),
+      radial-gradient(800px 560px at 85% 90%, rgba(255,59,78,.28), transparent 55%),
+      radial-gradient(700px 500px at 50% 50%, rgba(78,168,255,.12), transparent 60%),
       linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 45%, var(--bg-2) 78%, var(--bg-3) 100%);
     transition: opacity .6s ease, visibility .6s ease;
   }
   .splash-screen.hide{ opacity:0; visibility:hidden; pointer-events:none; }
   .splash-content{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; text-align:center; padding:0 24px; }
-  .splash-logo-wrap{ position:relative; width:150px; height:150px; display:flex; align-items:center; justify-content:center;
-    margin-bottom:6px; animation: splashPop .7s cubic-bezier(.34,1.56,.64,1) both; }
+
+  /* ---- 3D augmented logo stage: layered spinning rings + floating flower ---- */
+  .splash-logo-wrap{ position:relative; width:170px; height:170px; display:flex; align-items:center; justify-content:center;
+    margin-bottom:10px; perspective:900px; animation: splashPop .7s cubic-bezier(.34,1.56,.64,1) both; }
   @keyframes splashPop{0%{transform:scale(.3) rotate(-25deg); opacity:0;}60%{transform:scale(1.12) rotate(6deg); opacity:1;}100%{transform:scale(1) rotate(0);}}
-  .splash-glow{ position:absolute; inset:-10px; border-radius:50%;
-    background: radial-gradient(circle, rgba(255,179,0,.55), rgba(198,255,0,.25) 55%, transparent 75%);
-    filter:blur(6px); animation: splashGlowPulse 2.2s ease-in-out infinite; }
-  @keyframes splashGlowPulse{0%,100%{transform:scale(1); opacity:.75;}50%{transform:scale(1.18); opacity:1;}}
-  .splash-flower{ position:relative; font-size:84px; line-height:1; animation: splashBounce 1.8s ease-in-out infinite .7s; filter:drop-shadow(0 10px 20px rgba(0,0,0,.35)); }
+
+  .splash-glow{ position:absolute; inset:-6px; border-radius:50%;
+    background: radial-gradient(circle, rgba(255,59,78,.65), rgba(78,168,255,.3) 45%, rgba(255,196,0,.22) 70%, transparent 80%);
+    filter:blur(9px); animation: splashGlowPulse 2.2s ease-in-out infinite; }
+  @keyframes splashGlowPulse{0%,100%{transform:scale(1); opacity:.8;}50%{transform:scale(1.22); opacity:1;}}
+
+  .splash-ring{ position:absolute; border-radius:50%; border:4px solid transparent; transform-style:preserve-3d; }
+  .splash-ring.ring-a{ inset:2px; border-top-color:var(--pop-red); border-right-color:rgba(255,59,78,.2);
+    box-shadow:0 0 20px rgba(255,59,78,.5); animation: ringSpinA 2.4s linear infinite; }
+  .splash-ring.ring-b{ inset:-14px; border-bottom-color:var(--pop-blue); border-left-color:rgba(78,168,255,.18);
+    box-shadow:0 0 20px rgba(78,168,255,.42); animation: ringSpinB 3.2s linear infinite reverse; }
+  .splash-ring.ring-c{ inset:-30px; border-top-color:var(--sun); border-left-color:rgba(255,196,0,.18);
+    box-shadow:0 0 20px rgba(255,196,0,.4); animation: ringSpinC 4s linear infinite; }
+  @keyframes ringSpinA{ from{ transform:rotateZ(0deg) rotateY(0deg); } to{ transform:rotateZ(360deg) rotateY(360deg); } }
+  @keyframes ringSpinB{ from{ transform:rotateZ(0deg) rotateX(0deg); } to{ transform:rotateZ(-360deg) rotateX(360deg); } }
+  @keyframes ringSpinC{ from{ transform:rotateZ(0deg); } to{ transform:rotateZ(360deg); } }
+
+  .splash-3d-inner{ position:relative; transform-style:preserve-3d; animation: logoFloat3D 3.2s ease-in-out infinite .7s; }
+  @keyframes logoFloat3D{
+    0%,100%{ transform:rotateY(0deg) rotateX(0deg) translateZ(0); }
+    25%{ transform:rotateY(20deg) rotateX(-9deg) translateZ(14px); }
+    50%{ transform:rotateY(0deg) rotateX(9deg) translateZ(0); }
+    75%{ transform:rotateY(-20deg) rotateX(-6deg) translateZ(14px); }
+  }
+  .splash-flower{ position:relative; font-size:84px; line-height:1; animation: splashBounce 1.8s ease-in-out infinite .7s; filter:drop-shadow(0 10px 22px rgba(255,59,78,.4)); }
   @keyframes splashBounce{0%,100%{transform:translateY(0) rotate(-6deg);}25%{transform:translateY(-14px) rotate(4deg);}50%{transform:translateY(0) rotate(-3deg);}75%{transform:translateY(-7px) rotate(5deg);}}
-  .splash-sparkle{ position:absolute; font-size:22px; animation: sparkleTwinkle 1.6s ease-in-out infinite; }
-  .splash-sparkle.s1{ top:6px; left:0; animation-delay:.1s; }
-  .splash-sparkle.s2{ bottom:14px; right:-6px; font-size:18px; animation-delay:.55s; }
-  .splash-sparkle.s3{ top:40%; right:6px; font-size:16px; animation-delay:1s; }
-  @keyframes sparkleTwinkle{0%,100%{transform:scale(.6) rotate(0deg); opacity:.4;}50%{transform:scale(1.15) rotate(20deg); opacity:1;}}
+
+  .splash-sparkle{ position:absolute; font-size:22px; animation: sparkleTwinkle 1.6s ease-in-out infinite; filter:drop-shadow(0 0 6px rgba(255,59,78,.5)); }
+  .splash-sparkle.s1{ top:2px; left:-6px; animation-delay:.1s; }
+  .splash-sparkle.s2{ bottom:10px; right:-14px; font-size:18px; animation-delay:.55s; }
+  .splash-sparkle.s3{ top:38%; right:-2px; font-size:16px; animation-delay:1s; }
+  .splash-sparkle.s4{ bottom:0; left:2px; font-size:17px; animation-delay:.8s; }
+  @keyframes sparkleTwinkle{0%,100%{transform:scale(.6) rotate(0deg); opacity:.4;}50%{transform:scale(1.2) rotate(20deg); opacity:1;}}
+
   .splash-title{ font-size:clamp(30px,8vw,46px); margin:6px 0 4px; font-weight:800;
-    background:linear-gradient(135deg, #FFFDF6 0%, var(--leaf-dark) 45%, var(--sun) 100%);
+    background:linear-gradient(135deg, #FFFDF6 0%, var(--pop-red) 45%, var(--sun) 100%);
     -webkit-background-clip:text; background-clip:text; color:transparent;
-    filter:drop-shadow(0 0 22px rgba(198,255,0,.4));
+    filter:drop-shadow(0 0 22px rgba(255,59,78,.45));
     animation: splashTitleIn .7s ease .15s both; }
   @keyframes splashTitleIn{0%{opacity:0; transform:translateY(14px);}100%{opacity:1; transform:translateY(0);}}
   .splash-sub{ font-size:14.5px; color:var(--ink-dim); margin-bottom:18px; animation: splashTitleIn .7s ease .3s both; }
   .splash-dots{ display:flex; gap:8px; animation: splashTitleIn .7s ease .4s both; }
-  .splash-dots span{ width:11px; height:11px; border-radius:50%;
-    background:linear-gradient(180deg,#FFDE85,var(--sun)); box-shadow:0 3px 8px rgba(255,179,0,.5);
+  .splash-dots span{ width:12px; height:12px; border-radius:50%;
+    background:linear-gradient(180deg,#FF7A85,var(--pop-red)); box-shadow:0 3px 10px rgba(255,59,78,.55);
     animation: dotBounce 1s ease-in-out infinite; }
-  .splash-dots span:nth-child(1){ animation-delay:0s; background:linear-gradient(180deg,#FF9A65,var(--pop-red)); box-shadow:0 3px 8px rgba(255,107,74,.5); }
-  .splash-dots span:nth-child(2){ animation-delay:.15s; }
-  .splash-dots span:nth-child(3){ animation-delay:.3s; background:linear-gradient(180deg,#D4F26B,var(--pop-lime)); box-shadow:0 3px 8px rgba(205,243,59,.5); }
-  @keyframes dotBounce{0%,80%,100%{transform:translateY(0); opacity:.6;}40%{transform:translateY(-12px); opacity:1;}}
-  .splash-petal{ position:absolute; font-size:26px; opacity:.85; z-index:1;
-    animation: splashDrift linear infinite; filter:drop-shadow(0 4px 8px rgba(0,0,0,.25)); }
+  .splash-dots span:nth-child(1){ animation-delay:0s; }
+  .splash-dots span:nth-child(2){ animation-delay:.15s; background:linear-gradient(180deg,#FFDE85,var(--sun)); box-shadow:0 3px 10px rgba(255,196,0,.5); }
+  .splash-dots span:nth-child(3){ animation-delay:.3s; background:linear-gradient(180deg,#8FC7FF,var(--pop-blue)); box-shadow:0 3px 10px rgba(78,168,255,.5); }
+  @keyframes dotBounce{0%,80%,100%{transform:translateY(0) scale(1); opacity:.6;}40%{transform:translateY(-13px) scale(1.15); opacity:1;}}
+
+  .splash-petal{ position:absolute; font-size:26px; opacity:.9; z-index:1;
+    animation: splashDrift linear infinite; filter:drop-shadow(0 4px 10px rgba(255,59,78,.3)); }
   .splash-petal.p1{ left:8%; top:-40px; font-size:30px; animation-duration:7s; animation-delay:0s; }
   .splash-petal.p2{ left:22%; top:-40px; font-size:18px; animation-duration:5.5s; animation-delay:1.1s; }
   .splash-petal.p3{ left:42%; top:-40px; font-size:24px; animation-duration:8.5s; animation-delay:.4s; }
@@ -145,7 +172,8 @@
     100%{ transform:translateY(120vh) translateX(-14px) rotate(360deg); opacity:0; }
   }
   @media (prefers-reduced-motion: reduce){
-    .splash-flower, .splash-glow, .splash-sparkle, .splash-dots span, .splash-petal, .splash-logo-wrap, .splash-title, .splash-sub{ animation:none !important; }
+    .splash-flower, .splash-glow, .splash-sparkle, .splash-dots span, .splash-petal, .splash-logo-wrap, .splash-title, .splash-sub,
+    .splash-ring, .splash-3d-inner{ animation:none !important; }
   }
 
   /* ---------- Header ---------- */
@@ -369,16 +397,35 @@
   /* Video corner */
   .video-list{width:100%; max-width:480px;}
   .video-section{margin-bottom:8px;}
-  .video-section-head{display:flex; align-items:center; gap:8px; margin:18px 0 10px;}
+  .video-section-head{display:flex; align-items:center; gap:8px; margin:18px 0 10px; position:relative; padding-left:10px;}
+  .video-section-head::before{content:''; position:absolute; left:0; top:2px; bottom:2px; width:5px; border-radius:6px;
+    background:linear-gradient(180deg, var(--pop-red), var(--pop-red-dark)); box-shadow:0 0 10px rgba(255,59,78,.55);}
   .video-section-head:first-child{margin-top:0;}
-  .video-tag{font-family:'Baloo Da 2', sans-serif; font-size:15px; color:#fff;}
-  .channel-badge{display:inline-flex; align-items:center; gap:6px; background:var(--glass-hi); border:1px solid var(--glass-brd); border-radius:20px;
+  .video-tag{font-family:'Baloo Da 2', sans-serif; font-size:15.5px; font-weight:700; color:#fff;
+    text-shadow:0 0 12px rgba(255,59,78,.5);}
+  .channel-badge{display:inline-flex; align-items:center; gap:6px; background:linear-gradient(155deg, rgba(255,59,78,.22), var(--glass-hi));
+    border:1px solid rgba(255,59,78,.35); border-radius:20px;
     padding:5px 12px 5px 6px; font-size:12px; font-weight:700; color:var(--ink); margin-left:auto;}
-  .channel-badge .ch-avatar{width:22px; height:22px; border-radius:50%; background:linear-gradient(180deg,#FFD180,var(--pop-blue));
-    display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:800;}
-  .video-card{background:linear-gradient(155deg, var(--glass-hi), var(--glass)); border:1px solid var(--glass-brd); border-radius:20px; padding:12px; margin-bottom:14px; box-shadow:0 10px 24px rgba(0,0,0,.35);}
-  .video-card h3{font-family:'Baloo Da 2', sans-serif; margin:0 0 8px; font-size:17px; color:#fff;}
-  .video-card iframe{width:100%; aspect-ratio:16/9; border:none; border-radius:14px;}
+  .channel-badge .ch-avatar{width:22px; height:22px; border-radius:50%; background:linear-gradient(180deg,#FF7A85,var(--pop-red));
+    display:flex; align-items:center; justify-content:center; color:#fff; font-size:11px; font-weight:800;
+    box-shadow:0 2px 6px rgba(255,59,78,.5);}
+  .video-card{
+    position:relative;
+    background:linear-gradient(155deg, var(--glass-hi), var(--glass));
+    border:1px solid rgba(255,59,78,.3); border-radius:20px; padding:12px; margin-bottom:16px;
+    box-shadow:0 14px 28px rgba(120,10,30,.45), 0 0 0 1px rgba(255,59,78,.12) inset;
+    transform:perspective(700px) rotateX(0deg); transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .video-card:hover, .video-card:active{
+    transform:perspective(700px) rotateX(3deg) translateY(-3px);
+    box-shadow:0 20px 36px rgba(120,10,30,.55), 0 0 22px rgba(255,59,78,.35), 0 0 0 1px rgba(255,59,78,.2) inset;
+  }
+  .video-card::before{content:''; position:absolute; z-index:1; top:-25%; left:-12%; width:124%; height:52%;
+    background:linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,0));
+    border-radius:50%; pointer-events:none; mix-blend-mode:screen;}
+  .video-card h3{font-family:'Baloo Da 2', sans-serif; margin:0 0 8px; font-size:17px; color:#fff; display:flex; align-items:center; gap:6px;}
+  .video-card h3::before{content:'▶️'; font-size:14px; filter:drop-shadow(0 0 6px rgba(255,59,78,.6));}
+  .video-card iframe{width:100%; aspect-ratio:16/9; border:none; border-radius:14px; box-shadow:0 6px 16px rgba(0,0,0,.4);}
   .video-note{font-size:12.5px; color:var(--ink-faint); text-align:center; margin-top:6px;}
 
   /* ---------- Auth / setup screens ---------- */
@@ -475,19 +522,25 @@
 
 <!-- ---------- Animated splash / welcome screen (shown on every app load) ---------- -->
 <div id="splashScreen" class="splash-screen">
-  <div class="splash-petal p1">🌸</div>
+  <div class="splash-petal p1">❤️</div>
   <div class="splash-petal p2">⭐</div>
-  <div class="splash-petal p3">🍃</div>
+  <div class="splash-petal p3">🎈</div>
   <div class="splash-petal p4">✨</div>
-  <div class="splash-petal p5">🌼</div>
-  <div class="splash-petal p6">🦋</div>
+  <div class="splash-petal p5">🌺</div>
+  <div class="splash-petal p6">🍓</div>
   <div class="splash-content">
     <div class="splash-logo-wrap">
       <div class="splash-glow"></div>
-      <div class="splash-flower">🌷</div>
+      <div class="splash-ring ring-c"></div>
+      <div class="splash-ring ring-b"></div>
+      <div class="splash-ring ring-a"></div>
+      <div class="splash-3d-inner">
+        <div class="splash-flower">🌷</div>
+      </div>
       <div class="splash-sparkle s1">✨</div>
       <div class="splash-sparkle s2">⭐</div>
       <div class="splash-sparkle s3">✨</div>
+      <div class="splash-sparkle s4">❤️</div>
     </div>
     <h1 class="splash-title display">খুকির বাগান</h1>
     <div class="splash-sub" data-i18n="splashLoading">একটু অপেক্ষা করো...</div>
@@ -2085,6 +2138,49 @@ function buildSentences(body){
 }
 
 /* ---------- Video corner ---------- */
+// ---- Extra curated recommendations (added on top of whatever videoSections
+// already holds in content-data.js — doesn't replace or edit that file, so
+// existing curated sections there are untouched). 22 kid-safe videos across
+// Bengali rhymes, English nursery rhymes, ABC/phonics and counting. ----
+const EXTRA_KIDS_VIDEOS = [
+  { tag:'বাংলা ছড়া', tagEn:'Bengali Rhymes', channel:'Bangla Rhymes', items:[
+    { type:'video', id:'9BayKCtGHSY', title:'আয় রে আয় টিয়ে' },
+    { type:'video', id:'o2Edqb1NxsQ', title:'বাংলা ছড়া সংকলন' },
+    { type:'video', id:'xAIHCxxBR9U', title:'আতা গাছে তোতা পাখি' },
+    { type:'video', id:'Kv7U-lo1tdQ', title:'ছোটদের ২০টি বাংলা গান' },
+    { type:'video', id:'PfNMQrxEsF0', title:'শিশুদের বাংলা ছড়া' },
+    { type:'video', id:'oAK971iluDo', title:'ছুটি — ছোটদের ছড়া' }
+  ]},
+  { tag:'ইংরেজি নার্সারি রাইম', tagEn:'English Nursery Rhymes', channel:'ChuChu TV', items:[
+    { type:'video', id:'VXokId-v7oU', title:'Head, Shoulders, Knees & Toes' },
+    { type:'video', id:'IzVV8LjAuOE', title:'Twinkle Twinkle Little Star' },
+    { type:'video', id:'-Z95SxV8PZc', title:'Rain, Rain, Go Away' },
+    { type:'playlist', listId:'PLV-cxl3VSwWHy3JvK-E9e944E_ci8j_g4', title:'Nursery Rhymes Collection' }
+  ]},
+  { tag:'মজার গান', tagEn:'Fun Songs', channel:'CoComelon', items:[
+    { type:'video', id:'020g-0hhCAU', title:'Baby Shark' },
+    { type:'video', id:'Wbk4gZz2weQ', title:'Baby Shark Submarine + More' }
+  ]},
+  { tag:'অক্ষর ও ধ্বনি', tagEn:'ABC & Phonics', channel:'ABC Kids', items:[
+    { type:'video', id:'tKsIi1MH4lw', title:'ABC Phonics Song with Sounds' },
+    { type:'video', id:'ezmsrB59mj8', title:'ABC Song — Learn the Alphabet' },
+    { type:'video', id:'36IBDpTRVNE', title:'Alphabet Song' },
+    { type:'video', id:'ccEpTTZW34g', title:'The Alphabet Song — Finny the Shark' },
+    { type:'video', id:'vwxNBQnhRrM', title:'Learning Letter Sounds' },
+    { type:'playlist', listId:'PLV-cxl3VSwWGVA_-1aiC1NAaicLo0rs54', title:'ABC Songs & Alphabet Fun' }
+  ]},
+  { tag:'গণনা ও সংখ্যা', tagEn:'Counting & Numbers', channel:'Kids Songs', items:[
+    { type:'video', id:'JT0MmZcJ2Vw', title:'Numbers Song — Count 1 to 10' },
+    { type:'video', id:'BUZaPCLJA3c', title:'Counting to 10' },
+    { type:'video', id:'Yt8GFgxlITs', title:'Counting 1 to 10' },
+    { type:'video', id:'HkkYaj0m6cg', title:'Funky Counting Song' }
+  ]}
+];
+// videoSections itself is declared (const/let) in content-data.js, loaded
+// before this script — mutate it in place with push (never reassign) so we
+// add to it without needing to touch that file.
+videoSections.push(...EXTRA_KIDS_VIDEOS);
+
 function buildVideos(body){
   body.innerHTML = `<div class="video-list" id="videoList"></div><div class="video-note" data-i18n="act_videoNote">শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না</div>`;
   const list = document.getElementById('videoList');
