@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Glimmer &amp; Glow — মেকআপ ও ড্রেসআপ</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;700;800&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none;}
+  html,body{margin:0; padding:0; width:100%; min-height:100%; font-family:'Hind Siliguri',sans-serif;}
+  #root{width:100%; min-height:100vh;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useMemo } = React;
+
+// ---------- Data ----------
+const SKIN_TONES = ["#FFE0BD","#F1C27D","#C68642","#8D5524","#FFDAB9","#E8B796"];
+const FACE_SHAPES = ["গোলাকার","ডিম্বাকার","হৃদয়","চৌকো"];
+const FACE_KEYS = ["round","oval","heart","square"];
+const LIP_COLORS = ["#E85D75","#FF8FB3","#C0392B","#FF6F91","#D35400","#B83280","#F1948A","#922B21","#EC7063","#CD6155","#FF5C8A","#E91E63","#AD1457","#F06292","#C2185B"];
+const EYE_PALETTES = [
+  {name:"সূর্যাস্ত", colors:["#FF8FB3","#FFC857","#FF6F91"]},
+  {name:"সাগর", colors:["#9EEBCF","#5DADE2","#48C9B0"]},
+  {name:"বেরি", colors:["#C9A8F5","#AD1457","#F06292"]},
+  {name:"সোনালি", colors:["#FFC857","#F4D03F","#F5B041"]},
+  {name:"বন", colors:["#82E0AA","#28B463","#1E8449"]},
+  {name:"গোলাপি", colors:["#F1948A","#EC7063","#CD6155"]},
+  {name:"আকাশ", colors:["#AED6F1","#85C1E9","#5499C7"]},
+  {name:"বেগুনি", colors:["#BB8FCE","#A569BD","#8E44AD"]},
+  {name:"পিচ", colors:["#FFD3A5","#FDA085","#F8B195"]},
+  {name:"পুদিনা", colors:["#9EEBCF","#76D7C4","#48C9B0"]},
+];
+const HAIR_COLORS = ["#2C1B18","#4A2E1F","#7B3F00","#B8860B","#F4E04D","#FF8FB3","#C9A8F5","#5DADE2","#E74C3C","#1ABC9C","#EEEEEE","#7D3C98"];
+const HAIR_STYLES = Array.from({length:20},(_,i)=>i+1);
+const OUTFITS = [
+  {id:1,name:"রোদ্দুর ফ্রক",color:"#FFD3A5",price:0},
+  {id:2,name:"গোলাপি টি-শার্ট",color:"#FF8FB3",price:0},
+  {id:3,name:"বেগুনি গাউন",color:"#C9A8F5",price:150},
+  {id:4,name:"পুদিনা জাম্পস্যুট",color:"#9EEBCF",price:150},
+  {id:5,name:"তারার স্কার্ট",color:"#4A2E4C",price:250},
+  {id:6,name:"সোনালি ঝলমল",color:"#FFC857",price:300},
+  {id:7,name:"গোলাপি ওভারঅল",color:"#F1948A",price:200},
+  {id:8,name:"আকাশি রোম্পার",color:"#AED6F1",price:200},
+];
+const ACCESSORIES = [
+  {id:1,name:"মুক্তার দুল",price:0},
+  {id:2,name:"বো ক্লিপ",price:0},
+  {id:3,name:"তারা হার",price:100},
+  {id:4,name:"সান হ্যাট",price:180},
+  {id:5,name:"চকচকে ব্যাগ",price:220},
+];
+const SCENES = [
+  {id:"salon",name:"সেলুন",grad:["#FFD3E1","#FFEFF5"]},
+  {id:"party",name:"পার্টি",grad:["#C9A8F5","#F5E6FF"]},
+  {id:"beach",name:"সমুদ্র সৈকত",grad:["#9EEBCF","#EAFFF8"]},
+  {id:"school",name:"স্কুল",grad:["#FFD3A5","#FFF3E2"]},
+  {id:"redcarpet",name:"রেড কার্পেট",grad:["#FF8FB3","#FFE1EA"]},
+  {id:"stars",name:"তারার আলো",grad:["#4A2E4C","#8E6E9C"]},
+];
+const BADGES = [
+  {id:"color_master",name:"রঙের রাণী",icon:"💄"},
+  {id:"fashionista",name:"ফ্যাশনিস্তা",icon:"👗"},
+  {id:"stylist",name:"স্টাইলিস্ট",icon:"✂️"},
+  {id:"collector",name:"সংগ্রাহক",icon:"📸"},
+];
+const rnd = (arr)=>arr[Math.floor(Math.random()*arr.length)];
+
+function Avatar({look, size=260}){
+  const {skin,faceShape,lipColor,eyeColor,blush,hairColor,hairStyle,outfitColor,accessories}=look;
+  const faceRx = faceShape==="round"?78:faceShape==="square"?70:faceShape==="heart"?74:76;
+  const faceRy = faceShape==="round"?78:faceShape==="square"?82:faceShape==="heart"?84:90;
+  return (
+    <svg viewBox="0 0 300 340" width={size} height={size*(340/300)} style={{filter:"drop-shadow(0 10px 20px rgba(0,0,0,.15))"}}>
+      <defs>
+        <radialGradient id="cheekGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor={blush} stopOpacity="0.7"/>
+          <stop offset="100%" stopColor={blush} stopOpacity="0"/>
+        </radialGradient>
+      </defs>
+      <path d="M 90 260 Q 150 230 210 260 L 230 340 L 70 340 Z" fill={outfitColor} stroke="#4A2E4C" strokeWidth="3" strokeLinejoin="round"/>
+      <rect x="135" y="205" width="30" height="35" fill={skin}/>
+      {hairStyle%3===0 && <path d="M 70 160 Q 60 260 90 290 Q 100 220 95 160 Z M 230 160 Q 240 260 210 290 Q 200 220 205 160 Z" fill={hairColor}/>}
+      <ellipse cx="150" cy="150" rx={faceRx} ry={faceRy} fill={skin} stroke="#4A2E4C" strokeWidth="2.5"/>
+      <circle cx="108" cy="168" r="18" fill="url(#cheekGrad)"/>
+      <circle cx="192" cy="168" r="18" fill="url(#cheekGrad)"/>
+      <path d="M 105 128 Q 122 112 142 122 Q 122 128 108 138 Z" fill={eyeColor} opacity="0.85"/>
+      <path d="M 195 128 Q 178 112 158 122 Q 178 128 192 138 Z" fill={eyeColor} opacity="0.85"/>
+      <ellipse cx="122" cy="140" rx="10" ry="12" fill="#fff" stroke="#4A2E4C" strokeWidth="2.5"/>
+      <ellipse cx="178" cy="140" rx="10" ry="12" fill="#fff" stroke="#4A2E4C" strokeWidth="2.5"/>
+      <circle cx="122" cy="141" r="5" fill="#4A2E4C"/>
+      <circle cx="178" cy="141" r="5" fill="#4A2E4C"/>
+      <path d="M 112 132 Q 122 126 133 132" stroke="#2C1B18" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+      <path d="M 188 132 Q 178 126 167 132" stroke="#2C1B18" strokeWidth="2.5" fill="none" strokeLinecap="round"/>
+      <path d="M 108 116 Q 122 108 138 114" stroke="#4A2E1F" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <path d="M 192 116 Q 178 108 162 114" stroke="#4A2E1F" strokeWidth="3" fill="none" strokeLinecap="round"/>
+      <path d="M 150 145 Q 146 162 150 168 Q 154 166 152 160" stroke="#4A2E4C" strokeWidth="1.5" fill="none" opacity="0.5"/>
+      <path d="M 132 188 Q 150 182 168 188 Q 150 202 132 188 Z" fill={lipColor} stroke="#4A2E4C" strokeWidth="1.5"/>
+      <circle cx="135" cy="162" r="3" fill="#fff" opacity="0.8"/>
+      <circle cx="165" cy="162" r="3" fill="#fff" opacity="0.8"/>
+      <path d={hairStyle%5===0?"M 70 130 Q 150 40 230 130 Q 220 90 150 80 Q 80 90 70 130 Z":hairStyle%4===0?"M 65 140 Q 60 60 150 55 Q 240 60 235 140 Q 210 100 150 100 Q 90 100 65 140 Z":hairStyle%3===0?"M 68 150 Q 55 70 150 60 Q 245 70 232 150 Q 220 95 150 90 Q 80 95 68 150 Z":"M 72 135 Q 75 55 150 50 Q 225 55 228 135 Q 200 85 150 82 Q 100 85 72 135 Z"} fill={hairColor} stroke="#4A2E4C" strokeWidth="2"/>
+      {accessories.includes(2) && <g transform="translate(195,70)"><path d="M 0 0 L -14 -9 L -14 9 Z" fill="#FF8FB3" stroke="#4A2E4C" strokeWidth="1.5"/><path d="M 0 0 L 14 -9 L 14 9 Z" fill="#FF8FB3" stroke="#4A2E4C" strokeWidth="1.5"/><circle cx="0" cy="0" r="4" fill="#E85D75"/></g>}
+      {accessories.includes(1) && <><circle cx="95" cy="175" r="4" fill="#FFF6E5" stroke="#FFC857" strokeWidth="1.5"/><circle cx="205" cy="175" r="4" fill="#FFF6E5" stroke="#FFC857" strokeWidth="1.5"/></>}
+      {accessories.includes(3) && <path d="M 120 232 Q 150 250 180 232" stroke="#FFC857" strokeWidth="3" fill="none" strokeLinecap="round"/>}
+      {accessories.includes(4) && <ellipse cx="150" cy="80" rx="80" ry="16" fill="#FFD3A5" stroke="#4A2E4C" strokeWidth="2"/>}
+    </svg>
+  );
+}
+
+function TabButton({active,onClick,emoji,label}){
+  return (
+    <button onClick={onClick} style={{
+      display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2,
+      flex:1,padding:"10px 0",borderRadius:16,background:active?"#fff":"transparent",
+      boxShadow:active?"0 4px 10px rgba(0,0,0,.08)":"none",transform:active?"scale(1.05)":"none",
+      opacity:active?1:0.6, transition:"all .15s"}}>
+      <span style={{fontSize:19}}>{emoji}</span>
+      <span style={{fontSize:10,fontWeight:800,color:active?"#FF6F91":"#8A6E8C"}}>{label}</span>
+    </button>
+  );
+}
+
+function Swatch({color,active,onClick,locked}){
+  return (
+    <button onClick={!locked?onClick:undefined} style={{
+      position:"relative",width:42,height:42,borderRadius:"50%",
+      border:`4px solid ${active?"#4A2E4C":"#fff"}`,background:color,
+      opacity:locked?0.4:1, transform:active?"scale(1.1)":"scale(1)", transition:"transform .15s"}}>
+      {locked && <span style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:14}}>🔒</span>}
+      {active && !locked && <span style={{position:"absolute",top:-4,right:-4,background:"#fff",borderRadius:"50%",width:14,height:14,display:"flex",alignItems:"center",justifyContent:"center",fontSize:9}}>✓</span>}
+    </button>
+  );
+}
+
+function ColorMatchGame({onWin,onClose}){
+  const target = useMemo(()=>rnd(LIP_COLORS),[]);
+  const options = useMemo(()=>{
+    const opts=new Set([target]);
+    while(opts.size<4) opts.add(rnd(LIP_COLORS));
+    return [...opts].sort(()=>Math.random()-0.5);
+  },[target]);
+  const [result,setResult]=useState(null);
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.4)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:24}}>
+      <div style={{background:"#fff",borderRadius:24,padding:24,maxWidth:320,width:"100%",textAlign:"center",boxShadow:"0 20px 50px rgba(0,0,0,.3)"}}>
+        <h3 style={{fontWeight:800,fontSize:18,color:"#4A2E4C",margin:"0 0 4px"}}>রঙ মেলাও!</h3>
+        <p style={{fontSize:13,color:"#8A6E8C",margin:"0 0 16px"}}>একই রঙের সোয়াচে চাপ দাও!</p>
+        <div style={{width:64,height:64,borderRadius:"50%",margin:"0 auto 16px",background:target,border:"4px solid #fff",boxShadow:"0 4px 12px rgba(0,0,0,.15)"}}/>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
+          {options.map((c,i)=>(
+            <button key={i} disabled={result!==null} onClick={()=>setResult(c===target?"win":"lose")}
+              style={{height:56,borderRadius:12,background:c,border:"2px solid #fff",boxShadow:"0 2px 8px rgba(0,0,0,.1)"}}/>
+          ))}
+        </div>
+        {result==="win" && <p style={{color:"#16a34a",fontWeight:800,marginBottom:8}}>🎉 ঠিক! +২০ কয়েন</p>}
+        {result==="lose" && <p style={{color:"#ef4444",fontWeight:800,marginBottom:8}}>ঠিক হয়নি, আবার চেষ্টা করো!</p>}
+        {result ? (
+          <button onClick={()=>{if(result==="win")onWin(20); onClose();}} style={{background:"#FF8FB3",color:"#fff",fontWeight:800,padding:"10px 24px",borderRadius:999}}>এগিয়ে যাও</button>
+        ) : (
+          <button onClick={onClose} style={{fontSize:12,color:"#8A6E8C",textDecoration:"underline",background:"none"}}>বাদ দাও</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function App(){
+  const [screen,setScreen]=useState("home");
+  const [tab,setTab]=useState("face");
+  const [coins,setCoins]=useState(320);
+  const [level,setLevel]=useState(3);
+  const [xp,setXp]=useState(40);
+  const [scene,setScene]=useState(SCENES[0]);
+  const [ownedOutfits,setOwnedOutfits]=useState([1,2]);
+  const [ownedAccessories,setOwnedAccessories]=useState([1,2]);
+  const [wardrobe,setWardrobe]=useState([]);
+  const [showMiniGame,setShowMiniGame]=useState(false);
+  const [showPhotoBooth,setShowPhotoBooth]=useState(false);
+  const [toast,setToast]=useState(null);
+  const [triedLips,setTriedLips]=useState(new Set());
+  const [triedHair,setTriedHair]=useState(new Set());
+  const [look,setLook]=useState({
+    skin:SKIN_TONES[0], faceShape:"oval", lipColor:LIP_COLORS[0], eyeColor:EYE_PALETTES[0].colors[0],
+    blush:"#FF8FB3", hairColor:HAIR_COLORS[0], hairStyle:1, outfitColor:OUTFITS[0].color, outfitId:1,
+    accessories:[1,2],
+  });
+
+  const flash=(msg)=>{setToast(msg); setTimeout(()=>setToast(null),1800);};
+  const badgesEarned = useMemo(()=>{
+    const e=[];
+    if(triedLips.size>=10) e.push("color_master");
+    if(ownedOutfits.length>=5) e.push("fashionista");
+    if(triedHair.size>=5) e.push("stylist");
+    if(wardrobe.length>=3) e.push("collector");
+    return e;
+  },[triedLips,ownedOutfits,triedHair,wardrobe]);
+
+  const updateLook=(patch)=>setLook(l=>({...l,...patch}));
+  const buyItem=(item,type)=>{
+    if(coins<item.price){flash("পর্যাপ্ত কয়েন নেই! 🪙"); return;}
+    if(item.price>0) setCoins(c=>c-item.price);
+    if(type==="outfit") setOwnedOutfits(o=>[...o,item.id]);
+    if(type==="accessory") setOwnedAccessories(o=>[...o,item.id]);
+    flash(`${item.name} আনলক হলো! ✨`);
+  };
+  const toggleAccessory=(id)=>updateLook({accessories: look.accessories.includes(id)? look.accessories.filter(a=>a!==id): [...look.accessories,id]});
+  const saveLook=()=>{
+    setWardrobe(w=>[...w,{...look,scene:scene.id,id:Date.now()}]);
+    setXp(x=>{const nx=x+15; if(nx>=100){setLevel(l=>l+1); return nx-100;} return nx;});
+    flash("লুক সংরক্ষণ হলো! 💾");
+  };
+  const claimDaily=()=>{setCoins(c=>c+50); flash("দৈনিক পুরস্কার: +৫০ কয়েন! 🎁");};
+
+  return (
+    <div style={{width:"100%",minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",padding:12,background:"linear-gradient(160deg,#FFF6F0,#FFE9F0)"}}>
+      <div style={{width:"100%",maxWidth:400,margin:"0 auto",borderRadius:36,overflow:"hidden",boxShadow:"0 25px 60px rgba(0,0,0,.25)",border:"8px solid #fff",background:"#FFF6F0"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px",background:"linear-gradient(90deg,#FF8FB3,#C9A8F5)"}}>
+          <div style={{display:"flex",alignItems:"center",gap:4,background:"rgba(255,255,255,.9)",borderRadius:999,padding:"4px 12px"}}>
+            <span>⭐</span><span style={{fontWeight:800,fontSize:13,color:"#4A2E4C"}}>লেভেল {level}</span>
+          </div>
+          <h1 style={{color:"#fff",fontWeight:800,fontSize:18,margin:0,fontFamily:"'Baloo Da 2',sans-serif"}}>✨ Glimmer &amp; Glow</h1>
+          <div style={{display:"flex",alignItems:"center",gap:4,background:"rgba(255,255,255,.9)",borderRadius:999,padding:"4px 12px"}}>
+            <span>🪙</span><span style={{fontWeight:800,fontSize:13,color:"#4A2E4C"}}>{coins}</span>
+          </div>
+        </div>
+        <div style={{height:8,background:"rgba(255,255,255,.4)",margin:"8px 16px 0",borderRadius:999,overflow:"hidden"}}>
+          <div style={{height:"100%",width:`${xp}%`,background:"linear-gradient(90deg,#FFC857,#FF8FB3)",borderRadius:999}}/>
+        </div>
+
+        {screen==="home" ? (
+          <div style={{padding:20,display:"flex",flexDirection:"column",gap:16}}>
+            <div style={{borderRadius:24,padding:20,textAlign:"center",background:"linear-gradient(160deg,#C9A8F5,#FFD3E1)"}}>
+              <p style={{color:"#fff",fontWeight:700,fontSize:13,marginBottom:12}}>স্বাগতম, প্রিয় তারকা! 🌟</p>
+              <div style={{display:"flex",justifyContent:"center"}}><Avatar look={look} size={180}/></div>
+            </div>
+            <button onClick={claimDaily} style={{width:"100%",background:"#FFC857",color:"#4A2E4C",fontWeight:800,padding:"12px 0",borderRadius:16,boxShadow:"0 4px 10px rgba(0,0,0,.08)"}}>🎁 দৈনিক পুরস্কার নাও</button>
+            <button onClick={()=>setScreen("create")} style={{width:"100%",background:"#FF8FB3",color:"#fff",fontWeight:800,padding:"14px 0",borderRadius:16,boxShadow:"0 4px 10px rgba(0,0,0,.08)"}}>✨ মেকওভার শুরু করো</button>
+            <button onClick={()=>setShowMiniGame(true)} style={{width:"100%",background:"#9EEBCF",color:"#4A2E4C",fontWeight:800,padding:"12px 0",borderRadius:16,boxShadow:"0 4px 10px rgba(0,0,0,.08)"}}>🎮 মিনি-গেম খেলো (+কয়েন)</button>
+            {wardrobe.length>0 && (
+              <div>
+                <p style={{fontWeight:800,color:"#4A2E4C",fontSize:13,marginBottom:8}}>আমার ওয়ারড্রোব</p>
+                <div style={{display:"flex",gap:8,overflowX:"auto",paddingBottom:4}}>
+                  {wardrobe.map(w=>(<div key={w.id} style={{flexShrink:0,background:"#fff",borderRadius:16,padding:4,boxShadow:"0 2px 8px rgba(0,0,0,.08)"}}><Avatar look={w} size={70}/></div>))}
+                </div>
+              </div>
+            )}
+            <div>
+              <p style={{fontWeight:800,color:"#4A2E4C",fontSize:13,marginBottom:8}}>ব্যাজ</p>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+                {BADGES.map(b=>{const earned=badgesEarned.includes(b.id); return (
+                  <div key={b.id} style={{display:"flex",flexDirection:"column",alignItems:"center",padding:8,borderRadius:16,background:earned?"#fff":"rgba(255,255,255,.4)",boxShadow:earned?"0 2px 8px rgba(0,0,0,.08)":"none"}}>
+                    <span style={{fontSize:22,filter:earned?"none":"grayscale(1)",opacity:earned?1:0.4}}>{b.icon}</span>
+                    <span style={{fontSize:9,fontWeight:800,textAlign:"center",color:"#4A2E4C",marginTop:4,lineHeight:1.1}}>{b.name}</span>
+                  </div>
+                );})}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <React.Fragment>
+            <div style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",padding:"16px 0",background:`linear-gradient(160deg,${scene.grad[0]},${scene.grad[1]})`}}>
+              <button onClick={()=>setScreen("home")} style={{position:"absolute",left:12,top:12,background:"rgba(255,255,255,.9)",borderRadius:999,padding:8,boxShadow:"0 2px 8px rgba(0,0,0,.1)"}}>🏠</button>
+              <button onClick={()=>setShowPhotoBooth(true)} style={{position:"absolute",right:12,top:12,background:"rgba(255,255,255,.9)",borderRadius:999,padding:8,boxShadow:"0 2px 8px rgba(0,0,0,.1)"}}>📷</button>
+              <Avatar look={look} size={210}/>
+            </div>
+            <div style={{display:"flex",gap:8,padding:"8px 16px",overflowX:"auto",background:"rgba(255,255,255,.5)"}}>
+              {SCENES.map(s=>(
+                <button key={s.id} onClick={()=>setScene(s)} style={{flexShrink:0,fontSize:10,fontWeight:800,padding:"6px 12px",borderRadius:999,border:`2px solid ${scene.id===s.id?"#4A2E4C":"transparent"}`,background:scene.id===s.id?"#fff":"rgba(255,255,255,.6)",color:"#4A2E4C"}}>{s.name}</button>
+              ))}
+            </div>
+            <div style={{display:"flex",gap:4,padding:"8px 12px 0",background:"#fff"}}>
+              <TabButton active={tab==="face"} onClick={()=>setTab("face")} emoji="😊" label="মুখ"/>
+              <TabButton active={tab==="makeup"} onClick={()=>setTab("makeup")} emoji="💄" label="মেকআপ"/>
+              <TabButton active={tab==="hair"} onClick={()=>setTab("hair")} emoji="✂️" label="চুল"/>
+              <TabButton active={tab==="outfit"} onClick={()=>setTab("outfit")} emoji="👗" label="পোশাক"/>
+              <TabButton active={tab==="bag"} onClick={()=>setTab("bag")} emoji="👜" label="বাড়তি"/>
+            </div>
+            <div style={{background:"#fff",padding:"12px 16px 16px",minHeight:190}}>
+              {tab==="face" && (
+                <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                  <div>
+                    <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>ত্বকের রঙ</p>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{SKIN_TONES.map(c=>(<Swatch key={c} color={c} active={look.skin===c} onClick={()=>updateLook({skin:c})}/>))}</div>
+                  </div>
+                  <div>
+                    <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>মুখের গঠন</p>
+                    <div style={{display:"flex",gap:8}}>{FACE_KEYS.map((f,i)=>(<button key={f} onClick={()=>updateLook({faceShape:f})} style={{padding:"6px 12px",borderRadius:999,fontSize:12,fontWeight:800,border:`2px solid ${look.faceShape===f?"#4A2E4C":"transparent"}`,background:look.faceShape===f?"#FFE9F0":"#f3f4f6",color:"#4A2E4C"}}>{FACE_SHAPES[i]}</button>))}</div>
+                  </div>
+                </div>
+              )}
+              {tab==="makeup" && (
+                <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                  <div>
+                    <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>লিপস্টিক ({LIP_COLORS.length} রঙ)</p>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{LIP_COLORS.map(c=>(<Swatch key={c} color={c} active={look.lipColor===c} onClick={()=>{updateLook({lipColor:c}); setTriedLips(s=>new Set(s).add(c));}}/>))}</div>
+                  </div>
+                  <div>
+                    <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>আইশ্যাডো প্যালেট</p>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{EYE_PALETTES.map(p=>(
+                      <button key={p.name} onClick={()=>updateLook({eyeColor:p.colors[0]})} style={{display:"flex",borderRadius:999,overflow:"hidden",border:`2px solid ${look.eyeColor===p.colors[0]?"#4A2E4C":"#fff"}`}}>
+                        {p.colors.map((c,i)=>(<span key={i} style={{width:16,height:32,background:c}}/>))}
+                      </button>
+                    ))}</div>
+                  </div>
+                  <div>
+                    <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>ব্লাশ</p>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{["#FF8FB3","#F1948A","#FFC0CB","#E85D75"].map(c=>(<Swatch key={c} color={c} active={look.blush===c} onClick={()=>updateLook({blush:c})}/>))}</div>
+                  </div>
+                </div>
+              )}
+              {tab==="hair" && (
+                <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                  <div>
+                    <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>হেয়ারস্টাইল ({HAIR_STYLES.length}টি)</p>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap",maxHeight:96,overflowY:"auto"}}>{HAIR_STYLES.map(h=>(
+                      <button key={h} onClick={()=>{updateLook({hairStyle:h}); setTriedHair(s=>new Set(s).add(h));}} style={{width:36,height:36,borderRadius:12,fontSize:12,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",border:`2px solid ${look.hairStyle===h?"#4A2E4C":"#e5e7eb"}`,background:look.hairStyle===h?"#FFE9F0":"#f9fafb",color:"#4A2E4C"}}>{h}</button>
+                    ))}</div>
+                  </div>
+                  <div>
+                    <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>চুলের রঙ</p>
+                    <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>{HAIR_COLORS.map(c=>(<Swatch key={c} color={c} active={look.hairColor===c} onClick={()=>updateLook({hairColor:c})}/>))}</div>
+                  </div>
+                </div>
+              )}
+              {tab==="outfit" && (
+                <div>
+                  <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>পোশাক</p>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+                    {OUTFITS.map(o=>{const owned=ownedOutfits.includes(o.id); return (
+                      <button key={o.id} onClick={()=>owned?updateLook({outfitColor:o.color,outfitId:o.id}):buyItem(o,"outfit")} style={{position:"relative",display:"flex",flexDirection:"column",alignItems:"center",padding:8,borderRadius:12,border:`2px solid ${look.outfitId===o.id?"#4A2E4C":"#e5e7eb"}`,background:look.outfitId===o.id?"#FFE9F0":"#fff"}}>
+                        <span style={{width:32,height:32,borderRadius:8,background:o.color}}/>
+                        <span style={{fontSize:8,fontWeight:800,color:"#4A2E4C",textAlign:"center",marginTop:4,lineHeight:1.1}}>{o.name}</span>
+                        {!owned && <span style={{fontSize:8,fontWeight:800,color:"#FF6F91",marginTop:2}}>🪙{o.price}</span>}
+                      </button>
+                    );})}
+                  </div>
+                </div>
+              )}
+              {tab==="bag" && (
+                <div>
+                  <p style={{fontSize:12,fontWeight:800,color:"#8A6E8C",marginBottom:8}}>এক্সেসরিজ</p>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
+                    {ACCESSORIES.map(a=>{const owned=ownedAccessories.includes(a.id); const active=look.accessories.includes(a.id); return (
+                      <button key={a.id} onClick={()=>owned?toggleAccessory(a.id):buyItem(a,"accessory")} style={{position:"relative",display:"flex",flexDirection:"column",alignItems:"center",padding:8,borderRadius:12,border:`2px solid ${active?"#4A2E4C":"#e5e7eb"}`,background:active?"#FFE9F0":"#fff"}}>
+                        <span style={{fontSize:18}}>💎</span>
+                        <span style={{fontSize:8,fontWeight:800,color:"#4A2E4C",textAlign:"center",marginTop:4,lineHeight:1.1}}>{a.name}</span>
+                        {!owned && <span style={{fontSize:8,fontWeight:800,color:"#FF6F91",marginTop:2}}>🪙{a.price}</span>}
+                      </button>
+                    );})}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div style={{padding:"0 16px 16px",background:"#fff"}}>
+              <button onClick={saveLook} style={{width:"100%",background:"linear-gradient(90deg,#FF8FB3,#C9A8F5)",color:"#fff",fontWeight:800,padding:"12px 0",borderRadius:16,boxShadow:"0 4px 10px rgba(0,0,0,.1)"}}>💾 ওয়ারড্রোবে লুক সংরক্ষণ করো</button>
+            </div>
+          </React.Fragment>
+        )}
+      </div>
+
+      {toast && (
+        <div style={{position:"fixed",bottom:24,left:"50%",transform:"translateX(-50%)",background:"#4A2E4C",color:"#fff",fontSize:13,fontWeight:800,padding:"10px 18px",borderRadius:999,boxShadow:"0 10px 30px rgba(0,0,0,.3)",zIndex:50}}>{toast}</div>
+      )}
+      {showMiniGame && <ColorMatchGame onWin={(amt)=>setCoins(c=>c+amt)} onClose={()=>setShowMiniGame(false)}/>}
+      {showPhotoBooth && (
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:50,padding:24}}>
+          <div style={{background:"#fff",borderRadius:24,padding:20,maxWidth:320,width:"100%",textAlign:"center",boxShadow:"0 20px 50px rgba(0,0,0,.3)"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+              <h3 style={{fontWeight:800,color:"#4A2E4C",margin:0}}>ফটো বুথ 📸</h3>
+              <button onClick={()=>setShowPhotoBooth(false)} style={{background:"none",fontSize:18,color:"#4A2E4C"}}>✕</button>
+            </div>
+            <div style={{borderRadius:16,padding:16,marginBottom:12,background:`linear-gradient(160deg,${scene.grad[0]},${scene.grad[1]})`}}>
+              <div style={{display:"flex",justifyContent:"center"}}><Avatar look={look} size={160}/></div>
+              <p style={{color:"#fff",fontSize:12,fontWeight:800,marginTop:4}}>{scene.name}</p>
+            </div>
+            <div style={{display:"flex",gap:8,justifyContent:"center",marginBottom:12,fontSize:20}}><span>⭐</span><span>💖</span><span>✨</span><span>🌈</span></div>
+            <button onClick={()=>{flash("ছবি সংরক্ষণ হলো! 🖼️"); setShowPhotoBooth(false);}} style={{width:"100%",background:"#FF8FB3",color:"#fff",fontWeight:800,padding:"10px 0",borderRadius:12}}>ছবি সংরক্ষণ করো</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
