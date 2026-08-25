@@ -257,6 +257,9 @@
       radial-gradient(900px 600px at 20% 0%, rgba(90,209,255,.10), transparent 60%),
       linear-gradient(170deg, var(--bg-1), var(--bg-3)); z-index:10; display:none; flex-direction:column;}
   #activity.open{display:flex;}
+  .activity-progress-wrap{width:100%; height:4px; background:rgba(255,255,255,.08); position:relative; overflow:hidden; z-index:5;}
+  .activity-progress-bar{height:100%; width:0%; background:linear-gradient(90deg, var(--pop-green), var(--sun), var(--pop-red));
+    border-radius:0 2px 2px 0; box-shadow:0 0 8px rgba(0,224,168,.6); transition:width .35s cubic-bezier(.4,0,.2,1);}
   .topbar{display:flex; align-items:center; gap:12px; padding:16px 16px; color:#fff;
     background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
     backdrop-filter:blur(14px); border-bottom:1px solid var(--glass-brd-soft); box-shadow:0 10px 24px rgba(0,0,0,.3);}
@@ -754,6 +757,9 @@
     <span id="actSyllabusBadge" class="syllabus-badge" style="display:none;"></span>
     <button class="listen-btn" onclick="speakActivityIntro()" title="শোনো">🔊</button>
     <div class="stars">⭐ <span id="starCount">0</span></div>
+  </div>
+  <div class="activity-progress-wrap" id="actProgressWrap">
+    <div class="activity-progress-bar" id="actProgressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
   </div>
   <div class="activity-body" id="actBody"></div>
 </div>
@@ -1641,6 +1647,20 @@ const COLORS = ['#FF6B35','#8BC34A','#FFA726','#C6FF00','#FF7043','#FFC107','#AE
 
 let drawGallery = []; // in-memory only for this session — each save creates a real downloadable PNG
 
+function updateLessonProgress(current, total){
+  const bar = document.getElementById('actProgressBar');
+  if(!bar) return;
+  if(!total || total <= 0){
+    bar.style.width = '0%';
+    bar.setAttribute('aria-valuenow', '0');
+    return;
+  }
+  const pct = Math.min(100, Math.max(0, Math.round((current / total) * 100)));
+  bar.style.width = pct + '%';
+  bar.setAttribute('aria-valuenow', String(pct));
+}
+window.updateLessonProgress = updateLessonProgress;
+
 function speakActivityIntro(){
   if(!window.currentModule) return;
   const msg = t('d_' + window.currentModule);
@@ -1650,6 +1670,7 @@ function openActivity(name){
   window.currentModule = name;
   document.getElementById('activity').classList.add('open');
   document.getElementById('actTitle').textContent = moduleLabel(name);
+  updateLessonProgress(0, 1);
   // Syllabus badge: only shown once SYLLABUS_TAGS[name].source has actually
   // been filled in (see content-data.js) — never show it speculatively.
   const badge = document.getElementById('actSyllabusBadge');
@@ -1694,6 +1715,7 @@ function launchGame(file){
 
 function closeActivity(){
   document.getElementById('activity').classList.remove('open');
+  updateLessonProgress(0, 1);
   window.speechSynthesis && window.speechSynthesis.cancel();
 }
 
@@ -1705,6 +1727,8 @@ function buildLetters(body){
   const ranges = (typeof getSyllabusRanges === 'function') ? getSyllabusRanges(level, term) : null;
   const ceiling = ranges ? ranges.banglaLetterCeiling : letters.length - 1;
   const activeLetters = letters.slice(0, ceiling + 1);
+  const visited = new Set([0]);
+  updateLessonProgress(visited.size, activeLetters.length);
   body.innerHTML = `
     <div class="stage" id="letterStage" style="background:${COLORS[0]}">${activeLetters[0][0]}</div>
     <div class="word-label" id="letterWord">${activeLetters[0][1]}</div>
@@ -1721,6 +1745,8 @@ function buildLetters(body){
   });
   window.showLetter = function(i){
     idx = i;
+    visited.add(i);
+    updateLessonProgress(visited.size, activeLetters.length);
     const stage = document.getElementById('letterStage');
     stage.textContent = activeLetters[i][0];
     stage.style.background = COLORS[i%COLORS.length];
@@ -1742,6 +1768,8 @@ function buildNumbers(body){
   // Falls back to the old level-only defaults if a syllabus number range
   // couldn't be parsed for this level/term.
   const maxNum = (ranges && ranges.numberMax) || {playgroup:10, nursery:20, kg:50, class1:100}[level] || 20;
+  const visited = new Set([1]);
+  updateLessonProgress(visited.size, maxNum);
   body.innerHTML = `
     <div class="stage" id="numStage" style="background:${COLORS[0]}">${digitsOf(1)}</div>
     <div id="beeRow" style="font-size:26px; letter-spacing:3px; margin:8px 0 4px; min-height:40px; max-width:280px; text-align:center;"></div>
@@ -1759,6 +1787,8 @@ function buildNumbers(body){
   }
   window.showNum = function(i){
     n = i;
+    visited.add(i);
+    updateLessonProgress(visited.size, maxNum);
     const stage = document.getElementById('numStage');
     stage.textContent = digitsOf(i);
     stage.style.background = COLORS[i%COLORS.length];
@@ -1786,6 +1816,8 @@ function buildAnimals(body){
     const filtered = animalList.filter(a => a[3]==='general' || (wantsPet && a[3]==='pet') || (wantsWild && a[3]==='wild'));
     if(filtered.length) activeAnimals = filtered;
   }
+  const visited = new Set([0]);
+  updateLessonProgress(visited.size, activeAnimals.length);
   body.innerHTML = `
     <div class="stage" id="aniStage" style="background:${COLORS[0]}">${activeAnimals[0][0]}</div>
     <div class="word-label" id="aniWord">${activeAnimals[0][1]}</div>
@@ -1802,6 +1834,8 @@ function buildAnimals(body){
   });
   window.showAni = function(i){
     idx=i;
+    visited.add(i);
+    updateLessonProgress(visited.size, activeAnimals.length);
     const stage = document.getElementById('aniStage');
     stage.textContent = activeAnimals[i][0];
     stage.style.background = COLORS[i%COLORS.length];
@@ -1831,6 +1865,8 @@ function buildWords(body){
     const filtered = wordList.filter(w => w.tag==='general' || wantedTags.includes(w.tag));
     if(filtered.length) activeWords = filtered;
   }
+  const visited = new Set([0]);
+  updateLessonProgress(visited.size, activeWords.length);
   body.innerHTML = `
     <div class="stage" id="wordStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${activeWords[0].emoji}</div>
     <div class="syll-row" id="syllRow"></div>
@@ -1847,6 +1883,8 @@ function buildWords(body){
   });
   window.showWord = function(i){
     idx = i;
+    visited.add(i);
+    updateLessonProgress(visited.size, activeWords.length);
     [...list.children].forEach((c,ci)=>c.classList.toggle('active', ci===i));
     const stage = document.getElementById('wordStage');
     stage.textContent = activeWords[i].emoji;
@@ -1884,6 +1922,8 @@ function buildScienceExtra(body){
     if(filtered.length) active = filtered;
   }
   if(!active.length){ body.innerHTML = `<div class="word-sub">${t('syllabus_empty')}</div>`; return; }
+  const visited = new Set([0]);
+  updateLessonProgress(visited.size, active.length);
   body.innerHTML = `
     <div class="stage" id="sciStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${active[0].emoji}</div>
     <div class="word-label" id="sciWord">${active[0].word}</div>
@@ -1901,6 +1941,8 @@ function buildScienceExtra(body){
   });
   window.showSci = function(i){
     idx = i;
+    visited.add(i);
+    updateLessonProgress(visited.size, active.length);
     [...list.children].forEach((c,ci)=>c.classList.toggle('active', ci===i));
     const stage = document.getElementById('sciStage');
     stage.textContent = active[i].emoji;
@@ -1922,6 +1964,8 @@ function buildScienceExtra(body){
 function buildLessonModule(body, subjectKey){
   const items = (typeof LESSON_CONTENT !== 'undefined' && LESSON_CONTENT[subjectKey]) || [];
   if(!items.length){ body.innerHTML = `<div class="word-sub">${t('syllabus_empty')}</div>`; return; }
+  const visited = new Set();
+  updateLessonProgress(0, items.length);
   body.innerHTML = `<div class="word-sub" style="margin-bottom:8px;">${t('d_' + subjectKey)}</div><div id="lessonCardList"></div>`;
   const wrap = document.getElementById('lessonCardList');
   items.forEach((it, i)=>{
@@ -1930,7 +1974,12 @@ function buildLessonModule(body, subjectKey){
     c.style.marginBottom = '10px';
     c.style.cursor = 'pointer';
     c.innerHTML = `<h3 style="margin:0 0 6px;">${escapeHtml(it.title)}</h3><div class="word-sub">${escapeHtml(it.note)}</div>`;
-    c.onclick = ()=>{ speak(it.note); bump(1, subjectKey); };
+    c.onclick = ()=>{
+      visited.add(i);
+      updateLessonProgress(visited.size, items.length);
+      speak(it.note);
+      bump(1, subjectKey);
+    };
     wrap.appendChild(c);
   });
 }
@@ -1949,6 +1998,9 @@ function buildMath(body){
   // actually covers (e.g. playgroup midTerm tops out at 10) instead of
   // always drawing from a fixed 1–14 range regardless of class.
   const numMax = (ranges && ranges.numberMax) ? Math.max(4, ranges.numberMax) : 10;
+  let correctMathCount = 0;
+  const targetMathCount = 5;
+  updateLessonProgress(0, targetMathCount);
   body.innerHTML = `
     <div class="mode-toggle">
       <button class="mode-btn active" id="modeAdd" onclick="setMathMode('add')">➕ <span data-i18n="math_add">যোগ</span></button>
@@ -1993,6 +2045,8 @@ function buildMath(body){
       btn.onclick = ()=>{
         if(v===correct){
           btn.classList.add('correct'); bump(2, 'mathgame'); logHit('mathgame', mode); praise();
+          correctMathCount++;
+          updateLessonProgress(Math.min(correctMathCount, targetMathCount), targetMathCount);
           setTimeout(newProblem, 700);
         } else {
           btn.classList.add('wrong'); logMiss('mathgame', mode);
@@ -2019,6 +2073,8 @@ function buildEnglish(body){
   const ranges = (typeof getSyllabusRanges === 'function') ? getSyllabusRanges(level, term) : null;
   const ceiling = ranges ? ranges.englishLetterCeiling : englishLetters.length - 1;
   const activeLetters = englishLetters.slice(0, ceiling + 1);
+  const visited = new Set([0]);
+  updateLessonProgress(visited.size, activeLetters.length);
   body.innerHTML = `
     <div class="stage" id="engStage" style="background:${COLORS[0]}; font-size:clamp(60px,18vw,110px);">${activeLetters[0][2]}</div>
     <div class="word-label" id="engLetter">A</div>
@@ -2035,6 +2091,8 @@ function buildEnglish(body){
   });
   window.showEng = function(i){
     idx = i;
+    visited.add(i);
+    updateLessonProgress(visited.size, activeLetters.length);
     const stage = document.getElementById('engStage');
     stage.textContent = activeLetters[i][2];
     stage.style.background = COLORS[i%COLORS.length];
@@ -2083,6 +2141,8 @@ function buildMultiplication(body){
   // specific tables in CURRICULUM (e.g. earlier levels before multiplication starts).
   const tableSet = (ranges && ranges.tables) || [2,3,4,5,6,7,8,9,10];
   let table = tableSet[0];
+  const visited = new Set();
+  updateLessonProgress(0, 10);
   body.innerHTML = `
     <div class="mode-toggle" id="tableTabs" style="flex-wrap:wrap; justify-content:center;"></div>
     <div id="tableList" style="width:100%; max-width:360px;"></div>
@@ -2105,7 +2165,12 @@ function buildMultiplication(body){
       row.style.cursor = 'pointer';
       row.innerHTML = `<div class="flower-icon c2" style="font-size:20px;">${digitsOf(table)}×${digitsOf(i)}</div>
         <div><h2 style="font-size:20px;">= ${digitsOf(table*i)}</h2></div>`;
-      row.onclick = ()=>{ speak(bnDigitsOf(table)+' গুণ '+bnDigitsOf(i)+' সমান '+bnDigitsOf(table*i)); bump(1,'multiplication'); };
+      row.onclick = ()=>{
+        visited.add(table + 'x' + i);
+        updateLessonProgress(Math.min(visited.size, 10), 10);
+        speak(bnDigitsOf(table)+' গুণ '+bnDigitsOf(i)+' সমান '+bnDigitsOf(table*i));
+        bump(1,'multiplication');
+      };
       list.appendChild(row);
     }
   }
@@ -2115,6 +2180,8 @@ function buildMultiplication(body){
 /* ---------- বাক্য পড়ি (sentence reading, Class 1) ---------- */
 function buildSentences(body){
   let idx = 0;
+  const visited = new Set([0]);
+  updateLessonProgress(visited.size, sentenceList.length);
   body.innerHTML = `
     <div class="stage" id="sentStage" style="background:${COLORS[0]}; font-size:clamp(50px,16vw,80px);">${sentenceList[0].emoji}</div>
     <div class="word-label" id="sentText" style="font-size:20px; max-width:320px; text-align:center;">${sentenceList[0].text}</div>
@@ -2131,6 +2198,8 @@ function buildSentences(body){
   });
   window.showSentence = function(i){
     idx = i;
+    visited.add(i);
+    updateLessonProgress(visited.size, sentenceList.length);
     [...list.children].forEach((c,ci)=>c.classList.toggle('active', ci===i));
     const stage = document.getElementById('sentStage');
     stage.textContent = sentenceList[i].emoji;
@@ -2188,6 +2257,9 @@ const EXTRA_KIDS_VIDEOS = [
 videoSections.push(...EXTRA_KIDS_VIDEOS);
 
 function buildVideos(body){
+  let totalVids = 0;
+  videoSections.forEach(s=>{ totalVids += (s.items && s.items.length) || 0; });
+  updateLessonProgress(1, Math.max(1, totalVids));
   body.innerHTML = `<div class="video-list" id="videoList"></div><div class="video-note" data-i18n="act_videoNote">শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না</div>`;
   const list = document.getElementById('videoList');
   videoSections.forEach(section=>{
@@ -2223,7 +2295,9 @@ function buildVideos(body){
    rhymesList itself now lives in content-data.js — see the note there
    about adding Bangla chora alongside the current English-only rhymes. */
 let rhymePlaying = false;
+let rhymesVisited = new Set();
 function buildRhymes(body){
+  rhymesVisited.clear();
   body.innerHTML = `
     <div class="word-sub" style="margin-bottom:10px;" data-i18n="rhyme_listTitle">তোমার প্রিয় ছড়া বেছে নাও</div>
     <div class="rhyme-list" id="rhymeList"></div>
@@ -2256,6 +2330,7 @@ function buildRhymes(body){
   // so the module never renders completely empty.
   const matchedOnly = order.filter(o => o.matched);
   const toShow = matchedOnly.length ? matchedOnly : order;
+  updateLessonProgress(0, toShow.length);
   if(!matchedOnly.length){
     const note = document.createElement('div');
     note.className = 'word-sub';
@@ -2267,13 +2342,15 @@ function buildRhymes(body){
     const card = document.createElement('div');
     card.className = 'rhyme-card';
     card.innerHTML = `<div class="rhyme-card-emoji">${r.emoji}</div><div class="rhyme-card-title">${t(r.titleKey)}</div>${matched ? '<div class="rhyme-card-badge" style="font-size:11px; opacity:.7; margin-top:2px;">✓ '+t('rhyme_syllabusBadge')+'</div>' : ''}`;
-    card.onclick = ()=>openRhymeReader(i);
+    card.onclick = ()=>openRhymeReader(i, toShow.length);
     list.appendChild(card);
   });
 }
 let currentRhymeWords = [];
-function openRhymeReader(i){
+function openRhymeReader(i, totalCount){
   const r = rhymesList[i];
+  rhymesVisited.add(i);
+  updateLessonProgress(rhymesVisited.size, totalCount || rhymesList.length);
   window.speechSynthesis && window.speechSynthesis.cancel();
   rhymePlaying = false;
   document.getElementById('rhymeList').style.display = 'none';
@@ -2516,6 +2593,8 @@ function openSyllabusTopic(route, text){
   }
   openActivity(route.module);
 }
+
+/* ---------- Syllabus explorer (per-term topics from CURRICULUM) ---------- */
 function buildSyllabusModule(body){
   const level = (childData && childData.level) || 'playgroup';
   const term = (childData && childData.term) || 'midTerm';
@@ -2524,6 +2603,13 @@ function buildSyllabusModule(body){
     body.innerHTML = `<div class="word-sub">${t('syllabus_empty') || 'এই ক্লাসের সিলেবাস এখনো যোগ করা হয়নি'}</div>`;
     return;
   }
+  const visitedTopics = new Set();
+  let totalTopics = 0;
+  Object.keys(termData).forEach(sub=>{
+    const items = flattenSubjectFields(termData[sub], '');
+    totalTopics += items.length;
+  });
+  updateLessonProgress(0, Math.max(1, totalTopics));
   body.innerHTML = `
     <div class="word-sub" style="margin-bottom:10px;">${t('syllabus_hint') || '▶️ যেসব টপিকে অ্যাক্টিভিটি আছে সেগুলো খুলবে, বাকিগুলো 🔊 চাপ দিলে নাম শোনাবে'}</div>
     <div id="syllabusSubjects"></div>
@@ -2545,7 +2631,11 @@ function buildSyllabusModule(body){
     card.querySelectorAll('.syllabus-chip').forEach((el,i)=>{
       const item = items[i];
       const route = routeForSyllabusTopic(sub, item.fieldKey, item.text);
-      el.onclick = ()=> openSyllabusTopic(route, item.text);
+      el.onclick = ()=>{
+        visitedTopics.add(sub + ':' + item.text);
+        updateLessonProgress(visitedTopics.size, Math.max(1, totalTopics));
+        openSyllabusTopic(route, item.text);
+      };
     });
     wrap.appendChild(card);
   });
@@ -2556,11 +2646,12 @@ function buildMatch(body){
   const emojiSet = ['🍎','🍌','🍇','🍉','🥕','🌽','🍓','🍍'];
   let cards = [...emojiSet, ...emojiSet];
   cards.sort(()=>Math.random()-0.5);
+  let matchedCount = 0;
+  updateLessonProgress(0, emojiSet.length);
   body.innerHTML = `<div class="word-sub" style="margin-bottom:8px;" data-i18n="act_matchHint">দুটো একই ছবি খুঁজে বের করো</div><div class="memo-grid" id="memoGrid"></div>`;
   const grid = document.getElementById('memoGrid');
   let flipped = [];
   let lock = false;
-  let matchedCount = 0;
   cards.forEach((emoji, i)=>{
     const c = document.createElement('div');
     c.className='memo-card';
@@ -2578,6 +2669,7 @@ function buildMatch(body){
           if(flipped[0].dataset.emoji === flipped[1].dataset.emoji){
             flipped.forEach(f=>f.classList.add('matched'));
             matchedCount++;
+            updateLessonProgress(matchedCount, emojiSet.length);
             bump(2, 'match');
             praise();
             if(matchedCount===emojiSet.length){
@@ -2598,6 +2690,9 @@ function buildMatch(body){
 /* ---------- Drawing pad ---------- */
 const EMOJI_STICKERS = ['😀','😍','🥳','🐶','🐱','🦋','🐢','🦁','🌸','🌈','⭐','❤️','🎈','☀️','🍎','⚽','🚗','🌙'];
 function buildDraw(body){
+  let strokeCount = 0;
+  const targetStrokes = 6;
+  updateLessonProgress(0, targetStrokes);
   body.innerHTML = `
     <div class="draw-wrap">
       <canvas id="canvas"></canvas>
@@ -2734,6 +2829,8 @@ function buildDraw(body){
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(currentEmoji, p.x, p.y);
       bump(1, 'draw');
+      strokeCount++;
+      updateLessonProgress(Math.min(strokeCount, targetStrokes), targetStrokes);
       e.preventDefault();
       return;
     }
@@ -2768,6 +2865,8 @@ function buildDraw(body){
       drawing = false;
       shapeSnapshot = null;
       bump(1, 'draw');
+      strokeCount++;
+      updateLessonProgress(Math.min(strokeCount, targetStrokes), targetStrokes);
     }
   }
   canvas.addEventListener('mousedown', start);
@@ -2783,6 +2882,7 @@ function buildDraw(body){
     drawGallery.push({dataUrl});
     renderGallery();
     bump(3, 'draw');
+    updateLessonProgress(targetStrokes, targetStrokes);
     praise(t('draw_saved'));
     // R2 (via Worker)-এ আপলোড করে স্থায়ীভাবে গ্যালারিতে রাখা হয় (লগইন করা থাকলে)।
     // Firestore-এ URL সেভ করার অংশ আগের মতোই আছে — শুধু ফাইল কোথায় যায় সেটা বদলেছে।

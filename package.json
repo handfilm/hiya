@@ -1,16 +1,15 @@
 {
-  "name": "khukir-bagan-r2-worker",
+  "name": "khukir-bagan",
   "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
-  },
-  "devDependencies": {
-    "wrangler": "^3.78.0"
+    "dev": "node server.js",
+    "build": "echo 'No build step required for static assets'",
+    "start": "node server.js"
   },
   "dependencies": {
-    "jose": "^5.9.6"
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
   }
 }

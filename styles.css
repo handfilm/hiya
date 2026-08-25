@@ -187,6 +187,22 @@ h1{
   border-bottom:1px solid var(--glass-border);
   backdrop-filter:blur(8px);
 }
+.activity-progress-wrap{
+  width:100%;
+  height:4px;
+  background:rgba(255,255,255,.08);
+  position:relative;
+  overflow:hidden;
+  z-index:5;
+}
+.activity-progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg, var(--aurora-teal), var(--aurora-violet), var(--aurora-pink));
+  border-radius:0 2px 2px 0;
+  box-shadow:0 0 10px rgba(63,235,201,.7);
+  transition:width .35s cubic-bezier(.4,0,.2,1);
+}
 .stars{ background:rgba(255,255,255,.14) !important; color:var(--firefly-gold); }
 .backBtn{ background:rgba(255,255,255,.14) !important; }
 

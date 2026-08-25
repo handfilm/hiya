@@ -1,0 +1,8 @@
+{
+  "name": "Khukir Bagan",
+  "description": "An interactive Bengali educational web app and games platform for children (খুকির বাগান)",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
