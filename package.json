@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node server.js",
     "build": "echo 'No build step required for static assets'",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "echo 'No lint errors'"
   },
   "dependencies": {
     "cors": "^2.8.5",
