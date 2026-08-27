@@ -185,16 +185,31 @@
     filter:drop-shadow(0 0 22px rgba(198,255,0,.4));}
   .sub{font-size:15px; color:var(--ink-dim); margin-top:6px;}
 
-  /* ---------- Garden path (home) ---------- */
-  #home{position:relative; z-index:1; max-width:640px; margin:0 auto; padding:10px 18px 60px;}
-  .path{position:relative; display:grid; grid-template-columns:1fr 1fr; gap:16px;}
-  .path .flower-stop:only-child{grid-column:1 / -1;}
-  @media (max-width:380px){ .path{grid-template-columns:1fr;} }
+  /* ---------- Garden path (home) - Horizontal Focus-Trapping Carousel with CSS Scroll Snapping ---------- */
+  #home{position:relative; z-index:1; width:100%; max-width:1440px; margin:0 auto; padding:10px 24px 60px; box-sizing:border-box;}
+  .path{
+    position:relative;
+    display:flex;
+    flex-direction:row;
+    gap:18px;
+    overflow-x:auto;
+    overflow-y:visible;
+    padding:16px 8px 24px;
+    scroll-snap-type:x mandatory;
+    scroll-padding:0 24px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  .path::-webkit-scrollbar{ display:none; }
   .flower-stop{
     display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px;
     background:linear-gradient(155deg, var(--glass-hi), var(--glass));
     backdrop-filter:blur(18px) saturate(140%); -webkit-backdrop-filter:blur(18px) saturate(140%);
-    border-radius:28px; padding:20px 14px; margin:0;
+    border-radius:28px; padding:22px 18px; margin:0;
+    min-width:210px; width:210px; flex-shrink:0;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;
     box-shadow: var(--shadow-deep), inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 0 1px var(--glass-brd-soft);
     border:1px solid var(--glass-brd);
     cursor:pointer;
@@ -202,6 +217,16 @@
     opacity:0; transform:translateY(22px) scale(.97);
     animation: riseIn .6s cubic-bezier(.2,.8,.2,1) forwards;
     will-change: transform;
+    outline:none;
+    user-select:none;
+  }
+  .flower-stop:focus,
+  .flower-stop.dpad-active{
+    outline:none !important;
+    transform:scale(1.08) translateY(-6px) !important;
+    z-index:30 !important;
+    border-color:var(--firefly-gold, #FBBF24) !important;
+    box-shadow:0 0 0 5px var(--firefly-gold, #FBBF24), 0 18px 45px rgba(251,191,36,0.65), 0 0 60px rgba(251,191,36,0.4) !important;
   }
   .flower-stop:nth-child(1){animation-delay:.02s;} .flower-stop:nth-child(2){animation-delay:.08s;}
   .flower-stop:nth-child(3){animation-delay:.14s;} .flower-stop:nth-child(4){animation-delay:.2s;}
@@ -648,6 +673,8 @@
   <h1 id="appTitle">খুকির বাগান 🌷</h1>
   <div class="sub" data-i18n="headerSub">খেলো, আঁকো, শেখো — নিজের মতো করে</div>
   <div class="home-topbar">
+    <button class="pill-btn tv-mode-btn" onclick="toggleTVMode()">📺 <span>TV মোড (10-Foot UI)</span></button>
+    <button class="pill-btn app-exit-btn" onclick="openParentalGate()">🚪 <span>প্রস্থান (Exit)</span></button>
     <button class="pill-btn" onclick="speakWelcome()">🔊 <span data-i18n="btnHowTo">কীভাবে খেলব?</span></button>
     <button class="pill-btn" id="muteToggleBtn" onclick="toggleMute()"></button>
     <button class="pill-btn" onclick="openDashboard()">📊 <span data-i18n="drawerDashboard">প্যারেন্ট ড্যাশবোর্ড</span></button>
@@ -656,93 +683,93 @@
 </header>
 
 <div id="home" style="display:none;">
-  <div class="path">
-    <div class="flower-stop" data-module="syllabus" onclick="openActivity('syllabus')">
+  <div class="path" role="region" aria-label="Learning Modules" tabindex="0">
+    <div class="flower-stop" tabindex="0" role="button" data-module="syllabus" onclick="openActivity('syllabus')">
       <div class="flower-icon c3">📘</div>
       <div><h2 data-i18n="m_syllabus">আমার ক্লাস</h2><p data-i18n="d_syllabus">অঙ্ক, ইংরেজি, বিজ্ঞান — সব বিষয় এক জায়গায়</p></div>
     </div>
-    <div class="flower-stop" data-module="letters" onclick="openActivity('letters')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="letters" onclick="openActivity('letters')">
       <div class="flower-icon c1">🔤</div>
       <div><h2 data-i18n="m_letters">বর্ণ বাগান</h2><p data-i18n="d_letters">বাংলা অক্ষর চেনো ও শোনো</p></div>
     </div>
-    <div class="flower-stop" data-module="numbers" onclick="openActivity('numbers')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="numbers" onclick="openActivity('numbers')">
       <div class="flower-icon c2">🐝</div>
       <div><h2 data-i18n="m_numbers">সংখ্যা মৌমাছি</h2><p data-i18n="d_numbers">গুনে গুনে শিখি</p></div>
     </div>
-    <div class="flower-stop" data-module="rhymes" onclick="openActivity('rhymes')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="rhymes" onclick="openActivity('rhymes')">
       <div class="flower-icon c5">🎵</div>
       <div><h2 data-i18n="m_rhymes">ছড়ার বাগান</h2><p data-i18n="d_rhymes">প্রিয় ছড়া শোনো ও পড়ো</p></div>
     </div>
-    <div class="flower-stop" data-module="draw" onclick="openActivity('draw')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="draw" onclick="openActivity('draw')">
       <div class="flower-icon c4">🎨</div>
       <div><h2 data-i18n="m_draw">আঁকার খাতা</h2><p data-i18n="d_draw">নিজের ছবি নিজে আঁকো, সেভ করো</p></div>
     </div>
-    <div class="flower-stop" data-module="animals" onclick="openActivity('animals')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="animals" onclick="openActivity('animals')">
       <div class="flower-icon c1">🦁</div>
       <div><h2 data-i18n="m_animals">প্রাণী জগৎ</h2><p data-i18n="d_animals">প্রাণীর নাম ও ডাক শোনো</p></div>
     </div>
-    <div class="flower-stop" data-module="match" onclick="openActivity('match')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="match" onclick="openActivity('match')">
       <div class="flower-icon c2">🍎</div>
       <div><h2 data-i18n="m_match">মিলাও তো!</h2><p data-i18n="d_match">একই জোড়া খুঁজে বের করো</p></div>
     </div>
-    <div class="flower-stop" data-module="words" onclick="openActivity('words')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="words" onclick="openActivity('words')">
       <div class="flower-icon c3">📖</div>
       <div><h2 data-i18n="m_words">শব্দ পড়ি</h2><p data-i18n="d_words">ছোট ছোট শব্দ পড়তে শেখো</p></div>
     </div>
-    <div class="flower-stop" data-module="mathgame" onclick="openActivity('mathgame')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="mathgame" onclick="openActivity('mathgame')">
       <div class="flower-icon c4">➕</div>
       <div><h2 data-i18n="m_mathgame">যোগ-বিয়োগ</h2><p data-i18n="d_mathgame">গুনে গুনে যোগ আর বিয়োগ</p></div>
     </div>
-    <div class="flower-stop" data-module="english" onclick="openActivity('english')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="english" onclick="openActivity('english')">
       <div class="flower-icon c5">🅰️</div>
       <div><h2 data-i18n="m_english">ABC গার্ডেন</h2><p data-i18n="d_english">ইংরেজি অক্ষর চেনো ও শোনো</p></div>
     </div>
-    <div class="flower-stop" data-module="multiplication" onclick="openActivity('multiplication')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="multiplication" onclick="openActivity('multiplication')">
       <div class="flower-icon c1">✖️</div>
       <div><h2 data-i18n="m_multiplication">নামতা শিখি</h2><p data-i18n="d_multiplication">২ থেকে ১০ পর্যন্ত নামতা</p></div>
     </div>
-    <div class="flower-stop" data-module="sentences" onclick="openActivity('sentences')">
+    <div class="flower-stop" tabindex="0" role="button" data-module="sentences" onclick="openActivity('sentences')">
       <div class="flower-icon c2">📝</div>
       <div><h2 data-i18n="m_sentences">বাক্য পড়ি</h2><p data-i18n="d_sentences">ছোট ছোট বাক্য পড়তে শেখো</p></div>
     </div>
   </div>
 
   <div class="section-divider"><span data-i18n="videoCornerTitle">📺 ভিডিও কর্নার</span></div>
-  <div class="path">
-    <div class="flower-stop" data-module="videos" onclick="openActivity('videos')">
+  <div class="path" role="region" aria-label="Videos" tabindex="0">
+    <div class="flower-stop" tabindex="0" role="button" data-module="videos" onclick="openActivity('videos')">
       <div class="flower-icon c3">📺</div>
       <div><h2 data-i18n="m_videos">ভিডিও কর্নার</h2><p data-i18n="d_videos">পছন্দের ছড়া ও গল্প দেখো</p></div>
     </div>
   </div>
 
   <div class="section-divider"><span data-i18n="gamesTitle">🎮 মজার গেম</span></div>
-  <div class="path">
-    <div class="flower-stop game-stop" data-module="bubbleocean" onclick="launchGame('bubble-ocean.html')">
+  <div class="path" role="region" aria-label="Games" tabindex="0">
+    <div class="flower-stop game-stop" tabindex="0" role="button" data-module="bubbleocean" onclick="launchGame('bubble-ocean.html')">
       <span class="game-badge" data-i18n="gameBadge">নতুন</span>
       <div class="flower-icon c6">🫧</div>
       <div><h2 data-i18n="m_bubbleocean">বাবল ওশেন</h2><p data-i18n="d_bubbleocean">বুদবুদ ফাটাও, সমুদ্রের বন্ধুদের চেনো</p></div>
     </div>
-    <div class="flower-stop game-stop" data-module="tinychef" onclick="launchGame('tiny-chef-kitchen.html')">
+    <div class="flower-stop game-stop" tabindex="0" role="button" data-module="tinychef" onclick="launchGame('tiny-chef-kitchen.html')">
       <span class="game-badge" data-i18n="gameBadge">নতুন</span>
       <div class="flower-icon c7">🍳</div>
       <div><h2 data-i18n="m_tinychef">টাইনি শেফ কিচেন</h2><p data-i18n="d_tinychef">নিজে নিজে মজার খাবার রান্না করো</p></div>
     </div>
-    <div class="flower-stop game-stop" data-module="skypainter" onclick="launchGame('sky-painter.html')">
+    <div class="flower-stop game-stop" tabindex="0" role="button" data-module="skypainter" onclick="launchGame('sky-painter.html')">
       <span class="game-badge" data-i18n="gameBadge">নতুন</span>
       <div class="flower-icon c8">🎨</div>
       <div><h2 data-i18n="m_skypainter">স্কাই পেইন্টার</h2><p data-i18n="d_skypainter">আকাশ জুড়ে রং দিয়ে ছবি আঁকো</p></div>
     </div>
-    <div class="flower-stop game-stop" data-module="shapebuilder" onclick="launchGame('shape-builder-city.html')">
+    <div class="flower-stop game-stop" tabindex="0" role="button" data-module="shapebuilder" onclick="launchGame('shape-builder-city.html')">
       <span class="game-badge" data-i18n="gameBadge">নতুন</span>
       <div class="flower-icon c9">🧩</div>
       <div><h2 data-i18n="m_shapebuilder">শেইপ বিল্ডার সিটি</h2><p data-i18n="d_shapebuilder">আকৃতি দিয়ে গাড়ি-বাড়ি বানাও</p></div>
     </div>
-    <div class="flower-stop game-stop" data-module="melodyfarm" onclick="launchGame('melody-farm.html')">
+    <div class="flower-stop game-stop" tabindex="0" role="button" data-module="melodyfarm" onclick="launchGame('melody-farm.html')">
       <span class="game-badge" data-i18n="gameBadge">নতুন</span>
       <div class="flower-icon c10">🎵</div>
       <div><h2 data-i18n="m_melodyfarm">মেলোডি ফার্ম</h2><p data-i18n="d_melodyfarm">খামারের প্রাণী দিয়ে গান বাজাও</p></div>
     </div>
-    <div class="flower-stop game-stop" data-module="glimmerglow" onclick="launchGame('glimmer-glow.html')">
+    <div class="flower-stop game-stop" tabindex="0" role="button" data-module="glimmerglow" onclick="launchGame('glimmer-glow.html')">
       <span class="game-badge">নতুন</span>
       <div class="flower-icon c11">💄</div>
       <div><h2>Glimmer &amp; Glow</h2><p>মেকআপ ও সাজগোজ করে সাজো নিজের মতো</p></div>
@@ -3013,5 +3040,8 @@ applyLanguage();
   }
 })();
 </script>
+
+<!-- ============ 📺 TV WILL BE THE NEXT BLACKBOARD: Spatial Navigation & 10-Foot UI Engine ============ -->
+<script src="tv-engine.js"></script>
 </body>
 </html>
