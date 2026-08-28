@@ -1,18 +1,21 @@
 /**
- * 📺 TV WILL BE THE NEXT BLACKBOARD — Spatial Navigation & 10-Foot UI Engine
+ * 📺 TV WILL BE THE NEXT BLACKBOARD — Unified Smart TV Remote & 10-Foot UI Engine
  * --------------------------------------------------------------------------
  * Complete Smart TV / Android TV / Google TV / Apple TV / WebOS / Tizen Engine
- * with Hardware Back Button Interception & Parental Gate (Grown-Up Gate).
+ * with Hardware Remote Control Layer, Gamepad API Polling,
+ * Hardware Back Button Interception, Adult Parental Gate,
+ * and 2-Minute Particle Firefly Ambient Screensaver.
  * 
  * Features:
- * 1. 2D Spatial D-Pad navigation (Up, Down, Left, Right, Enter/OK, Back/Escape)
- * 2. 5% Title-safe overscan safe zones & 10-foot typography
- * 3. Hardware Back Button Interception across all TV platforms & webviews
- * 4. Adult-Tier Parental Gate (Grown-Up Gate) with Multiplication Challenge
- * 5. Strict Modal Focus Trapping with Aggressive TV Focus Ring & Error Shake
- * 6. Zero-network Web Audio API focus, error, and success synthesis
- * 7. Fullscreen Digital Blackboard with chalk canvas
- * 8. 10-Foot Flashcard detail modals with Bengali pronunciation
+ * 1. Universal Remote D-Pad normalization (Android TV, Tizen, webOS, Fire TV, Apple TV, Gamepad)
+ * 2. 2-Minute Idle Ambient TV Screensaver with particle firefly bioluminescence
+ * 3. 2D Spatial D-Pad navigation (Up, Down, Left, Right, Enter/OK, Back/Escape)
+ * 4. 5% Title-safe overscan safe zones & 10-foot typography
+ * 5. Tizen & webOS hardware remote key registration
+ * 6. Adult-Tier Parental Gate (Grown-Up Gate) with Multiplication Challenge
+ * 7. Zero-network Web Audio API focus, error, and success synthesis
+ * 8. Fullscreen Digital Blackboard with chalk canvas
+ * 9. 10-Foot Flashcard detail modals with Bengali pronunciation
  */
 
 (function() {
@@ -210,7 +213,7 @@
           </div>
           <nav class="tv-nav" id="tvSidebarNav">
             ${SIDEBAR_ITEMS.map((item, i) => `
-              <button class="tv-nav-item" data-sidebar-idx="${i}" data-nav-id="${item.id}">
+              <button class="tv-nav-item" data-sidebar-idx="${i}" data-nav-id="${item.id}" tabindex="0">
                 <span class="icon">${item.icon}</span>
                 <span>${item.label}</span>
               </button>
@@ -249,7 +252,7 @@
           </div>
           <div class="tv-carousel-track" data-row-idx="0">
             ${TV_DATA.activities.map((act, col) => `
-              <div class="tv-card tv-card-wide" data-row="0" data-col="${col}" data-act-id="${act.id}">
+              <div class="tv-card tv-card-wide" data-row="0" data-col="${col}" data-act-id="${act.id}" tabindex="0">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span style="font-size:38px;">${act.icon}</span>
                   <span class="tv-card-badge">${act.badge}</span>
@@ -271,7 +274,7 @@
           </div>
           <div class="tv-carousel-track" data-row-idx="1">
             ${TV_DATA.swaraborno.map((item, col) => `
-              <div class="tv-card tv-card-square" data-row="1" data-col="${col}" data-type="swaraborno" data-idx="${col}">
+              <div class="tv-card tv-card-square" data-row="1" data-col="${col}" data-type="swaraborno" data-idx="${col}" tabindex="0">
                 <div class="tv-card-glyph" style="color:#34D399;">${item.glyph}</div>
                 <div class="tv-card-word">${item.word}</div>
                 <div class="tv-card-emoji">${item.icon}</div>
@@ -288,7 +291,7 @@
           </div>
           <div class="tv-carousel-track" data-row-idx="2">
             ${TV_DATA.numbers.map((item, col) => `
-              <div class="tv-card tv-card-square" data-row="2" data-col="${col}" data-type="number" data-idx="${col}">
+              <div class="tv-card tv-card-square" data-row="2" data-col="${col}" data-type="number" data-idx="${col}" tabindex="0">
                 <div class="tv-card-glyph" style="color:#60A5FA;">${item.num}</div>
                 <div class="tv-card-word" style="color:#93C5FD;">${item.word}</div>
                 <div style="font-size:16px; opacity:0.85; margin-top:2px;">${item.desc}</div>
@@ -305,7 +308,7 @@
           </div>
           <div class="tv-carousel-track" data-row-idx="3">
             ${TV_DATA.byanjonborno.map((item, col) => `
-              <div class="tv-card tv-card-square" data-row="3" data-col="${col}" data-type="byanjonborno" data-idx="${col}">
+              <div class="tv-card tv-card-square" data-row="3" data-col="${col}" data-type="byanjonborno" data-idx="${col}" tabindex="0">
                 <div class="tv-card-glyph" style="color:#F472B6;">${item.glyph}</div>
                 <div class="tv-card-word" style="color:#FBCFE8;">${item.word}</div>
                 <div class="tv-card-emoji">${item.icon}</div>
@@ -322,7 +325,7 @@
           </div>
           <div class="tv-carousel-track" data-row-idx="4">
             ${TV_DATA.games.map((g, col) => `
-              <div class="tv-card tv-card-wide" data-row="4" data-col="${col}" data-game-file="${g.file}">
+              <div class="tv-card tv-card-wide" data-row="4" data-col="${col}" data-game-file="${g.file}" tabindex="0">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span style="font-size:40px;">${g.icon}</span>
                   <span class="tv-card-badge" style="color:#38BDF8; background:rgba(56,189,248,0.15);">${g.badge}</span>
@@ -347,7 +350,7 @@
 
   // Inject TV Mode and Exit App launch buttons into standard Web Topbar & Menu Drawer
   function injectTVModeButtons() {
-    const topbar = document.querySelector('.global-topbar');
+    const topbar = document.querySelector('.global-topbar') || document.querySelector('.home-topbar');
     if (topbar) {
       if (!document.getElementById('topbarTVToggle')) {
         const tvBtn = document.createElement('button');
@@ -356,7 +359,8 @@
         tvBtn.style.marginRight = '8px';
         tvBtn.innerHTML = `📺 <span>TV মোড (10-Foot UI)</span>`;
         tvBtn.onclick = () => setTVMode(true);
-        topbar.insertBefore(tvBtn, topbar.querySelector('.lang-toggle'));
+        const ref = topbar.querySelector('.lang-toggle') || topbar.firstChild;
+        topbar.insertBefore(tvBtn, ref);
       }
 
       if (!document.getElementById('topbarExitAppBtn')) {
@@ -366,7 +370,8 @@
         exitBtn.style.marginRight = '8px';
         exitBtn.innerHTML = `🚪 <span>প্রস্থান (Exit)</span>`;
         exitBtn.onclick = () => openParentalGateModal();
-        topbar.insertBefore(exitBtn, topbar.querySelector('.lang-toggle'));
+        const ref = topbar.querySelector('.lang-toggle') || topbar.firstChild;
+        topbar.insertBefore(exitBtn, ref);
       }
     }
 
@@ -411,96 +416,163 @@
     // Clear existing focus classes
     document.querySelectorAll('.tv-focused').forEach(el => el.classList.remove('tv-focused'));
 
-    if (focusSection === 'parental_gate') {
+    if (parentalGateState.isOpen) {
       const gateBtns = document.querySelectorAll('.tv-gate-option-btn');
       if (gateBtns[parentalGateState.focusedIndex]) {
         gateBtns[parentalGateState.focusedIndex].classList.add('tv-focused');
-        gateBtns[parentalGateState.focusedIndex].focus();
+        gateBtns[parentalGateState.focusedIndex].focus({ preventScroll: true });
       }
     } else if (focusSection === 'sidebar') {
       const navItems = document.querySelectorAll('#tvSidebarNav .tv-nav-item');
       if (navItems[sidebarIndex]) {
         navItems[sidebarIndex].classList.add('tv-focused');
+        navItems[sidebarIndex].focus({ preventScroll: true });
         navItems[sidebarIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     } else if (focusSection === 'content') {
       const targetCard = document.querySelector(`.tv-card[data-row="${contentRow}"][data-col="${contentCol}"]`);
       if (targetCard) {
         targetCard.classList.add('tv-focused');
+        targetCard.focus({ preventScroll: true });
         targetCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
     } else if (focusSection === 'modal') {
-      const modalBtn = document.querySelector('.tv-modal-btn.primary');
-      if (modalBtn) modalBtn.classList.add('tv-focused');
+      const modalBtn = document.querySelector('.tv-modal-btn.primary') || document.querySelector('.tv-modal-btn');
+      if (modalBtn) {
+        modalBtn.classList.add('tv-focused');
+        modalBtn.focus({ preventScroll: true });
+      }
     }
   }
 
-  // ================= 6. Hardware Back Button & Spatial Keydown Handler =================
-  const TV_BACK_KEY_CODES = ['Escape', 'Backspace', 'GoBack', 'XF86Back', 'BrowserBack', 'Exit'];
-  const TV_BACK_NUMERIC_CODES = [10009, 461, 8, 27, 166, 4];
+  // ================= 6. Universal TV Remote & Key Identifier Normalization Layer =================
+  /**
+   * Translates ANY Smart TV remote key event (Android TV, Tizen, webOS, Fire TV, Apple TV, Roku, Linux, Gamepads)
+   * into clean unified actions.
+   */
+  function normalizeRemoteEvent(e) {
+    const key = e.key || '';
+    const code = e.keyCode || e.which || 0;
 
-  function handleSpatialKeyDown(e) {
-    const key = e.key;
-    const isBackKey = TV_BACK_KEY_CODES.includes(key) || TV_BACK_NUMERIC_CODES.includes(e.keyCode);
+    // --- D-PAD UP ---
+    if (
+      key === 'ArrowUp' || key === 'Up' || key === 'UIKeyInputUpArrow' || key === 'UpArrow' || key === 'KEY_UP' ||
+      code === 38 || code === 19 || code === 29460 || code === 103 || code === 1
+    ) {
+      return 'UP';
+    }
+
+    // --- D-PAD DOWN ---
+    if (
+      key === 'ArrowDown' || key === 'Down' || key === 'UIKeyInputDownArrow' || key === 'DownArrow' || key === 'KEY_DOWN' ||
+      code === 40 || code === 20 || code === 29461 || code === 108 || code === 2
+    ) {
+      return 'DOWN';
+    }
+
+    // --- D-PAD LEFT ---
+    if (
+      key === 'ArrowLeft' || key === 'Left' || key === 'UIKeyInputLeftArrow' || key === 'LeftArrow' || key === 'KEY_LEFT' ||
+      code === 37 || code === 21 || code === 29462 || code === 105 || code === 3
+    ) {
+      return 'LEFT';
+    }
+
+    // --- D-PAD RIGHT ---
+    if (
+      key === 'ArrowRight' || key === 'Right' || key === 'UIKeyInputRightArrow' || key === 'RightArrow' || key === 'KEY_RIGHT' ||
+      code === 39 || code === 22 || code === 29463 || code === 106 || code === 4
+    ) {
+      return 'RIGHT';
+    }
+
+    // --- OK / SELECT / ENTER / CENTER ---
+    if (
+      key === 'Enter' || key === 'Select' || key === 'Accept' || key === 'OK' || key === 'Ok' || key === ' ' || key === 'Space' || key === 'Spacebar' ||
+      key === 'HeadsetHook' || key === 'MediaPlayPause' || key === 'MediaPlay' || key === 'MediaSelect' || key === 'KEY_ENTER' || key === 'KEY_OK' ||
+      code === 13 || code === 23 || code === 66 || code === 32 || code === 1536 || code === 29443 || code === 102 || code === 179 || code === 256
+    ) {
+      return 'OK';
+    }
+
+    // --- BACK / RETURN / ESCAPE / EXIT ---
+    if (
+      key === 'Escape' || key === 'Backspace' || key === 'GoBack' || key === 'Back' || key === 'BrowserBack' || key === 'XF86Back' ||
+      key === 'Exit' || key === 'HistoryBack' || key === 'KEY_BACK' || key === 'KEY_EXIT' ||
+      code === 27 || code === 8 || code === 4 || code === 10009 || code === 10182 || code === 461 || code === 166 || code === 29464 || code === 10071
+    ) {
+      return 'BACK';
+    }
+
+    // --- SPECIAL COLORED BUTTONS ---
+    if (key === 'ColorF0Red' || key === 'Red' || code === 403) return 'COLOR_RED';
+    if (key === 'ColorF1Green' || key === 'Green' || code === 404) return 'COLOR_GREEN';
+    if (key === 'ColorF2Yellow' || key === 'Yellow' || code === 405) return 'COLOR_YELLOW';
+    if (key === 'ColorF3Blue' || key === 'Blue' || code === 406) return 'COLOR_BLUE';
+
+    return null;
+  }
+
+  // Unified Spatial Dispatcher for both Hardware Key events and Gamepad inputs
+  function dispatchTVAction(action) {
+    if (!action) return;
+
+    // Any remote activity dismisses the Ambient Screensaver and resets idle countdown
+    resetIdleTimer();
+    if (isScreensaverActive) {
+      dismissAmbientScreensaver();
+      return;
+    }
 
     // --- Strict Parental Gate Trap Handler ---
     if (parentalGateState.isOpen) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      if (key === 'ArrowRight' || key === 'ArrowDown') {
+      if (action === 'RIGHT' || action === 'DOWN') {
         tvAudio.playMove();
         parentalGateState.focusedIndex = (parentalGateState.focusedIndex + 1) % 3;
         updateSpatialFocus();
-      } else if (key === 'ArrowLeft' || key === 'ArrowUp') {
+      } else if (action === 'LEFT' || action === 'UP') {
         tvAudio.playMove();
         parentalGateState.focusedIndex = (parentalGateState.focusedIndex - 1 + 3) % 3;
         updateSpatialFocus();
-      } else if (key === 'Enter' || key === ' ' || key === 'Select') {
+      } else if (action === 'OK') {
         const chosen = parentalGateState.options[parentalGateState.focusedIndex];
         handleParentalGateAnswer(chosen);
-      } else if (isBackKey) {
-        // Child or parent pressed Back on Gate -> close gate and stay safely inside app
+      } else if (action === 'BACK') {
         tvAudio.playMove();
         closeParentalGateModal();
       }
       return;
     }
 
+    // Web Mode Remote Handling (when user uses remote outside of full TV mode)
     if (!isTVMode) {
-      // Auto-enter TV Mode if user presses TV Remote navigation keys on web view
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key) && !document.querySelector('input:focus')) {
-        setTVMode(true);
-        e.preventDefault();
+      if (['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(action)) {
+        if (!document.querySelector('input:focus, textarea:focus')) {
+          setTVMode(true);
+        }
         return;
       }
-      if (isBackKey) {
-        // Check if an activity or modal is open in web mode
+      if (action === 'BACK') {
         const actWrap = document.getElementById('activity');
         const dashWrap = document.getElementById('dashboard');
         if (actWrap && actWrap.classList.contains('open')) {
-          e.preventDefault();
           if (typeof window.showHome === 'function') window.showHome();
           return;
         }
         if (dashWrap && dashWrap.classList.contains('open')) {
-          e.preventDefault();
           if (typeof window.closeDashboard === 'function') window.closeDashboard();
           return;
         }
-        // User on root home screen -> trigger Parental Gate to prevent accidental exit
-        e.preventDefault();
         openParentalGateModal();
         return;
       }
       return;
     }
 
-    // --- TV Mode Navigation ---
+    // --- Full TV Mode Action Execution ---
 
-    // Handle Back / Escape Key in TV Mode
-    if (isBackKey) {
-      e.preventDefault();
+    // 1. Back Action
+    if (action === 'BACK') {
       tvAudio.playMove();
 
       if (document.getElementById('tvDetailModal')) {
@@ -517,15 +589,14 @@
         return;
       }
       if (focusSection === 'sidebar') {
-        // Root screen reached: trigger the Grown-Up Gate
         openParentalGateModal();
         return;
       }
+      return;
     }
 
-    // Handle OK / Enter / Select Key
-    if (key === 'Enter' || key === ' ' || key === 'Select') {
-      e.preventDefault();
+    // 2. OK / Select Action
+    if (action === 'OK') {
       tvAudio.playSelect();
 
       if (document.getElementById('tvDetailModal')) {
@@ -535,6 +606,7 @@
 
       if (focusSection === 'sidebar') {
         const activeNav = SIDEBAR_ITEMS[sidebarIndex];
+        if (!activeNav) return;
         if (activeNav.id === 'exit_app') {
           openParentalGateModal();
         } else if (activeNav.id === 'exit_tv') {
@@ -581,23 +653,24 @@
         }
         return;
       }
+      return;
     }
 
-    // 2D D-Pad Matrix Navigation
+    // 3. 2D D-Pad Matrix Navigation
     let moved = false;
 
     if (focusSection === 'sidebar') {
-      if (key === 'ArrowDown') {
+      if (action === 'DOWN') {
         if (sidebarIndex < SIDEBAR_ITEMS.length - 1) {
           sidebarIndex++;
           moved = true;
         }
-      } else if (key === 'ArrowUp') {
+      } else if (action === 'UP') {
         if (sidebarIndex > 0) {
           sidebarIndex--;
           moved = true;
         }
-      } else if (key === 'ArrowRight') {
+      } else if (action === 'RIGHT') {
         focusSection = 'content';
         const targetRow = Math.min(sidebarIndex, 4);
         contentRow = targetRow;
@@ -614,7 +687,7 @@
       ];
       const maxCols = rowItemCounts[contentRow] || 1;
 
-      if (key === 'ArrowLeft') {
+      if (action === 'LEFT') {
         if (contentCol > 0) {
           contentCol--;
           rowColMemory[contentRow] = contentCol;
@@ -625,41 +698,155 @@
           sidebarIndex = Math.min(contentRow, SIDEBAR_ITEMS.length - 1);
           moved = true;
         }
-      } else if (key === 'ArrowRight') {
+      } else if (action === 'RIGHT') {
         if (contentCol < maxCols - 1) {
           contentCol++;
           rowColMemory[contentRow] = contentCol;
           moved = true;
         }
-      } else if (key === 'ArrowDown') {
+      } else if (action === 'DOWN') {
         if (contentRow < rowItemCounts.length - 1) {
           contentRow++;
           const nextMax = rowItemCounts[contentRow];
           contentCol = Math.min(rowColMemory[contentRow] ?? contentCol, nextMax - 1);
           moved = true;
         }
-      } else if (key === 'ArrowUp') {
+      } else if (action === 'UP') {
         if (contentRow > 0) {
           contentRow--;
           const nextMax = rowItemCounts[contentRow];
           contentCol = Math.min(rowColMemory[contentRow] ?? contentCol, nextMax - 1);
           moved = true;
         } else {
-          // Scroll hero into view
           const hero = document.getElementById('tvHeroBanner');
           if (hero) hero.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }
     }
 
+    // 4. Quick Colored Remote Shortcuts
+    if (action === 'COLOR_RED') {
+      openTVBlackboard();
+    } else if (action === 'COLOR_GREEN') {
+      focusSection = 'content'; contentRow = 1; contentCol = 0; moved = true;
+    } else if (action === 'COLOR_YELLOW') {
+      focusSection = 'content'; contentRow = 2; contentCol = 0; moved = true;
+    } else if (action === 'COLOR_BLUE') {
+      focusSection = 'content'; contentRow = 4; contentCol = 0; moved = true;
+    }
+
     if (moved) {
-      e.preventDefault();
       tvAudio.playMove();
       updateSpatialFocus();
     }
   }
 
-  // ================= 7. PARENTAL GATE (GROWN-UP GATE) ENGINE =================
+  function handleSpatialKeyDown(e) {
+    const action = normalizeRemoteEvent(e);
+    if (action) {
+      // Prevent browser default arrow scrolling or space page down
+      e.preventDefault();
+      e.stopPropagation();
+      dispatchTVAction(action);
+    }
+  }
+
+  // ================= 7. GAMEPAD / BLUETOOTH REMOTE API POLLER =================
+  let lastGamepadTimestamp = 0;
+  let lastGamepadActionTime = 0;
+  const GAMEPAD_DEBOUNCE_MS = 175;
+
+  function pollGamepads() {
+    try {
+      if (typeof navigator !== 'undefined' && navigator.getGamepads) {
+        const gamepads = navigator.getGamepads();
+        const now = performance.now();
+
+        for (let i = 0; i < gamepads.length; i++) {
+          const gp = gamepads[i];
+          if (!gp) continue;
+
+          // Check if timestamp updated
+          if (gp.timestamp && gp.timestamp === lastGamepadTimestamp) continue;
+          lastGamepadTimestamp = gp.timestamp || now;
+
+          if (now - lastGamepadActionTime < GAMEPAD_DEBOUNCE_MS) continue;
+
+          let action = null;
+
+          // Check D-Pad Buttons (standard mapping)
+          // 12: Up, 13: Down, 14: Left, 15: Right
+          if (gp.buttons[12] && gp.buttons[12].pressed) action = 'UP';
+          else if (gp.buttons[13] && gp.buttons[13].pressed) action = 'DOWN';
+          else if (gp.buttons[14] && gp.buttons[14].pressed) action = 'LEFT';
+          else if (gp.buttons[15] && gp.buttons[15].pressed) action = 'RIGHT';
+
+          // Check Analog Stick Axes
+          else if (gp.axes && gp.axes[1] < -0.5) action = 'UP';
+          else if (gp.axes && gp.axes[1] > 0.5) action = 'DOWN';
+          else if (gp.axes && gp.axes[0] < -0.5) action = 'LEFT';
+          else if (gp.axes && gp.axes[0] > 0.5) action = 'RIGHT';
+
+          // Check Action / OK Buttons (0: A/Cross, 2: X, 9: Start, 16: Center)
+          else if (
+            (gp.buttons[0] && gp.buttons[0].pressed) ||
+            (gp.buttons[9] && gp.buttons[9].pressed) ||
+            (gp.buttons[16] && gp.buttons[16].pressed)
+          ) {
+            action = 'OK';
+          }
+
+          // Check Back Buttons (1: B/Circle, 8: Select/Back, 17: Back)
+          else if (
+            (gp.buttons[1] && gp.buttons[1].pressed) ||
+            (gp.buttons[8] && gp.buttons[8].pressed) ||
+            (gp.buttons[17] && gp.buttons[17].pressed)
+          ) {
+            action = 'BACK';
+          }
+
+          if (action) {
+            lastGamepadActionTime = now;
+            dispatchTVAction(action);
+            break;
+          }
+        }
+      }
+    } catch (err) {}
+    requestAnimationFrame(pollGamepads);
+  }
+
+  // ================= 8. SMART TV PLATFORM HARDWARE REGISTRATIONS =================
+  function registerSmartTVPlatformKeys() {
+    // 1. Samsung Tizen Key Registration
+    try {
+      if (typeof window !== 'undefined' && window.tizen && window.tizen.tvinputdevice) {
+        const tizenKeys = [
+          'Return', 'Exit', 'ColorF0Red', 'ColorF1Green', 'ColorF2Yellow', 'ColorF3Blue',
+          'MediaPlay', 'MediaPause', 'MediaPlayPause', 'MediaFastForward', 'MediaRewind',
+          '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+        ];
+        tizenKeys.forEach(keyName => {
+          try {
+            window.tizen.tvinputdevice.registerKey(keyName);
+          } catch (e) {}
+        });
+      }
+    } catch (e) {}
+
+    // 2. LG webOS Cursor State & Platform Back
+    try {
+      if (typeof window !== 'undefined' && window.webOS) {
+        document.addEventListener('cursorStateChange', (e) => {
+          if (e && e.detail && !e.detail.visibility) {
+            updateSpatialFocus();
+          }
+        });
+      }
+    } catch (e) {}
+  }
+
+  // ================= 9. PARENTAL GATE (GROWN-UP GATE) ENGINE =================
   const parentalGateState = {
     isOpen: false,
     num1: 8,
@@ -676,7 +863,6 @@
   }
 
   function generateParentalChallenge() {
-    // Generate adult multiplication (e.g. 7 x 8, 8 x 9, 6 x 9, 7 x 7)
     const n1 = Math.floor(Math.random() * 4) + 6; // 6, 7, 8, 9
     const n2 = Math.floor(Math.random() * 6) + 4; // 4, 5, 6, 7, 8, 9
     const correct = n1 * n2;
@@ -749,7 +935,6 @@
 
     document.body.appendChild(gate);
 
-    // Bind clicks to buttons for mouse/touch users
     document.querySelectorAll('.tv-gate-option-btn').forEach((btn, idx) => {
       btn.onclick = () => {
         parentalGateState.focusedIndex = idx;
@@ -769,7 +954,6 @@
     if (chosen === parentalGateState.correctAnswer) {
       tvAudio.playSuccess();
 
-      // Show graceful exit screen and execute system exit
       if (card) {
         card.innerHTML = `
           <div class="tv-gate-icon-badge" style="background:rgba(52,211,153,0.2); border-color:#34D399;">👋</div>
@@ -785,12 +969,11 @@
       }, 900);
 
     } else {
-      // Wrong answer -> trigger error shake and safely return child to playground
       tvAudio.playError();
 
       if (card) {
         card.classList.remove('animate-shake');
-        void card.offsetWidth; // Force reflow
+        void card.offsetWidth;
         card.classList.add('animate-shake');
       }
 
@@ -817,22 +1000,18 @@
 
   function executeSystemExit() {
     try {
-      // Samsung Tizen TV Exit API
       if (typeof window !== 'undefined' && window.tizen && window.tizen.application) {
         window.tizen.application.getCurrentApplication().exit();
         return;
       }
-      // LG webOS TV Exit API
       if (typeof window !== 'undefined' && window.webOS && window.webOS.platformBack) {
         window.webOS.platformBack();
         return;
       }
-      // Android Native Webview / Cordova
       if (typeof navigator !== 'undefined' && navigator.app && navigator.app.exitApp) {
         navigator.app.exitApp();
         return;
       }
-      // Standard Browser Window Close / History Back
       window.close();
       window.history.back();
     } catch (e) {
@@ -844,9 +1023,9 @@
   window.closeParentalGate = closeParentalGateModal;
   window.handleAppExit = openParentalGateModal;
 
-  // Intercept Browser History popstate to prevent accidental back exit
+  // Intercept Browser History popstate
   window.history.pushState({ tvAppGate: true }, '');
-  window.addEventListener('popstate', (e) => {
+  window.addEventListener('popstate', () => {
     window.history.pushState({ tvAppGate: true }, '');
     const actWrap = document.getElementById('activity');
     const dashWrap = document.getElementById('dashboard');
@@ -865,7 +1044,7 @@
     openParentalGateModal();
   });
 
-  // ================= 8. Card Selection & 10-Foot Modals =================
+  // ================= 10. Card Selection & 10-Foot Modals =================
   function handleCardSelect(card) {
     const actId = card.dataset.actId;
     const gameFile = card.dataset.gameFile;
@@ -935,6 +1114,7 @@
     if (closeBtn) {
       closeBtn.onclick = () => closeTVDetailModal();
     }
+    updateSpatialFocus();
   }
 
   function closeTVDetailModal() {
@@ -946,7 +1126,7 @@
     }
   }
 
-  // ================= 9. Fullscreen Digital Blackboard (Chalk Mode) =================
+  // ================= 11. Fullscreen Digital Blackboard (Chalk Mode) =================
   let chalkColor = '#FFFFFF';
   let chalkSize = 10;
   let isDrawing = false;
@@ -1070,7 +1250,194 @@
     }
   }
 
-  // ================= 10. Toggle TV Mode =================
+  // ================= 12. AMBIENT TV SCREEN (PARTICLE-BASED FIREFLY SCREENSAVER) =================
+  const IDLE_TIMEOUT_MS = 120000; // 2 minutes of idle
+  let idleTimer = null;
+  let isScreensaverActive = false;
+  let fireflyCanvas = null;
+  let fireflyCtx = null;
+  let fireflies = [];
+  let fireflyAnimId = null;
+  let clockIntervalId = null;
+
+  class Firefly {
+    constructor(w, h) {
+      this.w = w;
+      this.h = h;
+      this.reset(true);
+    }
+
+    reset(initial = false) {
+      this.x = Math.random() * this.w;
+      this.y = initial ? Math.random() * this.h : (Math.random() > 0.5 ? -20 : this.h + 20);
+      this.radius = 2.5 + Math.random() * 3.5;
+      this.baseAlpha = 0.3 + Math.random() * 0.7;
+      this.alpha = this.baseAlpha;
+      this.pulseSpeed = 0.02 + Math.random() * 0.035;
+      this.pulseOffset = Math.random() * Math.PI * 2;
+      this.speed = 0.3 + Math.random() * 0.7;
+      this.angle = Math.random() * Math.PI * 2;
+      this.turnSpeed = (Math.random() - 0.5) * 0.04;
+
+      // Color Palette: Warm gold, glowing teal, bioluminescent pastel green
+      const colors = [
+        { r: 255, g: 216, b: 102 }, // Gold
+        { r: 63, g: 235, b: 201 },  // Teal
+        { r: 134, g: 239, b: 172 }, // Soft Green
+        { r: 255, g: 243, b: 176 }  // Warm Pale Yellow
+      ];
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    update() {
+      this.angle += this.turnSpeed;
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+
+      this.pulseOffset += this.pulseSpeed;
+      this.alpha = Math.max(0.05, Math.sin(this.pulseOffset) * this.baseAlpha);
+
+      if (this.x < -30 || this.x > this.w + 30 || this.y < -30 || this.y > this.h + 30) {
+        this.reset(false);
+      }
+    }
+
+    draw(ctx) {
+      if (this.alpha <= 0.01) return;
+
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+
+      // Outer gentle bioluminescent glow
+      const glowRad = this.radius * 7;
+      const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowRad);
+      grad.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`);
+      grad.addColorStop(0.3, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0.4)`);
+      grad.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`);
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, glowRad, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Bright inner core
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * 0.7, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  function initFireflyScreensaver() {
+    fireflyCanvas = document.getElementById('fireflyScreensaverCanvas');
+    if (!fireflyCanvas) return;
+    fireflyCanvas.width = window.innerWidth;
+    fireflyCanvas.height = window.innerHeight;
+    fireflyCtx = fireflyCanvas.getContext('2d');
+
+    fireflies = [];
+    const count = Math.min(55, Math.floor(window.innerWidth / 30));
+    for (let i = 0; i < count; i++) {
+      fireflies.push(new Firefly(fireflyCanvas.width, fireflyCanvas.height));
+    }
+
+    window.addEventListener('resize', () => {
+      if (fireflyCanvas) {
+        fireflyCanvas.width = window.innerWidth;
+        fireflyCanvas.height = window.innerHeight;
+      }
+    });
+  }
+
+  function renderFireflyLoop() {
+    if (!isScreensaverActive || !fireflyCtx) return;
+
+    fireflyCtx.clearRect(0, 0, fireflyCanvas.width, fireflyCanvas.height);
+
+    for (let i = 0; i < fireflies.length; i++) {
+      fireflies[i].update();
+      fireflies[i].draw(fireflyCtx);
+    }
+
+    fireflyAnimId = requestAnimationFrame(renderFireflyLoop);
+  }
+
+  function updateAmbientClock() {
+    const timeEl = document.getElementById('tvAmbientTime');
+    const dateEl = document.getElementById('tvAmbientDate');
+    if (!timeEl || !dateEl) return;
+
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'রাত / বিকেল' : 'সকাল / দুপুর';
+    hours = hours % 12 || 12;
+
+    const bnHours = toBengaliDigits(hours);
+    const bnMinutes = toBengaliDigits(minutes);
+    timeEl.textContent = `${bnHours}:${bnMinutes}`;
+
+    const days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+    const months = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+    dateEl.textContent = `${days[now.getDay()]}, ${toBengaliDigits(now.getDate())} ${months[now.getMonth()]} • খুকির বাগান শান্ত প্রহর`;
+  }
+
+  function triggerAmbientScreensaver() {
+    if (isScreensaverActive) return;
+    isScreensaverActive = true;
+
+    const ss = document.getElementById('tvAmbientScreensaver');
+    if (!ss) return;
+
+    initFireflyScreensaver();
+    updateAmbientClock();
+    clockIntervalId = setInterval(updateAmbientClock, 1000);
+
+    ss.style.display = 'flex';
+    void ss.offsetWidth; // force reflow
+    ss.classList.add('active');
+
+    renderFireflyLoop();
+  }
+
+  function dismissAmbientScreensaver() {
+    if (!isScreensaverActive) return;
+    isScreensaverActive = false;
+
+    const ss = document.getElementById('tvAmbientScreensaver');
+    if (ss) {
+      ss.classList.remove('active');
+      setTimeout(() => {
+        if (!isScreensaverActive) {
+          ss.style.display = 'none';
+          if (fireflyAnimId) cancelAnimationFrame(fireflyAnimId);
+          if (clockIntervalId) clearInterval(clockIntervalId);
+        }
+      }, 600);
+    }
+  }
+
+  function resetIdleTimer() {
+    if (idleTimer) clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      triggerAmbientScreensaver();
+    }, IDLE_TIMEOUT_MS);
+  }
+
+  // Register user activity listeners to maintain the 2-minute screensaver timer
+  ['keydown', 'keyup', 'mousemove', 'pointerdown', 'touchstart', 'wheel'].forEach(evt => {
+    window.addEventListener(evt, () => {
+      resetIdleTimer();
+      if (isScreensaverActive) dismissAmbientScreensaver();
+    }, { passive: true });
+  });
+
+  window.triggerScreensaver = triggerAmbientScreensaver;
+  window.dismissScreensaver = dismissAmbientScreensaver;
+
+  // ================= 13. Toggle TV Mode =================
   function setTVMode(active) {
     isTVMode = active;
     initTVDOM();
@@ -1082,10 +1449,12 @@
       contentCol = 0;
       updateSpatialFocus();
       tvAudio.playSelect();
+      resetIdleTimer();
     } else {
       document.body.classList.remove('tv-mode-active');
       closeTVDetailModal();
       closeTVBlackboard();
+      dismissAmbientScreensaver();
       if (typeof window.showHome === 'function') {
         window.showHome();
       }
@@ -1095,119 +1464,27 @@
   window.setTVMode = setTVMode;
   window.toggleTVMode = () => setTVMode(!isTVMode);
 
-  // Initialize event listeners
-  window.addEventListener('keydown', handleSpatialKeyDown, { capture: true });
+  // ================= 14. Event Registration & Poller Initialization =================
+  // Capturing listeners on both window and document for absolute TV reliability
+  window.addEventListener('keydown', handleSpatialKeyDown, { capture: true, passive: false });
+  document.addEventListener('keydown', handleSpatialKeyDown, { capture: true, passive: false });
 
-  // ================= 11. Home Grid Horizontal Carousel Focus-Trapping & D-Pad Controller =================
-  let homeTrackIndex = 0;
-  let homeCardIndex = 0;
-  const homeTrackMem = {};
+  // Initialize Gamepad API poller
+  pollGamepads();
 
-  function setupHomeCarouselDPad() {
-    const homeEl = document.getElementById('home');
-    if (!homeEl) return;
+  // Initialize Smart TV platform hooks
+  registerSmartTVPlatformKeys();
 
-    window.addEventListener('keydown', (e) => {
-      if (isTVMode || parentalGateState.isOpen) return;
-      const home = document.getElementById('home');
-      if (!home || home.style.display === 'none') return;
-      if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
-
-      const tracks = Array.from(home.querySelectorAll('.path'));
-      if (!tracks.length) return;
-
-      const key = e.key;
-
-      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter', ' '].includes(key)) {
-        const currentTrack = tracks[homeTrackIndex] || tracks[0];
-        const cards = Array.from(currentTrack.querySelectorAll('.flower-stop'));
-        if (!cards.length) return;
-
-        if (key === 'ArrowRight') {
-          e.preventDefault();
-          if (homeCardIndex < cards.length - 1) {
-            homeCardIndex++;
-          } else {
-            homeCardIndex = 0;
-          }
-          homeTrackMem[homeTrackIndex] = homeCardIndex;
-          focusHomeCard(cards[homeCardIndex]);
-          tvAudio.playMove();
-        } else if (key === 'ArrowLeft') {
-          e.preventDefault();
-          if (homeCardIndex > 0) {
-            homeCardIndex--;
-          } else {
-            homeCardIndex = cards.length - 1;
-          }
-          homeTrackMem[homeTrackIndex] = homeCardIndex;
-          focusHomeCard(cards[homeCardIndex]);
-          tvAudio.playMove();
-        } else if (key === 'ArrowDown') {
-          e.preventDefault();
-          if (homeTrackIndex < tracks.length - 1) {
-            homeTrackIndex++;
-            const nextCards = Array.from(tracks[homeTrackIndex].querySelectorAll('.flower-stop'));
-            homeCardIndex = Math.min(homeTrackMem[homeTrackIndex] ?? 0, nextCards.length - 1);
-            focusHomeCard(nextCards[homeCardIndex]);
-            tvAudio.playMove();
-          }
-        } else if (key === 'ArrowUp') {
-          e.preventDefault();
-          if (homeTrackIndex > 0) {
-            homeTrackIndex--;
-            const prevCards = Array.from(tracks[homeTrackIndex].querySelectorAll('.flower-stop'));
-            homeCardIndex = Math.min(homeTrackMem[homeTrackIndex] ?? 0, prevCards.length - 1);
-            focusHomeCard(prevCards[homeCardIndex]);
-            tvAudio.playMove();
-          }
-        } else if (key === 'Enter' || key === ' ') {
-          const activeCard = cards[homeCardIndex];
-          if (activeCard) {
-            e.preventDefault();
-            tvAudio.playSelect();
-            activeCard.click();
-          }
-        }
-      }
-    });
-
-    homeEl.addEventListener('focusin', (e) => {
-      const card = e.target.closest('.flower-stop');
-      if (!card) return;
-      const track = card.closest('.path');
-      const tracks = Array.from(homeEl.querySelectorAll('.path'));
-      const tIdx = tracks.indexOf(track);
-      if (tIdx !== -1) {
-        homeTrackIndex = tIdx;
-        const cards = Array.from(track.querySelectorAll('.flower-stop'));
-        const cIdx = cards.indexOf(card);
-        if (cIdx !== -1) {
-          homeCardIndex = cIdx;
-          homeTrackMem[tIdx] = cIdx;
-        }
-      }
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    });
-  }
-
-  function focusHomeCard(card) {
-    if (!card) return;
-    document.querySelectorAll('.flower-stop.dpad-active').forEach(el => el.classList.remove('dpad-active'));
-    card.classList.add('dpad-active');
-    card.focus({ preventScroll: true });
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-  }
+  // Initialize idle timer for Ambient TV Screen
+  resetIdleTimer();
 
   // DOM Content Ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       initTVDOM();
-      setupHomeCarouselDPad();
     });
   } else {
     initTVDOM();
-    setupHomeCarouselDPad();
   }
 
 })();

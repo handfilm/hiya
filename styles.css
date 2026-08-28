@@ -1935,6 +1935,120 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
   50% { transform: translateY(-6px); }
 }
 
+/* ==========================================================================
+   AMBIENT TV SCREENSAVER (SLOW-MOVING FIREFLIES & CALM 10-FOOT SLEEP MODE)
+   ========================================================================== */
+.tv-ambient-screensaver {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 50%, #0c142b 0%, #050814 70%, #02040a 100%);
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5vw;
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.tv-ambient-screensaver.active {
+  opacity: 1;
+  pointer-events: auto;
+  cursor: none;
+}
+
+#fireflyScreensaverCanvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.tv-ambient-overlay-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.tv-ambient-clock-wrap {
+  text-align: center;
+  margin-top: 6vh;
+  animation: ambientFloat 6s ease-in-out infinite;
+}
+
+.tv-ambient-time {
+  font-size: clamp(48px, 8vw, 110px);
+  font-weight: 900;
+  color: #fff;
+  font-family: 'Baloo Da 2', system-ui, sans-serif;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 30px rgba(63, 235, 201, 0.4), 0 0 60px rgba(255, 216, 102, 0.25);
+  line-height: 1;
+}
+
+.tv-ambient-date {
+  font-size: clamp(18px, 2.4vw, 32px);
+  color: #a7f3d0;
+  font-weight: 700;
+  margin-top: 12px;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.5px;
+}
+
+.tv-ambient-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 12px 28px;
+  border-radius: 99px;
+  font-size: clamp(14px, 1.6vw, 22px);
+  color: #fed7aa;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  margin-bottom: 4vh;
+}
+
+.tv-ambient-pulse-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3febc9;
+  box-shadow: 0 0 12px #3febc9;
+  animation: ambientDotPulse 2s infinite ease-in-out;
+}
+
+@keyframes ambientDotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.6); opacity: 1; box-shadow: 0 0 20px #3febc9; }
+}
+
+@keyframes ambientFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+
 
 
 
