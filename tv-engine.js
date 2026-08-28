@@ -344,6 +344,75 @@
 
     document.body.appendChild(tvWrap);
 
+    // Attach Mouse & Touch Listeners to Sidebar Navigation Items
+    const navItems = tvWrap.querySelectorAll('.tv-nav-item');
+    navItems.forEach((btn, idx) => {
+      btn.addEventListener('pointerenter', () => {
+        sidebarIndex = idx;
+        focusSection = 'sidebar';
+        updateSpatialFocus();
+      });
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        sidebarIndex = idx;
+        focusSection = 'sidebar';
+        updateSpatialFocus();
+        dispatchTVAction('OK');
+      });
+    });
+
+    // Attach Mouse & Touch Listeners to Content Carousel Cards
+    const cards = tvWrap.querySelectorAll('.tv-card');
+    cards.forEach((card) => {
+      card.addEventListener('pointerenter', () => {
+        const row = parseInt(card.dataset.row, 10);
+        const col = parseInt(card.dataset.col, 10);
+        if (!isNaN(row) && !isNaN(col)) {
+          contentRow = row;
+          contentCol = col;
+          rowColMemory[contentRow] = contentCol;
+          focusSection = 'content';
+          updateSpatialFocus();
+        }
+      });
+      card.addEventListener('click', (e) => {
+        e.preventDefault();
+        const row = parseInt(card.dataset.row, 10);
+        const col = parseInt(card.dataset.col, 10);
+        if (!isNaN(row) && !isNaN(col)) {
+          contentRow = row;
+          contentCol = col;
+          rowColMemory[contentRow] = contentCol;
+          focusSection = 'content';
+          updateSpatialFocus();
+        }
+        handleCardSelect(card);
+      });
+    });
+
+    // Support Mouse Drag / Touch Drag on Horizontal Carousel Tracks
+    const tracks = tvWrap.querySelectorAll('.tv-carousel-track');
+    tracks.forEach((track) => {
+      let isDown = false;
+      let startX = 0;
+      let scrollLeft = 0;
+
+      track.addEventListener('mousedown', (e) => {
+        isDown = true;
+        startX = e.pageX - track.offsetLeft;
+        scrollLeft = track.scrollLeft;
+      });
+      track.addEventListener('mouseleave', () => { isDown = false; });
+      track.addEventListener('mouseup', () => { isDown = false; });
+      track.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        track.scrollLeft = scrollLeft - walk;
+      });
+    });
+
     // Setup TV Mode & Exit buttons in the web header and menu drawer
     injectTVModeButtons();
   }
@@ -544,25 +613,84 @@
       return;
     }
 
-    // Web Mode Remote Handling (when user uses remote outside of full TV mode)
+    // Web Mode Remote Handling (when user uses remote outside of 10-foot TV mode)
     if (!isTVMode) {
-      if (['UP', 'DOWN', 'LEFT', 'RIGHT'].includes(action)) {
-        if (!document.querySelector('input:focus, textarea:focus')) {
-          setTVMode(true);
+      const actWrap = document.getElementById('activity');
+      const dashWrap = document.getElementById('dashboard');
+
+      // If an activity/lesson screen is open
+      if (actWrap && actWrap.classList.contains('open')) {
+        if (action === 'BACK') {
+          tvAudio.playMove();
+          if (typeof window.showHome === 'function') window.showHome();
+          else if (typeof window.closeActivity === 'function') window.closeActivity();
+          return;
+        }
+
+        // Navigate focus among activity buttons
+        const focusable = Array.from(actWrap.querySelectorAll('button:not([disabled]), [tabindex="0"], .say-btn, .back-btn, .opt-btn'));
+        if (focusable.length > 0) {
+          const currentIdx = focusable.findIndex(el => el === document.activeElement || el.classList.contains('tv-focused'));
+          let nextIdx = currentIdx;
+          if (action === 'RIGHT' || action === 'DOWN') {
+            nextIdx = currentIdx < 0 ? 0 : (currentIdx + 1) % focusable.length;
+          } else if (action === 'LEFT' || action === 'UP') {
+            nextIdx = currentIdx < 0 ? 0 : (currentIdx - 1 + focusable.length) % focusable.length;
+          } else if (action === 'OK') {
+            if (currentIdx >= 0 && focusable[currentIdx]) {
+              tvAudio.playSelect();
+              focusable[currentIdx].click();
+              return;
+            }
+          }
+          if (nextIdx !== currentIdx && focusable[nextIdx]) {
+            tvAudio.playMove();
+            document.querySelectorAll('.tv-focused').forEach(el => el.classList.remove('tv-focused'));
+            focusable[nextIdx].classList.add('tv-focused');
+            focusable[nextIdx].focus({ preventScroll: false });
+            focusable[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return;
+          }
         }
         return;
       }
-      if (action === 'BACK') {
-        const actWrap = document.getElementById('activity');
-        const dashWrap = document.getElementById('dashboard');
-        if (actWrap && actWrap.classList.contains('open')) {
-          if (typeof window.showHome === 'function') window.showHome();
-          return;
-        }
-        if (dashWrap && dashWrap.classList.contains('open')) {
+
+      // If dashboard is open
+      if (dashWrap && dashWrap.classList.contains('open')) {
+        if (action === 'BACK') {
+          tvAudio.playMove();
           if (typeof window.closeDashboard === 'function') window.closeDashboard();
           return;
         }
+      }
+
+      // If on standard Home page
+      const homeStops = Array.from(document.querySelectorAll('.flower-stop, .pill-btn, .home-topbar button, .global-topbar button'));
+      if (homeStops.length > 0 && ['UP', 'DOWN', 'LEFT', 'RIGHT', 'OK'].includes(action)) {
+        const currentIdx = homeStops.findIndex(el => el === document.activeElement || el.classList.contains('tv-focused'));
+        let nextIdx = currentIdx;
+        if (action === 'RIGHT' || action === 'DOWN') {
+          nextIdx = currentIdx < 0 ? 0 : (currentIdx + 1) % homeStops.length;
+        } else if (action === 'LEFT' || action === 'UP') {
+          nextIdx = currentIdx < 0 ? 0 : (currentIdx - 1 + homeStops.length) % homeStops.length;
+        } else if (action === 'OK') {
+          if (currentIdx >= 0 && homeStops[currentIdx]) {
+            tvAudio.playSelect();
+            homeStops[currentIdx].click();
+            return;
+          }
+        }
+        if (nextIdx !== currentIdx && homeStops[nextIdx]) {
+          tvAudio.playMove();
+          document.querySelectorAll('.tv-focused').forEach(el => el.classList.remove('tv-focused'));
+          homeStops[nextIdx].classList.add('tv-focused');
+          homeStops[nextIdx].focus({ preventScroll: false });
+          homeStops[nextIdx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          return;
+        }
+      }
+
+      if (action === 'BACK') {
         openParentalGateModal();
         return;
       }
@@ -740,6 +868,138 @@
       updateSpatialFocus();
     }
   }
+
+  // ================= 6.5 useTVRemote Hook & Universal Remote Adapter =================
+  /**
+   * 🎮 useTVRemote
+   * Maps standard D-Pad keydown events (Arrow keys: 38/40/37/39, Enter/OK: 13, Back/Return: 8/27/10009)
+   * to the application's existing navigation logic while working seamlessly alongside mouse & touch handlers.
+   *
+   * @param {Object} [options] Configuration options
+   * @param {Function} [options.onUp] Custom callback for D-Pad Up
+   * @param {Function} [options.onDown] Custom callback for D-Pad Down
+   * @param {Function} [options.onLeft] Custom callback for D-Pad Left
+   * @param {Function} [options.onRight] Custom callback for D-Pad Right
+   * @param {Function} [options.onSelect] Custom callback for Enter / Space / D-Pad OK
+   * @param {Function} [options.onBack] Custom callback for Escape / Backspace / Hardware Return
+   * @param {Function} [options.onAction] Universal callback: (action: string, e: KeyboardEvent) => boolean|void
+   * @param {boolean} [options.enabled=true] Whether the key listener is active
+   * @param {EventTarget} [options.target=window] Target to attach listener
+   * @param {boolean} [options.preventDefault=true] Prevent default scrolling / browser actions
+   * @param {boolean} [options.stopPropagation=true] Stop event propagation
+   * @param {boolean} [options.allowInInputs=false] Whether to capture when form inputs are focused
+   * @returns {Object} TV remote instance with lifecycle controls and navigation state
+   */
+  function useTVRemote(options = {}) {
+    const opts = Object.assign({
+      enabled: true,
+      target: (typeof window !== 'undefined' ? window : null),
+      preventDefault: true,
+      stopPropagation: true,
+      allowInInputs: false
+    }, options);
+
+    let isActive = !!opts.enabled;
+
+    function handleKey(e) {
+      if (!isActive) return;
+
+      // Don't intercept typing in inputs or textareas unless explicitly requested
+      if (!opts.allowInInputs) {
+        const activeTag = document.activeElement && document.activeElement.tagName;
+        if (activeTag === 'INPUT' || activeTag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable)) {
+          if (e.key === 'Escape' || e.keyCode === 27) {
+            document.activeElement.blur();
+          } else {
+            return;
+          }
+        }
+      }
+
+      const action = normalizeRemoteEvent(e);
+      if (!action) return;
+
+      if (opts.preventDefault) e.preventDefault();
+      if (opts.stopPropagation) e.stopPropagation();
+
+      // Execute custom callbacks if supplied
+      let handled = false;
+      if (typeof opts.onAction === 'function') {
+        const res = opts.onAction(action, e);
+        if (res === false || res === true) handled = (res === false);
+      }
+
+      if (!handled) {
+        if (action === 'UP' && typeof opts.onUp === 'function') {
+          if (opts.onUp(e) === false) handled = true;
+        } else if (action === 'DOWN' && typeof opts.onDown === 'function') {
+          if (opts.onDown(e) === false) handled = true;
+        } else if (action === 'LEFT' && typeof opts.onLeft === 'function') {
+          if (opts.onLeft(e) === false) handled = true;
+        } else if (action === 'RIGHT' && typeof opts.onRight === 'function') {
+          if (opts.onRight(e) === false) handled = true;
+        } else if (action === 'OK' && typeof opts.onSelect === 'function') {
+          if (opts.onSelect(e) === false) handled = true;
+        } else if (action === 'BACK' && typeof opts.onBack === 'function') {
+          if (opts.onBack(e) === false) handled = true;
+        }
+      }
+
+      // Delegate to application navigation if not handled
+      if (!handled) {
+        dispatchTVAction(action, e);
+      }
+    }
+
+    const target = opts.target || (typeof window !== 'undefined' ? window : null);
+    if (target && target.addEventListener) {
+      target.addEventListener('keydown', handleKey, { capture: true, passive: false });
+    }
+
+    return {
+      enable: () => { isActive = true; },
+      disable: () => { isActive = false; },
+      isEnabled: () => isActive,
+      destroy: () => {
+        isActive = false;
+        if (target && target.removeEventListener) {
+          target.removeEventListener('keydown', handleKey, { capture: true });
+        }
+      },
+      unbind: () => {
+        isActive = false;
+        if (target && target.removeEventListener) {
+          target.removeEventListener('keydown', handleKey, { capture: true });
+        }
+      },
+      dispatch: (action) => dispatchTVAction(action),
+      getState: () => ({
+        isTVMode,
+        focusSection,
+        contentRow,
+        contentCol,
+        sidebarIndex,
+        isScreensaverActive,
+        isParentalGateOpen: parentalGateState.isOpen
+      }),
+      setFocus: (section, row, col) => {
+        if (section) focusSection = section;
+        if (typeof row === 'number') contentRow = row;
+        if (typeof col === 'number') contentCol = col;
+        updateSpatialFocus();
+      },
+      setTVMode: (active) => setTVMode(active),
+      toggleTVMode: () => setTVMode(!isTVMode),
+      playAudio: (type) => {
+        if (type === 'move') tvAudio.playMove();
+        else if (type === 'select') tvAudio.playSelect();
+        else if (type === 'error') tvAudio.playError();
+        else if (type === 'success') tvAudio.playSuccess();
+      }
+    };
+  }
+
+  window.useTVRemote = useTVRemote;
 
   function handleSpatialKeyDown(e) {
     const action = normalizeRemoteEvent(e);
@@ -1251,7 +1511,7 @@
   }
 
   // ================= 12. AMBIENT TV SCREEN (PARTICLE-BASED FIREFLY SCREENSAVER) =================
-  const IDLE_TIMEOUT_MS = 120000; // 2 minutes of idle
+  const IDLE_TIMEOUT_MS = 120000; // 2 minutes of idle timeout
   let idleTimer = null;
   let isScreensaverActive = false;
   let fireflyCanvas = null;
@@ -1269,35 +1529,42 @@
 
     reset(initial = false) {
       this.x = Math.random() * this.w;
-      this.y = initial ? Math.random() * this.h : (Math.random() > 0.5 ? -20 : this.h + 20);
-      this.radius = 2.5 + Math.random() * 3.5;
-      this.baseAlpha = 0.3 + Math.random() * 0.7;
+      this.y = initial ? Math.random() * this.h : (Math.random() > 0.5 ? -30 : this.h + 30);
+      this.radius = 2.5 + Math.random() * 4.5;
+      this.baseAlpha = 0.35 + Math.random() * 0.65;
       this.alpha = this.baseAlpha;
-      this.pulseSpeed = 0.02 + Math.random() * 0.035;
+      this.pulseSpeed = 0.018 + Math.random() * 0.035;
       this.pulseOffset = Math.random() * Math.PI * 2;
-      this.speed = 0.3 + Math.random() * 0.7;
+      this.speed = 0.35 + Math.random() * 0.8;
       this.angle = Math.random() * Math.PI * 2;
-      this.turnSpeed = (Math.random() - 0.5) * 0.04;
+      this.turnSpeed = (Math.random() - 0.5) * 0.035;
+      this.wanderTimer = 0;
 
-      // Color Palette: Warm gold, glowing teal, bioluminescent pastel green
+      // Color Palette: Warm gold, glowing emerald teal, soft spring green, warm pastel yellow
       const colors = [
-        { r: 255, g: 216, b: 102 }, // Gold
-        { r: 63, g: 235, b: 201 },  // Teal
-        { r: 134, g: 239, b: 172 }, // Soft Green
-        { r: 255, g: 243, b: 176 }  // Warm Pale Yellow
+        { r: 255, g: 216, b: 102 }, // Gold (#FFD866)
+        { r: 63, g: 235, b: 201 },  // Teal (#3FEBC9)
+        { r: 134, g: 239, b: 172 }, // Soft Green (#86EFAC)
+        { r: 255, g: 243, b: 176 }, // Warm Pale Yellow
+        { r: 251, g: 191, b: 36 }   // Amber (#FBBF24)
       ];
       this.color = colors[Math.floor(Math.random() * colors.length)];
     }
 
     update() {
+      this.wanderTimer++;
+      if (this.wanderTimer > 60) {
+        this.wanderTimer = 0;
+        this.turnSpeed = (Math.random() - 0.5) * 0.04;
+      }
       this.angle += this.turnSpeed;
       this.x += Math.cos(this.angle) * this.speed;
       this.y += Math.sin(this.angle) * this.speed;
 
       this.pulseOffset += this.pulseSpeed;
-      this.alpha = Math.max(0.05, Math.sin(this.pulseOffset) * this.baseAlpha);
+      this.alpha = Math.max(0.04, ((Math.sin(this.pulseOffset) + 1) / 2) * this.baseAlpha);
 
-      if (this.x < -30 || this.x > this.w + 30 || this.y < -30 || this.y > this.h + 30) {
+      if (this.x < -40 || this.x > this.w + 40 || this.y < -40 || this.y > this.h + 40) {
         this.reset(false);
       }
     }
@@ -1308,11 +1575,12 @@
       ctx.save();
       ctx.globalAlpha = this.alpha;
 
-      // Outer gentle bioluminescent glow
-      const glowRad = this.radius * 7;
+      // Outer multi-tier bioluminescent glow
+      const glowRad = this.radius * 8;
       const grad = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, glowRad);
       grad.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`);
-      grad.addColorStop(0.3, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0.4)`);
+      grad.addColorStop(0.25, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0.55)`);
+      grad.addColorStop(0.65, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0.15)`);
       grad.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`);
 
       ctx.fillStyle = grad;
@@ -1320,17 +1588,47 @@
       ctx.arc(this.x, this.y, glowRad, 0, Math.PI * 2);
       ctx.fill();
 
-      // Bright inner core
+      // Bright inner particle core
       ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius * 0.7, 0, Math.PI * 2);
+      ctx.arc(this.x, this.y, this.radius * 0.75, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.restore();
     }
   }
 
+  function ensureAmbientScreensaverDOM() {
+    let ss = document.getElementById('tvAmbientScreensaver');
+    if (!ss) {
+      ss = document.createElement('div');
+      ss.id = 'tvAmbientScreensaver';
+      ss.className = 'tv-ambient-screensaver';
+      ss.style.display = 'none';
+      ss.innerHTML = `
+        <canvas id="fireflyScreensaverCanvas" class="tv-ambient-canvas"></canvas>
+        <div class="tv-ambient-vignette"></div>
+        <div class="tv-ambient-content">
+          <div class="tv-ambient-brand">
+            <span class="tv-ambient-brand-icon">🌱</span>
+            <span class="tv-ambient-brand-title">খুকির বাগান</span>
+            <span class="tv-ambient-brand-badge">শান্ত প্রহর</span>
+          </div>
+          <div class="tv-ambient-time" id="tvAmbientTime">১২:০০</div>
+          <div class="tv-ambient-date" id="tvAmbientDate">রবিবার, শান্ত প্রহর</div>
+          <div class="tv-ambient-hint">
+            <span class="tv-ambient-hint-dot"></span>
+            <span>রিমোটের যেকোনো বোতাম চেপে চালু করুন</span>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(ss);
+    }
+    return ss;
+  }
+
   function initFireflyScreensaver() {
+    ensureAmbientScreensaverDOM();
     fireflyCanvas = document.getElementById('fireflyScreensaverCanvas');
     if (!fireflyCanvas) return;
     fireflyCanvas.width = window.innerWidth;
@@ -1338,7 +1636,7 @@
     fireflyCtx = fireflyCanvas.getContext('2d');
 
     fireflies = [];
-    const count = Math.min(55, Math.floor(window.innerWidth / 30));
+    const count = Math.min(65, Math.max(35, Math.floor(window.innerWidth / 28)));
     for (let i = 0; i < count; i++) {
       fireflies.push(new Firefly(fireflyCanvas.width, fireflyCanvas.height));
     }
@@ -1352,7 +1650,7 @@
   }
 
   function renderFireflyLoop() {
-    if (!isScreensaverActive || !fireflyCtx) return;
+    if (!isScreensaverActive || !fireflyCtx || !fireflyCanvas) return;
 
     fireflyCtx.clearRect(0, 0, fireflyCanvas.width, fireflyCanvas.height);
 
@@ -1372,7 +1670,6 @@
     const now = new Date();
     let hours = now.getHours();
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? 'রাত / বিকেল' : 'সকাল / দুপুর';
     hours = hours % 12 || 12;
 
     const bnHours = toBengaliDigits(hours);
@@ -1381,18 +1678,17 @@
 
     const days = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
     const months = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
-    dateEl.textContent = `${days[now.getDay()]}, ${toBengaliDigits(now.getDate())} ${months[now.getMonth()]} • খুকির বাগান শান্ত প্রহর`;
+    dateEl.textContent = `${days[now.getDay()]}, ${toBengaliDigits(now.getDate())} ${months[now.getMonth()]} • রাত্রি ও বিশ্রাম`;
   }
 
   function triggerAmbientScreensaver() {
     if (isScreensaverActive) return;
     isScreensaverActive = true;
 
-    const ss = document.getElementById('tvAmbientScreensaver');
-    if (!ss) return;
-
+    const ss = ensureAmbientScreensaverDOM();
     initFireflyScreensaver();
     updateAmbientClock();
+    if (clockIntervalId) clearInterval(clockIntervalId);
     clockIntervalId = setInterval(updateAmbientClock, 1000);
 
     ss.style.display = 'flex';
@@ -1412,8 +1708,14 @@
       setTimeout(() => {
         if (!isScreensaverActive) {
           ss.style.display = 'none';
-          if (fireflyAnimId) cancelAnimationFrame(fireflyAnimId);
-          if (clockIntervalId) clearInterval(clockIntervalId);
+          if (fireflyAnimId) {
+            cancelAnimationFrame(fireflyAnimId);
+            fireflyAnimId = null;
+          }
+          if (clockIntervalId) {
+            clearInterval(clockIntervalId);
+            clockIntervalId = null;
+          }
         }
       }, 600);
     }
@@ -1427,12 +1729,15 @@
   }
 
   // Register user activity listeners to maintain the 2-minute screensaver timer
-  ['keydown', 'keyup', 'mousemove', 'pointerdown', 'touchstart', 'wheel'].forEach(evt => {
+  ['keydown', 'keyup', 'mousemove', 'pointerdown', 'touchstart', 'wheel', 'click'].forEach(evt => {
     window.addEventListener(evt, () => {
       resetIdleTimer();
       if (isScreensaverActive) dismissAmbientScreensaver();
     }, { passive: true });
   });
+
+  // Start the idle timer immediately
+  resetIdleTimer();
 
   window.triggerScreensaver = triggerAmbientScreensaver;
   window.dismissScreensaver = dismissAmbientScreensaver;
@@ -1465,9 +1770,8 @@
   window.toggleTVMode = () => setTVMode(!isTVMode);
 
   // ================= 14. Event Registration & Poller Initialization =================
-  // Capturing listeners on both window and document for absolute TV reliability
-  window.addEventListener('keydown', handleSpatialKeyDown, { capture: true, passive: false });
-  document.addEventListener('keydown', handleSpatialKeyDown, { capture: true, passive: false });
+  // Initialize standard global useTVRemote instance
+  window.tvRemote = useTVRemote();
 
   // Initialize Gamepad API poller
   pollGamepads();
