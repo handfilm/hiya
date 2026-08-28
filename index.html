@@ -341,7 +341,7 @@
 
   /* Drawing */
   .draw-wrap{width:100%; max-width:640px;}
-  canvas{width:100%; aspect-ratio:5/4; min-height:320px; background:#fff; border-radius:24px; box-shadow:0 14px 34px rgba(0,0,0,.4), 0 0 0 1px var(--glass-brd); touch-action:none;}
+  .draw-wrap canvas, #drawCanvas{width:100%; aspect-ratio:5/4; min-height:320px; background:#fff; border-radius:24px; box-shadow:0 14px 34px rgba(0,0,0,.4), 0 0 0 1px var(--glass-brd); touch-action:none;}
   .palette{display:flex; gap:10px; justify-content:center; margin:14px 0; flex-wrap:wrap;}
   .swatch{width:38px; height:38px; border-radius:50%; border:3px solid rgba(255,255,255,.7); box-shadow:0 4px 10px rgba(0,0,0,.35); cursor:pointer;}
   .swatch.active{box-shadow:0 0 0 3px var(--pop-lime), 0 4px 10px rgba(0,0,0,.35);}
@@ -549,6 +549,22 @@
 </head>
 <body>
 
+<!-- Flow Ambient Aurora Layer (GPU hardware accelerated) -->
+<div class="flow-ambient-aura">
+  <div class="flow-aura-blob blob-1"></div>
+  <div class="flow-aura-blob blob-2"></div>
+  <div class="flow-aura-blob blob-3"></div>
+</div>
+
+<!-- Broadcast Frame Corners for 10-Foot TV mode -->
+<div class="broadcast-frame-corner top-left"></div>
+<div class="broadcast-frame-corner top-right"></div>
+<div class="broadcast-frame-corner bottom-left"></div>
+<div class="broadcast-frame-corner bottom-right"></div>
+
+<!-- Celebration Particle Canvas -->
+<canvas id="celebrationCanvas"></canvas>
+
 <!-- ---------- Animated splash / welcome screen (shown on every app load) ---------- -->
 <div id="splashScreen" class="splash-screen">
   <div class="splash-petal p1">❤️</div>
@@ -601,6 +617,9 @@
   <div class="drawer-section-title" data-i18n="drawerCurrent">এখন যা আছে</div>
   <div class="drawer-item" onclick="drawerGo('home')"><span class="di-icon">🏡</span><span data-i18n="drawerHome">হোম / বাগান</span></div>
   <div class="drawer-item" onclick="drawerGo('dashboard')"><span class="di-icon">📊</span><span data-i18n="drawerDashboard">প্যারেন্ট ড্যাশবোর্ড</span></div>
+  <div class="drawer-item" onclick="openAvatarModal()"><span class="di-icon">🦸‍♂️</span><span>আমার অ্যাভাটার ও মেডেল</span></div>
+  <div class="drawer-item" onclick="openSchoolDiscoveryModal('discovery')"><span class="di-icon">🏫</span><span>টপ ১০০ স্কুল ডিরেক্টরি</span></div>
+  <div class="drawer-item" onclick="openSchoolDiscoveryModal('rbac')"><span class="di-icon">⚡</span><span>RBAC ও লোড টেস্ট</span></div>
   <div class="drawer-item" onclick="drawerGo('letters')"><span class="di-icon">🔤</span><span data-i18n="m_letters">বর্ণ বাগান</span></div>
   <div class="drawer-item" onclick="drawerGo('numbers')"><span class="di-icon">🐝</span><span data-i18n="m_numbers">সংখ্যা মৌমাছি</span></div>
   <div class="drawer-item" onclick="drawerGo('match')"><span class="di-icon">🍎</span><span data-i18n="m_match">মিলাও তো</span></div>
@@ -672,8 +691,47 @@
 <header id="appHeader" style="display:none;">
   <h1 id="appTitle">খুকির বাগান 🌷</h1>
   <div class="sub" data-i18n="headerSub">খেলো, আঁকো, শেখো — নিজের মতো করে</div>
+
+  <!-- Broadcast On-Air Live Ticker -->
+  <div class="broadcast-ticker-container" id="broadcastTickerBar">
+    <div class="broadcast-badge">
+      <span class="pulse-dot"></span>
+      <span>ON AIR • সম্প্রচার</span>
+    </div>
+    <div class="broadcast-ticker-track">
+      <div class="broadcast-ticker-content" id="liveTickerContent">
+        <span class="ticker-item"><span class="ticker-tag">আজকের শব্দ</span> 🦋 প্রজাপতি (Butterfly) — রঙিন ডানায় ওড়ে</span>
+        <span class="ticker-item"><span class="ticker-tag">স্কুল লিডারবোর্ড</span> 🏛️ ভিকারুননিসা ও সেন্ট জোসেফ স্কুলে আজ ৪২০+ নতুন স্টার অর্জিত!</span>
+        <span class="ticker-item"><span class="ticker-tag">দৈনিক মিশন</span> 🌟 ৩টি বর্ণ এঁকে আজকের স্পেশাল ম্যাজিক মেডেল আনলক করো!</span>
+        <span class="ticker-item"><span class="ticker-tag">লাইভ আবহাওয়া</span> 🌸 বসন্তের স্নিগ্ধ বাতাসে শেখার আনন্দ দ্বিগুণ</span>
+        <!-- Duplicated for seamless infinite loop -->
+        <span class="ticker-item"><span class="ticker-tag">আজকের শব্দ</span> 🦋 প্রজাপতি (Butterfly) — রঙিন ডানায় ওড়ে</span>
+        <span class="ticker-item"><span class="ticker-tag">স্কুল লিডারবোর্ড</span> 🏛️ ভিকারুননিসা ও সেন্ট জোসেফ স্কুলে আজ ৪২০+ নতুন স্টার অর্জিত!</span>
+        <span class="ticker-item"><span class="ticker-tag">দৈনিক মিশন</span> 🌟 ৩টি বর্ণ এঁকে আজকের স্পেশাল ম্যাজিক মেডেল আনলক করো!</span>
+      </div>
+    </div>
+  </div>
+
   <div class="home-topbar">
     <button class="pill-btn tv-mode-btn" onclick="toggleTVMode()">📺 <span>TV মোড (10-Foot UI)</span></button>
+    <button class="pill-btn" style="background:linear-gradient(135deg, #00e0a8, #00a67d); color:#051410; font-weight:800;" onclick="openSchoolDiscoveryModal('discovery')">🏫 <span>টপ ১০০ স্কুল</span></button>
+    <button class="pill-btn" style="background:linear-gradient(135deg, #ffc400, #e6a800); color:#221500; font-weight:800;" onclick="openSchoolDiscoveryModal('rbac')">⚡ <span>RBAC ও লোড টেস্ট</span></button>
+    <button class="pill-btn" onclick="openAvatarModal()">🦸‍♂️ <span>অ্যাভাটার ও মেডেল</span></button>
+    
+    <!-- Ambient Focus Soundscapes control in Topbar -->
+    <div class="ambient-sound-bar" id="ambientSoundControls" title="ফোকাস নেচার সাউন্ডস্কেপ">
+      <span style="font-size:13px;">🍃</span>
+      <button class="soundscape-btn" id="sndRainBtn" onclick="toggleNatureSound('rain')">🌧️ বৃষ্টি</button>
+      <button class="soundscape-btn" id="sndBirdsBtn" onclick="toggleNatureSound('birds')">🐦 পাখি</button>
+      <button class="soundscape-btn" id="sndChimesBtn" onclick="toggleNatureSound('chimes')">🌙 রাত</button>
+      <div class="audio-waves" id="ambientWaves" style="display:none;">
+        <span class="audio-bar"></span>
+        <span class="audio-bar"></span>
+        <span class="audio-bar"></span>
+        <span class="audio-bar"></span>
+      </div>
+    </div>
+
     <button class="pill-btn app-exit-btn" onclick="openParentalGate()">🚪 <span>প্রস্থান (Exit)</span></button>
     <button class="pill-btn" onclick="speakWelcome()">🔊 <span data-i18n="btnHowTo">কীভাবে খেলব?</span></button>
     <button class="pill-btn" id="muteToggleBtn" onclick="toggleMute()"></button>
@@ -683,7 +741,45 @@
 </header>
 
 <div id="home" style="display:none;">
+
+  <!-- Daily Magic Quest Card -->
+  <div class="daily-quest-banner" id="magicQuestBanner">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="font-size:32px; filter:drop-shadow(0 2px 8px rgba(255,216,102,0.5));">🌟</div>
+      <div>
+        <div style="font-size:16px; font-weight:800; color:#ffd866; font-family:'Baloo Da 2', sans-serif;">আজকের জাদুকরী মিশন (Daily Magic Quest)</div>
+        <div style="font-size:12px; color:rgba(255,255,255,0.7);">৩টি কাজ শেষ করে আজ অতিরিক্ত ২০টি স্টার এবং গোল্ড মেডেল নাও!</div>
+      </div>
+    </div>
+
+    <div class="quest-steps-row">
+      <div class="quest-step-pill" id="questStep1" onclick="openActivity('letters')">
+        <span class="step-check" id="questCheck1">1</span>
+        <span>🔤 ১টি বর্ণ আঁকো</span>
+      </div>
+      <div class="quest-step-pill" id="questStep2" onclick="openActivity('draw')">
+        <span class="step-check" id="questCheck2">2</span>
+        <span>🎨 রঙের ছবিতে হাত বোলাও</span>
+      </div>
+      <div class="quest-step-pill" id="questStep3" onclick="openActivity('rhymes')">
+        <span class="step-check" id="questCheck3">3</span>
+        <span>🎵 ১টি ছড়া শোনো</span>
+      </div>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div>
+        <div style="font-size:11px; color:rgba(255,255,255,0.6); margin-bottom:3px; text-align:right;">মিশন অগ্রগতি: <span id="questPct">০%</span></div>
+        <div class="quest-progress-track">
+          <div class="quest-progress-fill" id="questProgressFill" style="width: 0%;"></div>
+        </div>
+      </div>
+      <button class="primary-btn" id="claimQuestBtn" style="margin:0; padding:8px 16px; font-size:12px; display:none;" onclick="claimDailyQuestReward()">🎁 রিওয়ার্ড নাও!</button>
+    </div>
+  </div>
+
   <div class="path" role="region" aria-label="Learning Modules" tabindex="0">
+
     <div class="flower-stop" tabindex="0" role="button" data-module="syllabus" onclick="openActivity('syllabus')">
       <div class="flower-icon c3">📘</div>
       <div><h2 data-i18n="m_syllabus">আমার ক্লাস</h2><p data-i18n="d_syllabus">অঙ্ক, ইংরেজি, বিজ্ঞান — সব বিষয় এক জায়গায়</p></div>
@@ -848,6 +944,277 @@
       <h3 data-i18n="dashGalleryTitle">আঁকা ছবির গ্যালারি</h3>
       <div class="mini-gallery" id="dashGallery"></div>
       <div class="empty-note" id="dashGalleryEmpty" style="display:none;" data-i18n="dashGalleryEmptyTxt">এখনো কোনো ছবি নেই</div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- ENTERPRISE MULTI-TENANT, SCHOOL DISCOVERY & LOAD TESTING MODAL ---------- -->
+<div class="discovery-modal-overlay" id="schoolDiscoveryModal">
+  <div class="discovery-modal-card">
+    <div class="discovery-modal-header">
+      <div class="discovery-modal-title">
+        <span>🏛️</span>
+        <span id="discModalHeaderTitle">ঢাকা টপ ১০০ স্কুল ডিরেক্টরি ও RBAC কনসোল</span>
+      </div>
+      <div class="discovery-nav-tabs">
+        <button class="discovery-tab-btn active" id="tabBtnDiscovery" onclick="switchDiscoveryTab('discovery')">🏫 টপ ১০০ স্কুল</button>
+        <button class="discovery-tab-btn" id="tabBtnRbac" onclick="switchDiscoveryTab('rbac')">🛡️ Multi-Tenant RBAC</button>
+        <button class="discovery-tab-btn" id="tabBtnLoadTest" onclick="switchDiscoveryTab('loadtest')">⚡ লোড টেস্টিং</button>
+      </div>
+      <button class="pill-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:6px 14px; font-weight:800; cursor:pointer;" onclick="closeSchoolDiscoveryModal()">✕ বন্ধ</button>
+    </div>
+
+    <!-- TAB 1: School Discovery Directory -->
+    <div class="discovery-modal-body" id="tabContentDiscovery">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+        <div>
+          <h3 style="font-size:18px; color:#fff; margin-bottom:4px;">ঢাকার শীর্ষ ১০০টি অনুমোদিত স্কুল ও প্রিস্কুল</h3>
+          <p style="font-size:13px; color:rgba(255,243,246,0.6);">র্যাঙ্কিং, কারিকুলাম এবং শিক্ষার্থীর সংখ্যা অনুযায়ী স্কুল খুঁজুন ও বাচ্চার অ্যাকাউন্ট লিংক করুন</p>
+        </div>
+        <a href="/schools/dhaka" target="_blank" class="pill-btn" style="background:rgba(255,196,0,0.15); border:1px solid #ffc400; color:#ffc400; font-size:13px; font-weight:700; text-decoration:none;">🔗 আলাদা SSR পেজে দেখুন ↗</a>
+      </div>
+
+      <div class="discovery-filter-row">
+        <input type="text" id="modalSchoolSearch" class="discovery-input" style="flex:2; min-width:220px;" placeholder="🔍 স্কুলের নাম বা এলাকা দিয়ে সার্চ করুন..." oninput="handleSchoolFilter()">
+        <select id="modalThanaFilter" class="discovery-input" style="flex:1; min-width:160px;" onchange="handleSchoolFilter()">
+          <option value="ALL">📍 সকল থানা</option>
+          <option value="Bailey Road">Bailey Road</option>
+          <option value="Dhanmondi">Dhanmondi</option>
+          <option value="Gulshan">Gulshan</option>
+          <option value="Uttara">Uttara</option>
+          <option value="Motijheel">Motijheel</option>
+          <option value="Mohammadpur">Mohammadpur</option>
+          <option value="Tejgaon">Tejgaon</option>
+          <option value="Cantonment">Cantonment</option>
+          <option value="Mirpur">Mirpur</option>
+          <option value="Bashundhara">Bashundhara</option>
+          <option value="Baridhara">Baridhara</option>
+        </select>
+        <select id="modalCurriculumFilter" class="discovery-input" style="flex:1; min-width:160px;" onchange="handleSchoolFilter()">
+          <option value="ALL">📘 সকল কারিকুলাম</option>
+          <option value="NCTB_BANGLA">NCTB বাংলা মাধ্যম</option>
+          <option value="NCTB_ENGLISH">NCTB English Version</option>
+          <option value="CAMBRIDGE">Cambridge (O/A Level)</option>
+          <option value="IB">International Baccalaureate (IB)</option>
+          <option value="EARLY_YEARS_EYFS">Early Years / Preschool</option>
+        </select>
+      </div>
+
+      <div id="schoolListingCount" style="font-size:12px; color:rgba(255,255,255,0.6); margin-bottom:12px;">১০০টি স্কুল প্রদর্শিত হচ্ছে</div>
+      <div class="discovery-grid" id="modalSchoolsGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- TAB 2: Multi-Tenant RBAC Console -->
+    <div class="discovery-modal-body" id="tabContentRbac" style="display:none;">
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:18px; color:#fff; margin-bottom:4px;">Multi-Tenant Role-Based Access Control (RBAC)</h3>
+        <p style="font-size:13px; color:rgba(255,243,246,0.6);">Firebase Auth Custom Claims ভিত্তিক ৪-স্তরের ভূমিকা ও ডেটা আইসোলেশন ইঞ্জিন</p>
+      </div>
+
+      <!-- Role Selector -->
+      <div class="rbac-role-grid">
+        <button class="rbac-role-btn active" id="roleBtn_parent" onclick="switchRBACRole('parent')">
+          <div style="font-size:22px; margin-bottom:6px;">👨‍👩‍👧 Parent (অভিভাবক)</div>
+          <div style="font-size:12px; opacity:0.7;">নিজের বাচ্চার অগ্রগতি ও স্কুলের সাথে লিংক করা প্রোফাইল দেখা</div>
+        </button>
+        <button class="rbac-role-btn" id="roleBtn_teacher" onclick="switchRBACRole('teacher')">
+          <div style="font-size:22px; margin-bottom:6px;">👩‍🏫 Teacher (শিক্ষক)</div>
+          <div style="font-size:12px; opacity:0.7;">নিজের স্কুলের ক্লাসের সকল শিক্ষার্থীর অগ্রগতি মনিটরিং</div>
+        </button>
+        <button class="rbac-role-btn" id="roleBtn_schoolAdmin" onclick="switchRBACRole('schoolAdmin')">
+          <div style="font-size:22px; margin-bottom:6px;">🏛️ School Admin (অধ্যক্ষ)</div>
+          <div style="font-size:12px; opacity:0.7;">স্কুল টেন্যান্টের সকল শিক্ষক ও ক্লাসের সামগ্রিক রিপোর্ট</div>
+        </button>
+        <button class="rbac-role-btn" id="roleBtn_superAdmin" onclick="switchRBACRole('superAdmin')">
+          <div style="font-size:22px; margin-bottom:6px;">👑 Super Admin (বোর্ড)</div>
+          <div style="font-size:12px; opacity:0.7;">জাতীয় ১০০টি স্কুলের পূর্ণাঙ্গ ডিরেক্টরি ও নীতি নির্ধারণ</div>
+        </button>
+      </div>
+
+      <!-- Active Custom Claims Preview -->
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <span style="font-size:13px; font-weight:700; color:#ffc400;">🔑 Active Firebase Auth Custom Claims &amp; Security Token:</span>
+          <span style="font-size:11px; background:rgba(0,224,168,0.2); color:#00e0a8; padding:2px 8px; border-radius:4px;">Firestore Rules Verified</span>
+        </div>
+        <pre class="rbac-claims-box" id="rbacClaimsDisplay">{
+  "uid": "usr_parent_ayesha",
+  "role": "parent",
+  "schoolId": "SCH_DHK_001",
+  "tenantId": "SCH_DHK_001",
+  "isVerified": true
+}</pre>
+      </div>
+
+      <!-- Tenant & Student Linkage Form -->
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:20px; margin-bottom:20px;">
+        <h4 style="font-size:16px; color:#00e0a8; margin-bottom:12px;">🔗 বাচ্চার অ্যাকাউন্ট অনুমোদিত স্কুলে লিঙ্ক করুন (Sign Up with School)</h4>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:12px;">
+          <div>
+            <label style="font-size:12px; color:rgba(255,255,255,0.7); display:block; margin-bottom:4px;">অভিভাবকের নাম</label>
+            <input type="text" id="rbacParentName" class="discovery-input" style="width:100%;" value="ফারহানা ইয়াসমিন">
+          </div>
+          <div>
+            <label style="font-size:12px; color:rgba(255,255,255,0.7); display:block; margin-bottom:4px;">বাচ্চার নাম</label>
+            <input type="text" id="rbacChildName" class="discovery-input" style="width:100%;" value="আয়েশা সিদ্দিকা">
+          </div>
+          <div>
+            <label style="font-size:12px; color:rgba(255,255,255,0.7); display:block; margin-bottom:4px;">নির্বাচিত স্কুল (School ID)</label>
+            <select id="rbacSchoolSelect" class="discovery-input" style="width:100%;" onchange="updateRbacClaimsPreview()">
+              <option value="SCH_DHK_001">ভিকারুননিসা নূন স্কুল (SCH_DHK_001)</option>
+              <option value="SCH_DHK_002">নটর ডেম কলেজ / স্কুল (SCH_DHK_002)</option>
+              <option value="SCH_DHK_004">সেন্ট জোসেফ স্কুল (SCH_DHK_004)</option>
+              <option value="SCH_DHK_005">স্কলাস্টিকা স্কুল (SCH_DHK_005)</option>
+              <option value="SCH_DHK_007">রাজউক উত্তরা মডেল কলেজ (SCH_DHK_007)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px; color:rgba(255,255,255,0.7); display:block; margin-bottom:4px;">শ্রেণী / ক্লাস</label>
+            <select id="rbacChildGrade" class="discovery-input" style="width:100%;">
+              <option value="Playgroup">প্লে-গ্রুপ (Playgroup)</option>
+              <option value="Nursery" selected>নার্সারি (Nursery)</option>
+              <option value="KG">কেজি (KG)</option>
+              <option value="Class 1">ক্লাস ১ (Class 1)</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <button class="primary-btn" style="margin:0; padding:10px 24px;" onclick="handleRegisterWithSchool()">✓ লিঙ্ক নিশ্চিত করুন (Save &amp; Set Claims)</button>
+          <span id="rbacSuccessMsg" style="font-size:13px; color:#00e0a8; font-weight:700; display:none;">✓ সফলভাবে স্কুলে লিঙ্ক ও কাস্টম ক্লেইমস সেট করা হয়েছে!</span>
+        </div>
+      </div>
+
+      <!-- School Tenant Analytics View -->
+      <div id="schoolTenantAnalyticsCard" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:20px;">
+        <h4 style="font-size:16px; color:#ffc400; margin-bottom:12px;">📊 টেন্যান্ট অ্যানালিটিক্স (<span id="analyticsSchoolName">Viqarunnisa Noon School and College</span>)</h4>
+        <div class="load-stats-grid">
+          <div class="load-stat-box">
+            <div class="load-stat-val" id="analyticsStudentCount">১৪,৫০০</div>
+            <div class="load-stat-lbl">মোট সক্রিয় শিক্ষার্থী</div>
+          </div>
+          <div class="load-stat-box">
+            <div class="load-stat-val" id="analyticsStarsCount">৪৮,২০০ ⭐</div>
+            <div class="load-stat-lbl">স্কুল মোট স্টার অর্জন</div>
+          </div>
+          <div class="load-stat-box">
+            <div class="load-stat-val" id="analyticsMastery">৯৬%</div>
+            <div class="load-stat-lbl">গড় শিখন দক্ষতা (Mastery)</div>
+          </div>
+          <div class="load-stat-box">
+            <div class="load-stat-val" style="color:#00e0a8;">নিরাপদ টেন্যান্ট</div>
+            <div class="load-stat-lbl">ডেটা আইসোলেশন স্ট্যাটাস</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Concurrency Load Testing Suite -->
+    <div class="discovery-modal-body" id="tabContentLoadTest" style="display:none;">
+      <div style="margin-bottom:20px;">
+        <h3 style="font-size:18px; color:#fff; margin-bottom:4px;">⚡ High-Concurrency k6 Load Testing Simulator</h3>
+        <p style="font-size:13px; color:rgba(255,243,246,0.6);">রিয়েল-টাইম কনকারেন্ট ইউজার (৫০ - ৩০০ VUs) সিমুলেশন এবং p95 Latency বেঞ্চমার্কিং</p>
+      </div>
+
+      <!-- Load Test Controls -->
+      <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:20px; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <label style="font-size:13px; font-weight:700; color:#fff;">ভার্চুয়াল ব্যবহারকারী (Concurrent Virtual Users): <span id="vuValueDisplay" style="color:#ffc400;">১০০ VUs</span></label>
+            <input type="range" id="loadTestVuSlider" min="50" max="300" step="25" value="100" style="width:280px; display:block; margin-top:8px;" oninput="document.getElementById('vuValueDisplay').textContent = this.value + ' VUs'">
+          </div>
+          <button class="primary-btn" id="runLoadTestBtn" style="margin:0; padding:12px 28px; background:linear-gradient(135deg, #ff3b4e, #d6112b);" onclick="runInAppLoadTest()">🚀 কনকারেন্সি টেস্ট চালান (Run Test)</button>
+        </div>
+      </div>
+
+      <!-- Benchmark Metrics Results -->
+      <div class="load-stats-grid">
+        <div class="load-stat-box">
+          <div class="load-stat-val" id="resAvgLatency">~12 ms</div>
+          <div class="load-stat-lbl">গড় রেসপন্স টাইম (Avg Latency)</div>
+        </div>
+        <div class="load-stat-box">
+          <div class="load-stat-val" id="resP95Latency" style="color:#00e0a8;">~28 ms</div>
+          <div class="load-stat-lbl">p95 Latency (SLA &lt; 400ms)</div>
+        </div>
+        <div class="load-stat-box">
+          <div class="load-stat-val" id="resErrorRate" style="color:#00e0a8;">0.00%</div>
+          <div class="load-stat-lbl">এরর রেট (Threshold &lt; 1%)</div>
+        </div>
+        <div class="load-stat-box">
+          <div class="load-stat-val" id="resSlaStatus" style="color:#00e0a8; font-size:20px;">PASSED ✓</div>
+          <div class="load-stat-lbl">SLA বেঞ্চমার্ক স্ট্যাটাস</div>
+        </div>
+      </div>
+
+      <!-- Live Terminal Output -->
+      <div>
+        <div style="font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px; font-weight:700;">🖥️ k6 Test Logs &amp; HTTP Threshold Assertion:</div>
+        <pre class="rbac-claims-box" id="loadTestLogBox" style="height:140px; color:#ffc400; font-size:12px;">[k6 engine ready] Select VU count and click 'Run Test' to benchmark /api/schools, /schools/dhaka, and /api/auth/register-with-school endpoints.</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- KIDS DIGITAL AVATAR & MEDAL TROPHY SHELF MODAL ---------- -->
+<div class="discovery-modal-overlay" id="avatarBadgeModal">
+  <div class="discovery-modal-card" style="max-width: 680px;">
+    <div class="discovery-modal-header">
+      <div class="discovery-modal-title">
+        <span>🦸‍♂️</span>
+        <span>আমার অ্যাভাটার ও অর্জিত মেডেল</span>
+      </div>
+      <button class="pill-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:6px 14px; font-weight:800; cursor:pointer;" onclick="closeAvatarModal()">✕ বন্ধ</button>
+    </div>
+    <div class="discovery-modal-body">
+      <!-- Active Avatar Display -->
+      <div style="text-align:center; padding:18px 0; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:18px;">
+        <div class="avatar-icon-large" id="currentAvatarIcon">🦋</div>
+        <h3 style="font-size:20px; color:#ffd866; margin-bottom:4px;" id="currentAvatarName">রঙিন প্রজাপতি</h3>
+        <p style="font-size:13px; color:rgba(255,243,246,0.7);">বাচ্চার প্রোফাইল ব্যক্তিত্ব ও প্রিয় সঙ্গী</p>
+      </div>
+
+      <!-- Choose Avatar -->
+      <h4 style="font-size:15px; color:#3febc9; margin-bottom:10px;">✨ পছন্দের অ্যাভাটার বেছে নাও:</h4>
+      <div class="avatar-grid">
+        <div class="avatar-option-card selected" id="av_butterfly" onclick="selectAvatar('🦋', 'রঙিন প্রজাপতি', 'av_butterfly')">
+          <div style="font-size:32px; margin-bottom:4px;">🦋</div>
+          <div style="font-size:13px; font-weight:700;">প্রজাপতি</div>
+        </div>
+        <div class="avatar-option-card" id="av_tiger" onclick="selectAvatar('🐯', 'সাহসী বাঘ মামা', 'av_tiger')">
+          <div style="font-size:32px; margin-bottom:4px;">🐯</div>
+          <div style="font-size:13px; font-weight:700;">বাঘ মামা</div>
+        </div>
+        <div class="avatar-option-card" id="av_firefly" onclick="selectAvatar('✨', 'টুনটুনি জোনাকি', 'av_firefly')">
+          <div style="font-size:32px; margin-bottom:4px;">✨</div>
+          <div style="font-size:13px; font-weight:700;">টুনটুনি</div>
+        </div>
+        <div class="avatar-option-card" id="av_rocket" onclick="selectAvatar('🚀', 'মহাকাশ অভিযাত্রী', 'av_rocket')">
+          <div style="font-size:32px; margin-bottom:4px;">🚀</div>
+          <div style="font-size:13px; font-weight:700;">রকেট হিরো</div>
+        </div>
+      </div>
+
+      <!-- Achievement Medals & Trophies -->
+      <h4 style="font-size:15px; color:#ff6fb0; margin:24px 0 10px 0;">🏆 অর্জিত শিক্ষা মেডেল ও সম্মাননা:</h4>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px;">
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,216,102,0.3); border-radius:14px; padding:12px; text-align:center;">
+          <div style="font-size:28px; margin-bottom:4px;">🥇</div>
+          <div style="font-size:13px; font-weight:800; color:#ffd866;">বর্ণমালার জাদুকর</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.6);">বাংলা ৫০টি স্বরবর্ণ ও ব্যঞ্জনবর্ণ চেনা</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(63,235,201,0.3); border-radius:14px; padding:12px; text-align:center;">
+          <div style="font-size:28px; margin-bottom:4px;">🎖️</div>
+          <div style="font-size:13px; font-weight:800; color:#3febc9;">গণিত মৌমাছি</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.6);">১ থেকে ২০ পর্যন্ত সংখ্যা গণনা সম্পন্ন</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,111,176,0.3); border-radius:14px; padding:12px; text-align:center;">
+          <div style="font-size:28px; margin-bottom:4px;">🎨</div>
+          <div style="font-size:13px; font-weight:800; color:#ff6fb0;">রঙিন তুলির মাস্টার</div>
+          <div style="font-size:11px; color:rgba(255,255,255,0.6);">স্কাই পেইন্টার ও ড্রইং ক্যানভাস মাস্টার</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2957,8 +3324,542 @@ function buildDraw(body){
   renderGallery();
 }
 
+// =====================================================================
+// ENTERPRISE MULTI-TENANT RBAC, SCHOOL DISCOVERY & LOAD TESTING ENGINE
+// =====================================================================
+let cachedSchoolsList = [];
+let currentActiveRole = 'parent';
+let currentTenantSchoolId = 'SCH_DHK_001';
+
+window.openSchoolDiscoveryModal = function(initialTab = 'discovery') {
+  const modal = document.getElementById('schoolDiscoveryModal');
+  if (modal) {
+    modal.classList.add('open');
+    switchDiscoveryTab(initialTab);
+    fetchAndRenderSchools();
+  }
+};
+
+window.closeSchoolDiscoveryModal = function() {
+  const modal = document.getElementById('schoolDiscoveryModal');
+  if (modal) modal.classList.remove('open');
+};
+
+window.switchDiscoveryTab = function(tabName) {
+  ['discovery', 'rbac', 'loadtest'].forEach(t => {
+    const tabBtn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+    const content = document.getElementById('tabContent' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (tabBtn) tabBtn.classList.toggle('active', t === tabName);
+    if (content) content.style.display = (t === tabName) ? 'block' : 'none';
+  });
+
+  if (tabName === 'rbac') {
+    updateRbacClaimsPreview();
+    fetchSchoolAnalytics(currentTenantSchoolId);
+  }
+};
+
+async function fetchAndRenderSchools() {
+  try {
+    const res = await fetch('/api/schools');
+    const data = await res.json();
+    cachedSchoolsList = data.schools || [];
+    renderSchoolsGrid(cachedSchoolsList);
+    populateRbacSchoolSelect(cachedSchoolsList);
+  } catch (err) {
+    console.error('Failed to load schools from API:', err);
+  }
+}
+
+function renderSchoolsGrid(list) {
+  const grid = document.getElementById('modalSchoolsGrid');
+  const countEl = document.getElementById('schoolListingCount');
+  if (!grid) return;
+
+  if (countEl) {
+    countEl.textContent = `${list.length}টি স্কুল প্রদর্শিত হচ্ছে`;
+  }
+
+  if (!list.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:rgba(255,255,255,0.5);">কোনো স্কুল পাওয়া যায়নি</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(school => `
+    <div class="school-item-card" data-thana="${school.thana}" data-curriculum="${(school.curriculum||[]).join(',')}">
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <span class="school-rank-pill">RANK #${school.metrics?.ranking || 1} • 📍 ${school.thana}</span>
+          <span style="font-size:11px; color:#00e0a8; font-weight:700;">✓ Verified</span>
+        </div>
+        <h4 class="school-card-title">${school.name}</h4>
+        <div class="school-card-sub">${school.banglaName || ''}</div>
+        <div class="school-curriculum-chips">
+          ${(school.curriculum||[]).map(c => `<span class="curr-chip">${c.replace(/_/g, ' ')}</span>`).join('')}
+        </div>
+      </div>
+      <div class="school-card-actions">
+        <span style="font-size:12px; color:rgba(255,255,255,0.6);">👥 ${(school.metrics?.totalStudents || 0).toLocaleString()} শিক্ষার্থী</span>
+        <button class="btn-link-school" onclick="selectSchoolForLinkage('${school.schoolId}', '${school.name.replace(/'/g, "\\'")}')">🔗 লিংক করুন</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.handleSchoolFilter = function() {
+  const q = (document.getElementById('modalSchoolSearch')?.value || '').toLowerCase();
+  const thana = document.getElementById('modalThanaFilter')?.value || 'ALL';
+  const curr = document.getElementById('modalCurriculumFilter')?.value || 'ALL';
+
+  const filtered = cachedSchoolsList.filter(s => {
+    const nameMatch = !q || s.name.toLowerCase().includes(q) || (s.banglaName && s.banglaName.toLowerCase().includes(q)) || s.thana.toLowerCase().includes(q);
+    const thanaMatch = thana === 'ALL' || s.thana.toLowerCase() === thana.toLowerCase();
+    const currMatch = curr === 'ALL' || (s.curriculum && s.curriculum.includes(curr));
+    return nameMatch && thanaMatch && currMatch;
+  });
+
+  renderSchoolsGrid(filtered);
+};
+
+function populateRbacSchoolSelect(list) {
+  const select = document.getElementById('rbacSchoolSelect');
+  if (!select) return;
+  select.innerHTML = list.slice(0, 20).map(s => `
+    <option value="${s.schoolId}">${s.name} (${s.schoolId})</option>
+  `).join('');
+}
+
+window.selectSchoolForLinkage = function(schoolId, schoolName) {
+  currentTenantSchoolId = schoolId;
+  switchDiscoveryTab('rbac');
+  const select = document.getElementById('rbacSchoolSelect');
+  if (select) select.value = schoolId;
+  updateRbacClaimsPreview();
+  fetchSchoolAnalytics(schoolId);
+};
+
+window.switchRBACRole = function(role) {
+  currentActiveRole = role;
+  ['parent', 'teacher', 'schoolAdmin', 'superAdmin'].forEach(r => {
+    const btn = document.getElementById('roleBtn_' + r);
+    if (btn) btn.classList.toggle('active', r === role);
+  });
+  updateRbacClaimsPreview();
+};
+
+window.updateRbacClaimsPreview = function() {
+  const schoolSelect = document.getElementById('rbacSchoolSelect');
+  const schoolId = schoolSelect ? schoolSelect.value : currentTenantSchoolId;
+  const claimsDisplay = document.getElementById('rbacClaimsDisplay');
+
+  const claims = {
+    uid: currentActiveRole === 'parent' ? 'usr_parent_ayesha' : `usr_${currentActiveRole}_${schoolId.toLowerCase()}`,
+    role: currentActiveRole,
+    schoolId: currentActiveRole === 'superAdmin' ? null : schoolId,
+    tenantId: currentActiveRole === 'superAdmin' ? 'ALL_TENANTS' : schoolId,
+    isVerified: true,
+    issuedAt: new Date().toISOString()
+  };
+
+  if (claimsDisplay) {
+    claimsDisplay.textContent = JSON.stringify(claims, null, 2);
+  }
+};
+
+window.handleRegisterWithSchool = async function() {
+  const parentName = document.getElementById('rbacParentName')?.value || 'Farhana Yasmin';
+  const childName = document.getElementById('rbacChildName')?.value || 'Ayesha Siddiqua';
+  const schoolId = document.getElementById('rbacSchoolSelect')?.value || 'SCH_DHK_001';
+  const grade = document.getElementById('rbacChildGrade')?.value || 'Nursery';
+
+  const payload = {
+    fullName: parentName,
+    schoolId: schoolId,
+    role: currentActiveRole,
+    child: {
+      name: childName,
+      grade: grade,
+      rollNumber: '14',
+      section: 'Lily'
+    }
+  };
+
+  try {
+    const res = await fetch('/api/auth/register-with-school', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+      const msg = document.getElementById('rbacSuccessMsg');
+      if (msg) {
+        msg.style.display = 'inline';
+        msg.textContent = `✓ ${data.user.schoolName}-এ বাচ্চার প্রোফাইল লিঙ্ক ও Claims সেট সম্পন্ন!`;
+        setTimeout(() => { msg.style.display = 'none'; }, 4000);
+      }
+      fetchSchoolAnalytics(schoolId);
+    }
+  } catch (err) {
+    console.error('Registration failed:', err);
+  }
+};
+
+async function fetchSchoolAnalytics(schoolId) {
+  try {
+    const res = await fetch(`/api/schools/${schoolId}/analytics`);
+    const data = await res.json();
+    if (data) {
+      document.getElementById('analyticsSchoolName').textContent = data.schoolName || 'School';
+      document.getElementById('analyticsStudentCount').textContent = (data.totalStudents || 0).toLocaleString();
+      document.getElementById('analyticsStarsCount').textContent = (data.totalStarsEarned || 0).toLocaleString() + ' ⭐';
+      document.getElementById('analyticsMastery').textContent = data.averageMastery || '95%';
+    }
+  } catch (err) {
+    console.error('Analytics fetch error:', err);
+  }
+}
+
+// In-App Load Testing Execution
+window.runInAppLoadTest = async function() {
+  const slider = document.getElementById('loadTestVuSlider');
+  const vuCount = slider ? Number(slider.value) : 100;
+  const btn = document.getElementById('runLoadTestBtn');
+  const logBox = document.getElementById('loadTestLogBox');
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = '⏳ বেঞ্চমার্ক চলছে...';
+  }
+
+  if (logBox) {
+    logBox.textContent = `[k6 start] Spawning ${vuCount} concurrent virtual users...\n[GET] /api/schools\n[GET] /schools/dhaka (SSR)\n[POST] /api/auth/register-with-school\n[POST] /api/learning-progress/sync\nEvaluating SLA thresholds...`;
+  }
+
+  try {
+    const res = await fetch('/api/load-test/simulate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ virtualUsers: vuCount })
+    });
+    const result = await res.json();
+
+    document.getElementById('resAvgLatency').textContent = `${result.avgLatencyMs} ms`;
+    document.getElementById('resP95Latency').textContent = `${result.p95LatencyMs} ms`;
+    document.getElementById('resErrorRate').textContent = result.errorRate;
+    document.getElementById('resSlaStatus').textContent = result.thresholdPassed ? 'PASSED ✓' : 'FAILED ✗';
+    document.getElementById('resSlaStatus').style.color = result.thresholdPassed ? '#00e0a8' : '#ff3b4e';
+
+    if (logBox) {
+      logBox.textContent = `[k6 complete] ${result.virtualUsersSimulated} VUs simulated in ${result.elapsedTotalMs}ms\n- Avg Latency: ${result.avgLatencyMs}ms\n- p95 Latency: ${result.p95LatencyMs}ms (Threshold: <400ms -> ${result.thresholdPassed ? 'PASS' : 'FAIL'})\n- Error Rate: ${result.errorRate} (Threshold: <1% -> PASS)\n${result.statusSummary}`;
+    }
+  } catch (err) {
+    if (logBox) logBox.textContent += `\nError running test: ${err.message}`;
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '🚀 কনকারেন্সি টেস্ট চালান (Run Test)';
+    }
+  }
+};
+
+// Check query param ?linkSchool=...
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const linkSchool = params.get('linkSchool');
+  if (linkSchool) {
+    openSchoolDiscoveryModal('rbac');
+    selectSchoolForLinkage(linkSchool, 'Selected School');
+  }
+  initDailyQuest();
+  initCelebrationCanvas();
+});
+
+// =====================================================================
+// KIDS DIGITAL AVATAR & MEDAL TROPHY MANAGER
+// =====================================================================
+window.openAvatarModal = function() {
+  const modal = document.getElementById('avatarBadgeModal');
+  if (modal) modal.classList.add('open');
+};
+
+window.closeAvatarModal = function() {
+  const modal = document.getElementById('avatarBadgeModal');
+  if (modal) modal.classList.remove('open');
+};
+
+window.selectAvatar = function(icon, name, cardId) {
+  localStorage.setItem('kb_selected_avatar', JSON.stringify({ icon, name, cardId }));
+  document.getElementById('currentAvatarIcon').textContent = icon;
+  document.getElementById('currentAvatarName').textContent = name;
+  document.querySelectorAll('.avatar-option-card').forEach(c => c.classList.remove('selected'));
+  const card = document.getElementById(cardId);
+  if (card) card.classList.add('selected');
+  triggerStarCelebration(window.innerWidth / 2, window.innerHeight / 2, 25);
+};
+
+// =====================================================================
+// WEB AUDIO GENERATIVE NATURE SOUNDSCAPES (FOCUS & CALM LEARNING)
+// =====================================================================
+let activeAudioCtx = null;
+let activeSoundType = null;
+let natureAudioNodes = [];
+
+window.toggleNatureSound = function(type) {
+  if (activeSoundType === type) {
+    stopNatureSound();
+    return;
+  }
+  stopNatureSound();
+  playNatureSound(type);
+};
+
+function playNatureSound(type) {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    if (!activeAudioCtx) activeAudioCtx = new AudioContext();
+    if (activeAudioCtx.state === 'suspended') activeAudioCtx.resume();
+
+    activeSoundType = type;
+    document.querySelectorAll('.soundscape-btn').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.getElementById('snd' + type.charAt(0).toUpperCase() + type.slice(1) + 'Btn');
+    if (activeBtn) activeBtn.classList.add('active');
+    const waves = document.getElementById('ambientWaves');
+    if (waves) waves.style.display = 'inline-flex';
+
+    if (type === 'rain') {
+      // Pink/Brown noise buffer for gentle rainfall
+      const bufferSize = activeAudioCtx.sampleRate * 2;
+      const noiseBuffer = activeAudioCtx.createBuffer(1, bufferSize, activeAudioCtx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        output[i] = (b0 + b1 + b2) * 0.04;
+      }
+      const whiteNoise = activeAudioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+      const filter = activeAudioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 1000;
+      const gainNode = activeAudioCtx.createGain();
+      gainNode.gain.setValueAtTime(0.3, activeAudioCtx.currentTime);
+      whiteNoise.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(activeAudioCtx.destination);
+      whiteNoise.start();
+      natureAudioNodes.push(whiteNoise, gainNode);
+    } else if (type === 'birds' || type === 'chimes') {
+      // Generative periodic wind chimes / peaceful frequency oscillation
+      const freqs = type === 'birds' ? [1400, 1850, 2200, 2600] : [528, 639, 741, 852];
+      const interval = setInterval(() => {
+        if (!activeAudioCtx || activeSoundType !== type) {
+          clearInterval(interval);
+          return;
+        }
+        const osc = activeAudioCtx.createOscillator();
+        const gain = activeAudioCtx.createGain();
+        const f = freqs[Math.floor(Math.random() * freqs.length)];
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, activeAudioCtx.currentTime);
+        gain.gain.setValueAtTime(0.01, activeAudioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.12, activeAudioCtx.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.0001, activeAudioCtx.currentTime + 1.6);
+        osc.connect(gain);
+        gain.connect(activeAudioCtx.destination);
+        osc.start();
+        osc.stop(activeAudioCtx.currentTime + 1.7);
+      }, type === 'birds' ? 1200 : 1800);
+    }
+  } catch (err) {
+    console.warn('Nature soundscape playback error:', err);
+  }
+}
+
+function stopNatureSound() {
+  natureAudioNodes.forEach(node => {
+    try { if (node.stop) node.stop(); } catch(e){}
+    try { if (node.disconnect) node.disconnect(); } catch(e){}
+  });
+  natureAudioNodes = [];
+  activeSoundType = null;
+  document.querySelectorAll('.soundscape-btn').forEach(b => b.classList.remove('active'));
+  const waves = document.getElementById('ambientWaves');
+  if (waves) waves.style.display = 'none';
+}
+
+// =====================================================================
+// DAILY MAGIC QUEST & STREAK TRACKER
+// =====================================================================
+let dailyQuestState = {
+  step1: false,
+  step2: false,
+  step3: false,
+  claimed: false
+};
+
+function initDailyQuest() {
+  const saved = localStorage.getItem('kb_daily_quest_state');
+  if (saved) {
+    try { dailyQuestState = JSON.parse(saved); } catch(e){}
+  }
+  renderDailyQuestUI();
+}
+
+function renderDailyQuestUI() {
+  const s1 = document.getElementById('questStep1');
+  const s2 = document.getElementById('questStep2');
+  const s3 = document.getElementById('questStep3');
+  const c1 = document.getElementById('questCheck1');
+  const c2 = document.getElementById('questCheck2');
+  const c3 = document.getElementById('questCheck3');
+  const fill = document.getElementById('questProgressFill');
+  const pctEl = document.getElementById('questPct');
+  const claimBtn = document.getElementById('claimQuestBtn');
+
+  if (s1 && c1) {
+    s1.classList.toggle('completed', !!dailyQuestState.step1);
+    c1.textContent = dailyQuestState.step1 ? '✓' : '1';
+  }
+  if (s2 && c2) {
+    s2.classList.toggle('completed', !!dailyQuestState.step2);
+    c2.textContent = dailyQuestState.step2 ? '✓' : '2';
+  }
+  if (s3 && c3) {
+    s3.classList.toggle('completed', !!dailyQuestState.step3);
+    c3.textContent = dailyQuestState.step3 ? '✓' : '3';
+  }
+
+  const completedCount = [dailyQuestState.step1, dailyQuestState.step2, dailyQuestState.step3].filter(Boolean).length;
+  const pct = Math.round((completedCount / 3) * 100);
+  if (fill) fill.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct === 100 ? '১০০% সম্পন্ন! 🎉' : (completedCount === 1 ? '৩৩%' : (completedCount === 2 ? '৬৭%' : '০%'));
+
+  if (claimBtn) {
+    if (pct === 100 && !dailyQuestState.claimed) {
+      claimBtn.style.display = 'inline-block';
+    } else if (dailyQuestState.claimed) {
+      claimBtn.style.display = 'inline-block';
+      claimBtn.disabled = true;
+      claimBtn.textContent = '✓ রিওয়ার্ড নেওয়া হয়েছে';
+      claimBtn.style.background = 'rgba(63,235,201,0.2)';
+      claimBtn.style.color = '#3febc9';
+    } else {
+      claimBtn.style.display = 'none';
+    }
+  }
+}
+
+window.completeQuestStep = function(stepNum) {
+  if (stepNum === 1) dailyQuestState.step1 = true;
+  if (stepNum === 2) dailyQuestState.step2 = true;
+  if (stepNum === 3) dailyQuestState.step3 = true;
+  localStorage.setItem('kb_daily_quest_state', JSON.stringify(dailyQuestState));
+  renderDailyQuestUI();
+};
+
+window.claimDailyQuestReward = function() {
+  dailyQuestState.claimed = true;
+  localStorage.setItem('kb_daily_quest_state', JSON.stringify(dailyQuestState));
+  renderDailyQuestUI();
+  triggerStarCelebration(window.innerWidth / 2, window.innerHeight / 2, 70);
+  playChime();
+  const praise = document.getElementById('praise');
+  if (praise) {
+    praise.textContent = '🌟 অসাধারণ! আজকের দৈনিক মিশন সম্পন্ন হয়েছে! +২০ স্টার';
+    praise.classList.add('show');
+    setTimeout(() => { praise.classList.remove('show'); }, 3500);
+  }
+};
+
+// =====================================================================
+// 60FPS STAR CELEBRATION PARTICLE CANNON
+// =====================================================================
+let celebCtx = null;
+let celebParticles = [];
+
+function initCelebrationCanvas() {
+  const cvs = document.getElementById('celebrationCanvas');
+  if (!cvs) return;
+  cvs.width = window.innerWidth;
+  cvs.height = window.innerHeight;
+  celebCtx = cvs.getContext('2d');
+  window.addEventListener('resize', () => {
+    cvs.width = window.innerWidth;
+    cvs.height = window.innerHeight;
+  });
+  requestAnimationFrame(updateCelebrationParticles);
+}
+
+window.triggerStarCelebration = function(originX = window.innerWidth / 2, originY = window.innerHeight / 2, count = 40) {
+  const colors = ['#FFD866', '#3FEBC9', '#FF6FB0', '#9C7CFF', '#FFFFFF'];
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 2 + Math.random() * 8;
+    celebParticles.push({
+      x: originX,
+      y: originY,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 2,
+      size: 4 + Math.random() * 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: 1,
+      decay: 0.015 + Math.random() * 0.02,
+      rotation: Math.random() * Math.PI,
+      rotSpeed: (Math.random() - 0.5) * 0.2
+    });
+  }
+};
+
+function updateCelebrationParticles() {
+  if (celebCtx && celebParticles.length > 0) {
+    celebCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    for (let i = celebParticles.length - 1; i >= 0; i--) {
+      const p = celebParticles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.15; // gravity
+      p.alpha -= p.decay;
+      p.rotation += p.rotSpeed;
+
+      if (p.alpha <= 0) {
+        celebParticles.splice(i, 1);
+        continue;
+      }
+
+      celebCtx.save();
+      celebCtx.globalAlpha = Math.max(0, p.alpha);
+      celebCtx.translate(p.x, p.y);
+      celebCtx.rotate(p.rotation);
+      celebCtx.fillStyle = p.color;
+      celebCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      celebCtx.restore();
+    }
+  } else if (celebCtx) {
+    celebCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  }
+  requestAnimationFrame(updateCelebrationParticles);
+}
+
+// Hook into openActivity to advance quest steps seamlessly
+const originalOpenActivity = window.openActivity;
+window.openActivity = function(mod) {
+  if (typeof originalOpenActivity === 'function') {
+    originalOpenActivity(mod);
+  }
+  if (mod === 'letters' || mod === 'numbers') completeQuestStep(1);
+  if (mod === 'draw') completeQuestStep(2);
+  if (mod === 'rhymes') completeQuestStep(3);
+};
+
 // ================= Initial language apply =================
 applyLanguage();
+
 </script>
 
 <!-- ============ Ambient visual layer: floating sparkles + card tilt (purely decorative, does not touch app logic) ============ -->

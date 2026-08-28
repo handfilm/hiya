@@ -7,7 +7,9 @@
     "dev": "node server.js",
     "build": "echo 'No build step required for static assets'",
     "start": "node server.js",
-    "lint": "echo 'No lint errors'"
+    "lint": "echo 'No lint errors'",
+    "seed:emulator": "node seed-emulator.js",
+    "test:load": "k6 run load-test.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
