@@ -2281,6 +2281,312 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
   50% { transform: translateY(-10px); }
 }
 
+/* ==========================================================================
+   Responsive UI & My Class Syllabus Navigation Enhancements
+   ========================================================================== */
+
+/* Activity Screen & Responsive Topbar */
+#activity {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 16px;
+  min-height: 56px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.topbar-title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.topbar-title-wrap h2 {
+  font-family: 'Baloo Da 2', sans-serif;
+  font-size: clamp(16px, 3.6vw, 20px);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #ffffff;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.back-to-syllabus-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(255,107,53,0.35), rgba(255,193,7,0.35)) !important;
+  border: 1px solid var(--sun) !important;
+  color: #ffffff !important;
+  padding: 6px 14px;
+  border-radius: 24px;
+  font-family: 'Baloo Da 2', sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.25);
+  transition: transform 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.back-to-syllabus-btn:hover,
+.back-to-syllabus-btn:active {
+  background: linear-gradient(135deg, rgba(255,107,53,0.6), rgba(255,193,7,0.6)) !important;
+  transform: translateY(-1px);
+}
+
+.activity-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Lesson Grid & Interactive Cards */
+.lesson-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lesson-item-card {
+  border-radius: 18px;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.lesson-item-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 216, 102, 0.4) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.syl-lesson-card {
+  border-radius: 18px;
+  box-sizing: border-box;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+}
+
+.syl-lesson-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Full Lesson Reader View */
+.full-lesson-reader {
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  padding-bottom: 30px;
+}
+
+.lesson-reader-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lesson-reader-banner {
+  border-radius: 20px;
+  box-sizing: border-box;
+}
+
+.lesson-block-card {
+  border-radius: 16px;
+  box-sizing: border-box;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.lesson-block-card.active {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: var(--sun) !important;
+  box-shadow: 0 0 18px rgba(255, 193, 7, 0.35);
+}
+
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.vocab-card {
+  border-radius: 14px;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.vocab-card:hover,
+.vocab-card:active {
+  transform: scale(1.03);
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Practice Quiz Responsive Buttons */
+.quiz-card {
+  border-radius: 16px;
+}
+
+.quiz-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.ans-btn.quiz-opt-btn {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 46px;
+  padding: 10px 14px;
+  font-size: 15px;
+  border-radius: 14px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.35;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* Syllabus Tabs Horizontal Scroll */
+.syllabus-tabs-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.syllabus-tabs-bar::-webkit-scrollbar {
+  height: 4px;
+}
+
+.syllabus-tabs-bar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* ==========================================================================
+   Media Queries for Tablet and Mobile Responsiveness
+   ========================================================================== */
+
+@media (max-width: 768px) {
+  .lesson-card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px;
+  }
+  
+  .topbar {
+    padding: 8px 12px;
+  }
+  
+  .activity-body {
+    padding: 12px 10px 40px;
+  }
+
+  .quiz-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .lesson-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    padding: 6px 8px;
+    gap: 6px;
+  }
+
+  .backBtn.labeled {
+    padding: 0 10px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .backBtn.labeled span {
+    font-size: 13px;
+  }
+
+  .back-to-syllabus-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .listen-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .stars {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+
+  .topbar-title-wrap h2 {
+    font-size: 15px;
+  }
+
+  .lesson-reader-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lesson-reader-header > div {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .quiz-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
 
 

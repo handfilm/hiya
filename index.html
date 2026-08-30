@@ -631,19 +631,28 @@
   </div>
   <div class="drawer-section-title" data-i18n="drawerCurrent">এখন যা আছে</div>
   <div class="drawer-item" onclick="drawerGo('home')"><span class="di-icon">🏡</span><span data-i18n="drawerHome">হোম / বাগান</span></div>
+  <div class="drawer-item" onclick="drawerGo('syllabus')"><span class="di-icon">📘</span><span style="font-weight:700; color:var(--leaf-dark);">আমার ক্লাস (১১৫টি সম্পূর্ণ পাঠ)</span></div>
   <div class="drawer-item" onclick="drawerGo('dashboard')"><span class="di-icon">📊</span><span data-i18n="drawerDashboard">প্যারেন্ট ড্যাশবোর্ড</span></div>
   <div class="drawer-item" onclick="openAvatarModal()"><span class="di-icon">🦸‍♂️</span><span>আমার অ্যাভাটার ও মেডেল</span></div>
   <div class="drawer-item" onclick="openSchoolDiscoveryModal('discovery')"><span class="di-icon">🏫</span><span>টপ ১০০ স্কুল ডিরেক্টরি</span></div>
   <div class="drawer-item" onclick="openSchoolDiscoveryModal('rbac')"><span class="di-icon">⚡</span><span>RBAC ও লোড টেস্ট</span></div>
-  <div class="drawer-item" onclick="drawerGo('bangla')"><span class="di-icon">📚</span><span data-i18n="m_bangla">আমার বাংলা পাঠ</span></div>
+  <div class="drawer-item" onclick="drawerGo('bangla')"><span class="di-icon">📚</span><span data-i18n="m_bangla">আমার বাংলা পাঠ (১৪)</span></div>
+  <div class="drawer-item" onclick="drawerGo('english')"><span class="di-icon">🅰️</span><span>English পাঠ (৩৬)</span></div>
+  <div class="drawer-item" onclick="drawerGo('math')"><span class="di-icon">➕</span><span>গণিত / Math (২২)</span></div>
+  <div class="drawer-item" onclick="drawerGo('islam')"><span class="di-icon">🕌</span><span>ইসলাম ও নৈতিক শিক্ষা (৪)</span></div>
+  <div class="drawer-item" onclick="drawerGo('gk')"><span class="di-icon">🌍</span><span>সাধারণ জ্ঞান ও সমাজ (১৫)</span></div>
+  <div class="drawer-item" onclick="drawerGo('science')"><span class="di-icon">🔬</span><span>বিজ্ঞান ও পরিবেশ (৭)</span></div>
+  <div class="drawer-item" onclick="drawerGo('computer')"><span class="di-icon">💻</span><span>কম্পিউটার শিক্ষা (৪)</span></div>
+  <div class="drawer-item" onclick="drawerGo('moral')"><span class="di-icon">💖</span><span>নৈতিক শিক্ষা (৭)</span></div>
+  <div class="drawer-item" onclick="drawerGo('drawing')"><span class="di-icon">🎨</span><span>আঁকা ও শিল্পকলা (৬)</span></div>
   <div class="drawer-item" onclick="drawerGo('letters')"><span class="di-icon">🔤</span><span data-i18n="m_letters">বর্ণ বাগান</span></div>
   <div class="drawer-item" onclick="drawerGo('numbers')"><span class="di-icon">🐝</span><span data-i18n="m_numbers">সংখ্যা মৌমাছি</span></div>
   <div class="drawer-item" onclick="drawerGo('match')"><span class="di-icon">🍎</span><span data-i18n="m_match">মিলাও তো</span></div>
   <div class="drawer-item" onclick="drawerGo('draw')"><span class="di-icon">🎨</span><span data-i18n="m_draw">আঁকার খাতা</span></div>
   <div class="drawer-item" onclick="drawerGo('animals')"><span class="di-icon">🦁</span><span data-i18n="m_animals">প্রাণী জগৎ</span></div>
   <div class="drawer-item" onclick="drawerGo('words')"><span class="di-icon">📖</span><span data-i18n="m_words">শব্দ পড়ি</span></div>
-  <div class="drawer-item" onclick="drawerGo('mathgame')"><span class="di-icon">➕</span><span data-i18n="m_mathgame">যোগ-বিয়োগ</span></div>
-  <div class="drawer-item" onclick="drawerGo('english')"><span class="di-icon">🅰️</span><span data-i18n="m_english">ABC গার্ডেন</span></div>
+  <div class="drawer-item" onclick="drawerGo('mathgame')"><span class="di-icon">➕</span><span data-i18n="m_mathgame">যোগ-বিয়োগ খেলা</span></div>
+  <div class="drawer-item" onclick="drawerGo('english_letters')"><span class="di-icon">🔠</span><span>ABC বর্ণ বাগান</span></div>
   <div class="drawer-item" onclick="drawerGo('multiplication')"><span class="di-icon">✖️</span><span data-i18n="m_multiplication">নামতা শিখি</span></div>
   <div class="drawer-item" onclick="drawerGo('sentences')"><span class="di-icon">📝</span><span data-i18n="m_sentences">বাক্য পড়ি</span></div>
   <div class="drawer-item" onclick="drawerGo('videos')"><span class="di-icon">📺</span><span data-i18n="m_videos">ভিডিও কর্নার</span></div>
@@ -675,6 +684,9 @@
     <button class="google-btn" onclick="handleGoogleLogin()">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.85 2.09-1.8 2.73v2.27h2.92c1.71-1.57 2.68-3.88 2.68-6.64z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.17l-2.92-2.27c-.81.54-1.85.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.34C2.44 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.97 10.72c-.18-.54-.28-1.11-.28-1.72s.1-1.18.28-1.72V4.94H.96C.35 6.17 0 7.55 0 9s.35 2.83.96 4.06l3.01-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.59-2.59C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.94l3.01 2.34C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
       <span data-i18n="btnGoogle">Google দিয়ে লগইন করুন</span>
+    </button>
+    <button class="google-btn" style="margin-top:10px; background:linear-gradient(135deg, rgba(0,224,168,0.15), rgba(0,166,125,0.25)); border:1px solid #00e0a8; color:#00e0a8; font-weight:700;" onclick="handleGuestMode()">
+      <span>🚀 অতিথি হিসেবে সরাসরি শুরু করো (Explore as Guest)</span>
     </button>
   </div>
 </div>
@@ -894,12 +906,21 @@
 </div>
 
 <div id="activity">
-  <div class="topbar">
-    <button class="backBtn labeled" onclick="closeActivity()">← <span data-i18n="drawerHome">হোম</span></button>
-    <h2 id="actTitle">শিরোনাম</h2>
-    <span id="actSyllabusBadge" class="syllabus-badge" style="display:none;"></span>
-    <button class="listen-btn" onclick="speakActivityIntro()" title="শোনো">🔊</button>
-    <div class="stars">⭐ <span id="starCount">0</span></div>
+  <div class="topbar" id="actTopbar">
+    <div class="topbar-nav">
+      <button class="backBtn labeled" id="actHomeBtn" onclick="closeActivity()" title="হোমে ফিরুন">← <span data-i18n="drawerHome">হোম</span></button>
+      <button class="back-to-syllabus-btn" id="actBackToSyllabusBtn" style="display:none;" onclick="openActivity('syllabus')" title="আমার ক্লাসে ফিরুন">
+        <span>← 🏫</span> <span>আমার ক্লাস</span>
+      </button>
+    </div>
+    <div class="topbar-title-wrap">
+      <h2 id="actTitle">শিরোনাম</h2>
+      <span id="actSyllabusBadge" class="syllabus-badge" style="display:none;"></span>
+    </div>
+    <div class="topbar-actions">
+      <button class="listen-btn" onclick="speakActivityIntro()" title="শোনো">🔊</button>
+      <div class="stars">⭐ <span id="starCount">0</span></div>
+    </div>
   </div>
   <div class="activity-progress-wrap" id="actProgressWrap">
     <div class="activity-progress-bar" id="actProgressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
@@ -1313,6 +1334,11 @@ const I18N = {
     m_rhymes:'ছড়ার বাগান', d_rhymes:'প্রিয় ছড়া শোনো ও পড়ো',
     m_syllabus:'আমার ক্লাস', d_syllabus:'অঙ্ক, ইংরেজি, বিজ্ঞান — তোমার ক্লাসের সব বিষয় এখানে',
     m_bangla:'আমার বাংলা পাঠ', d_bangla:'ক্লাস ১ বাংলা পাঠ, শব্দ, ব্যাকরণ ও অনুচ্ছেদ',
+    m_gk:'সাধারণ জ্ঞান', d_gk:'দেশ, পৃথিবী, স্বাস্থ্য ও সমাজ',
+    m_science:'বিজ্ঞান ও পরিবেশ', d_science:'জীব ও জড়, উদ্ভিদ, ঋতু ও আকাশ',
+    m_math:'গণিত ও সংখ্যা', d_math:'গণনা, যোগ-বিয়োগ ও জ্যামিতি',
+    m_drawing:'আঁকা ও শিল্পকলা', d_drawing:'সহজ ছবি আঁকা ও রং করা',
+    m_moral:'নৈতিক শিক্ষা', d_moral:'সুন্দর আচরণ ও মূল্যবোধ',
     syllabus_hint:'▶️ চিহ্নে চাপ দিলে সেই পড়া খুলবে, 🔊 চিহ্নে চাপ দিলে নামটা শোনাবে',
     syllabus_empty:'এই ক্লাসের সিলেবাস এখনো যোগ করা হয়নি',
     m_scienceExtra:'ঋতু ও প্রকৃতি', d_scienceExtra:'ঋতু, আবহাওয়া, মাস, রংধনু চেনো',
@@ -1397,6 +1423,11 @@ const I18N = {
     m_rhymes:'Rhyme Garden', d_rhymes:'Listen to and follow along with favourite rhymes',
     m_syllabus:'My Class', d_syllabus:'Math, English, Science — every subject for your class in one place',
     m_bangla:'Bangla Lessons', d_bangla:'Class 1 Bangla reading, grammar & stories',
+    m_gk:'General Knowledge', d_gk:'Earth, Bangladesh, health and society',
+    m_science:'Primary Science', d_science:'Living things, plants, weather and nature',
+    m_math:'Elementary Mathematics', d_math:'Counting, addition, subtraction and shapes',
+    m_drawing:'Art & Drawing', d_drawing:'Step-by-step drawing and colouring',
+    m_moral:'Moral Education', d_moral:'Good manners, kindness and values',
     syllabus_hint:'Tap ▶️ topics to open that activity, tap 🔊 topics to hear the name',
     syllabus_empty:'No syllabus added for this class yet',
     m_scienceExtra:'Seasons & Nature', d_scienceExtra:'Learn seasons, weather, months, rainbow',
@@ -1676,6 +1707,26 @@ function handleSetupSubmit(){
     .then(()=>{ document.getElementById('setupScreen').style.display='none'; showHome(); })
     .catch(()=>{ errEl.textContent = t('err_setupSave'); });
 }
+
+function handleGuestMode(){
+  childData = {
+    childName: 'সোনামণি',
+    childAge: 6,
+    stream: 'english_medium',
+    level: 'class1',
+    term: 'midTerm',
+    stars: { syllabus: 5, bangla: 4, english: 8, math: 6, islam: 2, gk: 4, science: 3, computer: 2, moral: 3, drawing: 2 },
+    totalStars: 39,
+    galleryUrls: [],
+    weakSpots: {}
+  };
+  currentUser = { uid: 'guest_' + Date.now(), isAnonymous: true };
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('setupScreen').style.display = 'none';
+  showHome();
+  praise('স্বাগতম! অতিথি মোডে তোমার জন্য সব পাঠ উন্মুক্ত 🎉');
+}
+window.handleGuestMode = handleGuestMode;
 
 function showHome(){
   applyStreamLanguageDefault();
@@ -2055,6 +2106,44 @@ function speak(text, opts, audioKey){
   }catch(e){ warnNoSound(); }
 }
 
+function speakSmart(text, opts, audioKey){
+  if(!text) return;
+  const hasBangla = /[\u0980-\u09FF]/.test(text);
+  if(hasBangla){
+    speak(text, opts, audioKey);
+  } else {
+    speakEn(text, opts, audioKey);
+  }
+}
+window.speakSmart = speakSmart;
+
+function getSubjectLessons(key){
+  if(typeof LESSON_CONTENT === 'undefined') return [];
+  const map = {
+    bangla: 'bangla',
+    english: 'english',
+    english_lessons: 'english',
+    math: 'math',
+    mathematics: 'math',
+    elementaryMathematics: 'math',
+    islam: 'islam',
+    gk: 'gk',
+    socialStudies: 'gk',
+    generalKnowledge: 'gk',
+    science: 'science',
+    primaryScience: 'science',
+    computer: 'computer',
+    computerStudies: 'computer',
+    moral: 'moral',
+    moralEducation: 'moral',
+    drawing: 'drawing',
+    art: 'drawing'
+  };
+  const normalizedKey = map[key] || key;
+  return LESSON_CONTENT[normalizedKey] || [];
+}
+window.getSubjectLessons = getSubjectLessons;
+
 const COLORS = ['#FF6B35','#8BC34A','#FFA726','#C6FF00','#FF7043','#FFC107','#AEEA00'];
 
 // NOTE: letters, wordList, englishLetters, sentenceList, videoSections,
@@ -2083,11 +2172,29 @@ function speakActivityIntro(){
   const msg = t('d_' + window.currentModule);
   if(currentLang === 'en'){ speakEn(msg); } else { speak(msg); }
 }
-function openActivity(name){
+function openActivity(name, customArg){
   window.currentModule = name;
   document.getElementById('activity').classList.add('open');
-  document.getElementById('actTitle').textContent = moduleLabel(name);
+  document.getElementById('actTitle').textContent = moduleLabel(name) || 'পাঠশালা';
   updateLessonProgress(0, 1);
+
+  // Manage back-to-syllabus button in activity topbar
+  const backToSylBtn = document.getElementById('actBackToSyllabusBtn');
+  const subjectModules = ['bangla','english','math','mathematics','islam','gk','socialStudies','science','primaryScience','computer','moral','moralEducation','drawing','english_letters','multiplication','words','sentences','animals'];
+  if(backToSylBtn){
+    if(name === 'syllabus'){
+      backToSylBtn.style.display = 'none';
+    } else if(subjectModules.includes(name) || customArg !== undefined){
+      backToSylBtn.style.display = 'inline-flex';
+      backToSylBtn.onclick = () => {
+        window.speechSynthesis && window.speechSynthesis.cancel();
+        openActivity('syllabus', name);
+      };
+    } else {
+      backToSylBtn.style.display = 'none';
+    }
+  }
+
   // Syllabus badge: only shown once SYLLABUS_TAGS[name].source has actually
   // been filled in (see content-data.js) — never show it speculatively.
   const badge = document.getElementById('actSyllabusBadge');
@@ -2101,24 +2208,29 @@ function openActivity(name){
   const body = document.getElementById('actBody');
   body.innerHTML = '';
   if(name==='letters') buildLetters(body);
-  if(name==='numbers') buildNumbers(body);
-  if(name==='match') buildMatch(body);
-  if(name==='draw') buildDraw(body);
-  if(name==='animals') buildAnimals(body);
-  if(name==='words') buildWords(body);
-  if(name==='mathgame') buildMath(body);
-  if(name==='english') buildEnglish(body);
-  if(name==='multiplication') buildMultiplication(body);
-  if(name==='sentences') buildSentences(body);
-  if(name==='videos') buildVideos(body);
-  if(name==='rhymes') buildRhymes(body);
-  if(name==='syllabus') buildSyllabusModule(body);
-  if(name==='scienceExtra') buildScienceExtra(body);
-  if(name==='bangla') buildBangla(body);
-  if(name==='islam') buildIslam(body);
-  if(name==='socialStudies') buildSocialStudies(body);
-  if(name==='computer') buildComputer(body);
-  if(name==='moralEducation') buildMoralEducation(body);
+  else if(name==='numbers') buildNumbers(body);
+  else if(name==='match') buildMatch(body);
+  else if(name==='draw') buildDraw(body);
+  else if(name==='animals') buildAnimals(body);
+  else if(name==='words') buildWords(body);
+  else if(name==='mathgame') buildMath(body);
+  else if(name==='english_letters') buildEnglish(body);
+  else if(name==='multiplication') buildMultiplication(body);
+  else if(name==='sentences') buildSentences(body);
+  else if(name==='videos') buildVideos(body);
+  else if(name==='rhymes') buildRhymes(body);
+  else if(name==='syllabus') buildSyllabusModule(body, customArg);
+  else if(name==='scienceExtra') buildScienceExtra(body);
+  else if(name==='bangla') buildLessonModule(body, 'bangla', customArg);
+  else if(name==='english') buildLessonModule(body, 'english', customArg);
+  else if(name==='math' || name==='mathematics') buildLessonModule(body, 'math', customArg);
+  else if(name==='islam') buildLessonModule(body, 'islam', customArg);
+  else if(name==='gk' || name==='socialStudies') buildLessonModule(body, 'gk', customArg);
+  else if(name==='science' || name==='primaryScience') buildLessonModule(body, 'science', customArg);
+  else if(name==='computer') buildLessonModule(body, 'computer', customArg);
+  else if(name==='moral' || name==='moralEducation') buildLessonModule(body, 'moral', customArg);
+  else if(name==='drawing') buildLessonModule(body, 'drawing', customArg);
+  else buildLessonModule(body, name, customArg);
   applyLanguage();
 }
 // ---- Games (standalone single-file apps) ----
@@ -2374,26 +2486,68 @@ function buildScienceExtra(body){
   window.saySci = function(){ speak(active[idx].word + '। ' + active[idx].sub); };
 }
 
-/* ---------- Generic lesson-card module (Islam / Social Studies /
-   Computer / Moral Education) — reads LESSON_CONTENT[subjectKey], shows
-   each chapter as a tappable card with its short note, read aloud on tap.
-   Deliberately simple (title + 1-2 sentences), not full lesson content —
-   see hand-off doc, Priority 2, for why this is scoped modestly. ---------- */
-/* ---------- Generic lesson-card module (Islam / Social Studies /
-   Computer / Moral Education / Bangla) — reads LESSON_CONTENT[subjectKey].
-   If an item has rich structured lesson data, it renders a full interactive reader
-   with audio narration, vocabulary pronunciation cards, fun facts, and practice quiz! ---------- */
+/* ---------- Full-fledged Interactive Lesson Module for all subjects ----------
+   Reads LESSON_CONTENT[subjectKey], supporting Bangla, English, Math, Islam,
+   General Knowledge/Social Studies, Science, Computer, Moral Education, and Drawing.
+   Features full interactive reader with smart multilingual voice synthesis (speakSmart),
+   vocabulary pronunciation cards, fun facts, interactive quizzes, and navigation. ---------- */
 function buildLessonModule(body, subjectKey, targetLessonIndex){
-  const items = (typeof LESSON_CONTENT !== 'undefined' && LESSON_CONTENT[subjectKey]) || [];
-  if(!items.length){ body.innerHTML = `<div class="word-sub">${t('syllabus_empty')}</div>`; return; }
+  const items = getSubjectLessons(subjectKey);
+  if(!items.length){
+    body.innerHTML = `
+      <div style="text-align:center; padding:30px 16px; width:100%; max-width:500px;">
+        <div style="font-size:48px; margin-bottom:12px;">📚</div>
+        <div class="word-sub" style="font-size:16px;">${t('syllabus_empty') || 'এই বিষয়ের পাঠ এখনো যোগ করা হয়নি'}</div>
+        <button class="tool-btn" onclick="openActivity('syllabus')" style="margin-top:16px; padding:10px 20px; font-size:14px;">← 🏫 আমার ক্লাসে ফিরুন</button>
+      </div>
+    `;
+    return;
+  }
   const visited = new Set();
   updateLessonProgress(0, items.length);
 
+  const subjectNames = {
+    bangla: 'আমার বাংলা পাঠ (Class 1 Bangla)',
+    english: 'English First & Second Paper',
+    math: 'Elementary Mathematics (গণিত)',
+    islam: 'Islamic Studies (ইসলাম শিক্ষা)',
+    gk: 'General Knowledge & Social Studies (সাধারণ জ্ঞান)',
+    science: 'Primary Science & Environment (বিজ্ঞান)',
+    computer: 'Computer Studies (কম্পিউটার)',
+    moral: 'Moral & Value Education (নৈতিক শিক্ষা)',
+    drawing: 'Art & Drawing (আঁকা ও শিল্প)'
+  };
+  const subjDisplayName = subjectNames[subjectKey] || (t('m_' + subjectKey) || subjectKey);
+
   body.innerHTML = `
-    <div id="lessonListView">
-      <div class="word-sub" style="margin-bottom:12px; font-size:15px; font-weight:600;">${t('d_' + subjectKey) || 'পাঠ তালিকা'}</div>
+    <div id="lessonListView" style="width:100%; max-width:960px;">
+      <!-- Subject Header Card -->
+      <div class="dash-card" style="background:linear-gradient(135deg, rgba(255,107,53,0.16), rgba(255,193,7,0.16)); border:1px solid var(--glass-brd); padding:16px; border-radius:18px; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <div>
+            <button class="back-to-syllabus-btn" onclick="openActivity('syllabus')" style="margin-bottom:8px;">
+              <span>← 🏫</span> <span>আমার ক্লাস (My Class)</span>
+            </button>
+            <h2 style="margin:0 0 4px; font-size:20px; color:var(--sun); font-family:'Baloo Da 2', sans-serif;">
+              ${escapeHtml(subjDisplayName)}
+            </h2>
+            <div class="word-sub" style="font-size:13.5px; opacity:0.95;">
+              মোট <strong>${items.length}</strong>টি পাঠ, উচ্চারণ সহায়িকা ও কুইজ
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <span style="font-size:12px; background:rgba(255,255,255,0.1); color:#fff; padding:4px 10px; border-radius:12px; font-weight:700; border:1px solid rgba(255,255,255,0.15);">
+              হিড স্কুল ও ক্লাস ১ সিলেবাস
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lessons Grid -->
       <div id="lessonCardList" class="lesson-card-grid"></div>
     </div>
+
+    <!-- Full Reader View -->
     <div id="lessonReaderView" style="display:none;" class="full-lesson-reader"></div>
   `;
 
@@ -2404,22 +2558,42 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
   items.forEach((it, i)=>{
     const c = document.createElement('div');
     c.className = 'dash-card lesson-item-card';
-    c.style.marginBottom = '12px';
+    c.style.marginBottom = '0';
     c.style.cursor = 'pointer';
-    c.style.transition = 'all 0.2s ease';
+    c.style.borderLeft = `4px solid ${COLORS[i % COLORS.length]}`;
+    c.style.display = 'flex';
+    c.style.flexDirection = 'column';
+    c.style.justifyContent = 'space-between';
     
     const isRich = Array.isArray(it.mainContent);
     const snippet = isRich ? (it.learningObjective || (it.mainContent[0] && it.mainContent[0].text) || '') : (it.note || '');
-    const badgeText = isRich ? '📖 সম্পূর্ণ পাঠ ও কুইজ' : '🔊 ছোট্ট পাঠ';
+    const hasQuiz = it.practiceQuestions && it.practiceQuestions.length > 0;
+    const hasVocab = it.keyVocabulary && it.keyVocabulary.length > 0;
 
     c.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; gap:8px;">
-        <h3 style="margin:0; font-size:16px; line-height:1.4; color:var(--leaf-dark);">${escapeHtml(it.title)}</h3>
-        <span class="lesson-badge" style="font-size:11px; background:rgba(255,255,255,0.1); padding:3px 8px; border-radius:12px; white-space:nowrap; border:1px solid rgba(255,255,255,0.15);">${badgeText}</span>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; min-width:26px; border-radius:50%; background:var(--sun); color:#000; font-weight:700; font-size:13px;">${i+1}</span>
+            <h3 style="margin:0; font-size:16px; line-height:1.4; color:#fff;">${escapeHtml(it.title)}</h3>
+          </div>
+          <span class="lesson-badge" style="font-size:11px; background:rgba(255,255,255,0.08); padding:3px 8px; border-radius:12px; white-space:nowrap; border:1px solid rgba(255,255,255,0.12); flex-shrink:0;">
+            ${isRich ? '📖 সম্পূর্ণ পাঠ' : '🔊 ছোট্ট পাঠ'}
+          </span>
+        </div>
+        <div class="word-sub" style="line-height:1.5; font-size:13.5px; opacity:0.85; margin-bottom:12px;">
+          ${escapeHtml(snippet.slice(0, 110))}${snippet.length > 110 ? '...' : ''}
+        </div>
       </div>
-      <div class="word-sub" style="line-height:1.5; font-size:13.5px; opacity:0.85;">${escapeHtml(snippet.slice(0, 95))}${snippet.length > 95 ? '...' : ''}</div>
-      <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
-        <span style="font-size:12px; color:var(--sun); font-weight:600;">▶️ পাঠ শুরু করো</span>
+      <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+        <span style="font-size:12.5px; color:var(--sun); font-weight:700; display:flex; align-items:center; gap:4px;">
+          ▶️ পাঠ শুরু করো
+        </span>
+        <div style="display:flex; gap:4px;">
+          ${hasVocab ? '<span style="font-size:11px; background:rgba(33,150,243,0.2); color:#90CAF9; padding:2px 6px; border-radius:8px;">🔤 শব্দার্থ</span>' : ''}
+          ${hasQuiz ? '<span style="font-size:11px; background:rgba(139,195,74,0.2); color:#C6FF00; padding:2px 6px; border-radius:8px;">✍️ কুইজ</span>' : ''}
+          ${it.funFact ? '<span style="font-size:11px; background:rgba(255,193,7,0.2); color:#FFE082; padding:2px 6px; border-radius:8px;">💡 তথ্য</span>' : ''}
+        </div>
       </div>
     `;
 
@@ -2438,15 +2612,21 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
     listView.style.display = 'none';
     readerView.style.display = 'block';
     window.speechSynthesis && window.speechSynthesis.cancel();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if(!Array.isArray(it.mainContent)){
-      // Simple note lesson
+      // Simple note lesson fallback
       readerView.innerHTML = `
-        <button class="tool-btn" id="btnBackToLessonList" style="margin-bottom:12px;">← ${t('m_' + subjectKey) || 'সব পাঠ'}</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:8px; flex-wrap:wrap;">
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="tool-btn" id="btnBackToLessonList">← পাঠ তালিকা</button>
+            <button class="back-to-syllabus-btn" onclick="openActivity('syllabus')">← 🏫 আমার ক্লাস</button>
+          </div>
+          <button class="say-btn" id="btnSaySimpleLesson" style="margin:0; padding:8px 18px; font-size:14px;">🔊 শোনো</button>
+        </div>
         <div class="dash-card" style="padding:18px;">
-          <h3 style="margin:0 0 10px; font-size:18px;">${escapeHtml(it.title)}</h3>
+          <h3 style="margin:0 0 10px; font-size:18px; color:var(--sun);">${escapeHtml(it.title)}</h3>
           <div class="word-sub" style="font-size:16px; line-height:1.6; margin-bottom:16px;">${escapeHtml(it.note || '')}</div>
-          <button class="say-btn" id="btnSaySimpleLesson">🔊 শোনো</button>
         </div>
       `;
       document.getElementById('btnBackToLessonList').onclick = ()=>{
@@ -2455,37 +2635,53 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
         listView.style.display = 'block';
       };
       document.getElementById('btnSaySimpleLesson').onclick = ()=>{
-        speak(it.note || it.title);
+        speakSmart(it.note || it.title);
       };
-      speak(it.note || it.title);
+      speakSmart(it.note || it.title);
       return;
     }
 
     // Rich full lesson view
     let isPlayingFull = false;
     readerView.innerHTML = `
-      <div class="lesson-reader-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; gap:8px; flex-wrap:wrap;">
-        <button class="tool-btn" id="btnBackToLessonList">← পাঠ তালিকা</button>
-        <div style="display:flex; gap:8px;">
-          <button class="tool-btn" id="btnPlayFullLesson" style="background:var(--sun); color:#000; font-weight:700;">🔊 পুরো পাঠ শোনো</button>
+      <!-- Top Navigation Bar -->
+      <div class="lesson-reader-header">
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+          <button class="tool-btn" id="btnBackToLessonList" style="padding:8px 14px; font-size:13.5px;">← পাঠ তালিকা</button>
+          <button class="back-to-syllabus-btn" onclick="openActivity('syllabus')">
+            <span>← 🏫</span> <span>আমার ক্লাস</span>
+          </button>
+        </div>
+        <div>
+          <button class="tool-btn" id="btnPlayFullLesson" style="background:var(--sun); color:#000; font-weight:700; padding:8px 16px; font-size:13.5px; border-radius:20px;">
+            🔊 পুরো পাঠ শোনো
+          </button>
         </div>
       </div>
 
-      <div class="lesson-reader-banner" style="background:linear-gradient(135deg, rgba(255,107,53,0.15), rgba(255,193,7,0.15)); border:1px solid var(--glass-brd); border-radius:18px; padding:16px; margin-bottom:16px;">
-        <div style="font-size:12px; color:var(--sun); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">পাঠ ${idx+1} / ${items.length}</div>
-        <h2 style="margin:0 0 8px; font-family:'Baloo Da 2', sans-serif; font-size:20px; color:#fff;">${escapeHtml(it.title)}</h2>
-        <div class="lesson-obj-box" style="background:rgba(0,0,0,0.2); border-radius:12px; padding:10px 12px; font-size:14px; color:#E0E0E0; line-height:1.5;">
+      <!-- Banner -->
+      <div class="lesson-reader-banner dash-card" style="background:linear-gradient(135deg, rgba(255,107,53,0.18), rgba(255,193,7,0.18)); border:1px solid var(--glass-brd); padding:16px; margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+          <div style="font-size:12px; color:var(--sun); font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">
+            ${escapeHtml(subjDisplayName)} • পাঠ ${idx+1} / ${items.length}
+          </div>
+          <span style="font-size:11.5px; background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:10px;">
+            ক্লিক করে প্রতিটি অনুচ্ছেদ শোনো
+          </span>
+        </div>
+        <h2 style="margin:0 0 8px; font-family:'Baloo Da 2', sans-serif; font-size:22px; color:#fff;">${escapeHtml(it.title)}</h2>
+        <div class="lesson-obj-box" style="background:rgba(0,0,0,0.3); border-radius:12px; padding:10px 14px; font-size:14px; color:#E0E0E0; line-height:1.5; border:1px solid rgba(255,255,255,0.08);">
           🎯 <strong>আজকের লক্ষ্য:</strong> ${escapeHtml(it.learningObjective || '')}
         </div>
       </div>
 
       ${it.warmUp ? `
-        <div class="lesson-card-sec" id="warmUpBox" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:14px; margin-bottom:14px; cursor:pointer;">
+        <div class="lesson-card-sec dash-card" id="warmUpBox" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:14px 16px; margin-bottom:14px; cursor:pointer;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <div style="font-weight:700; color:var(--leaf-dark); font-size:15px;">🤔 চলো একটু ভাবি (Warm-Up)</div>
             <span style="font-size:16px;">🔊</span>
           </div>
-          <div style="font-size:14.5px; line-height:1.5; color:var(--ink-light);">${escapeHtml(it.warmUp)}</div>
+          <div style="font-size:14.5px; line-height:1.55; color:var(--ink-light);">${escapeHtml(it.warmUp)}</div>
         </div>
       ` : ''}
 
@@ -2498,7 +2694,7 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
           <div class="dash-card lesson-block-card" id="lessonBlock_${bi}" style="margin:0; padding:14px 16px; border-left:4px solid ${COLORS[bi%COLORS.length]};">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
               <h4 style="margin:0; font-size:16px; color:#fff;">${escapeHtml(block.heading)}</h4>
-              <button class="icon-btn btn-block-speak" data-bi="${bi}" style="width:32px; height:32px; font-size:14px;" title="শোনো">🔊</button>
+              <button class="icon-btn btn-block-speak" data-bi="${bi}" style="width:32px; height:32px; font-size:14px; background:rgba(255,255,255,0.1); border-radius:50%; border:none; color:#fff; cursor:pointer;" title="শোনো">🔊</button>
             </div>
             <div class="lesson-block-text" style="font-size:15px; line-height:1.65; color:var(--ink);">${escapeHtml(block.text)}</div>
           </div>
@@ -2509,7 +2705,7 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
         <div class="lesson-section-title" style="font-size:16px; font-weight:700; color:var(--leaf-dark); margin:18px 0 10px;">
           🔤 নতুন শব্দ ও অর্থ (Key Vocabulary)
         </div>
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:10px; margin-bottom:18px;">
+        <div class="vocab-grid" style="margin-bottom:18px;">
           ${it.keyVocabulary.map((v, vi)=>`
             <div class="dash-card vocab-card" data-word="${escapeHtml(v.word)}" data-meaning="${escapeHtml(v.meaning)}" style="margin:0; padding:12px; cursor:pointer; background:rgba(255,255,255,0.05); text-align:center; border:1px solid rgba(255,255,255,0.12);">
               <div style="font-size:17px; font-weight:700; color:var(--sun); margin-bottom:4px;">${escapeHtml(v.word)}</div>
@@ -2539,14 +2735,14 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
               <div style="font-weight:700; font-size:15px; margin-bottom:10px; color:#fff;">
                 ${qi+1}. ${escapeHtml(q.question)}
               </div>
-              <div class="quiz-options-grid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px;">
+              <div class="quiz-options-grid">
                 ${q.options.map((opt, oi)=>`
                   <button class="ans-btn quiz-opt-btn" data-qi="${qi}" data-opt="${escapeHtml(opt)}">
                     ${escapeHtml(opt)}
                   </button>
                 `).join('')}
               </div>
-              <div class="quiz-feedback-box" id="quizFeedback_${qi}" style="display:none; margin-top:10px; padding:8px 12px; border-radius:10px; font-size:13.5px; line-height:1.4;"></div>
+              <div class="quiz-feedback-box" id="quizFeedback_${qi}" style="display:none; margin-top:10px; padding:10px 14px; border-radius:12px; font-size:14px; line-height:1.4;"></div>
             </div>
           `).join('')}
         </div>
@@ -2561,9 +2757,17 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
         </div>
       ` : ''}
 
-      <div style="display:flex; justify-content:space-between; margin-top:20px; gap:10px;">
-        <button class="tool-btn" id="btnPrevLesson" ${idx===0?'disabled style="opacity:0.4;"':''}>← আগের পাঠ</button>
-        <button class="tool-btn" id="btnNextLesson" ${idx===items.length-1?'disabled style="opacity:0.4;"':''}>পরের পাঠ →</button>
+      <!-- Bottom Navigation Footer -->
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; gap:10px; flex-wrap:wrap; padding-top:14px; border-top:1px solid rgba(255,255,255,0.1);">
+        <button class="tool-btn" id="btnPrevLesson" ${idx===0?'disabled style="opacity:0.35; pointer-events:none;"':''} style="padding:10px 16px; font-size:14px;">
+          ← আগের পাঠ
+        </button>
+        <button class="back-to-syllabus-btn" onclick="openActivity('syllabus')">
+          <span>← 🏫</span> <span>আমার ক্লাস (My Class)</span>
+        </button>
+        <button class="tool-btn" id="btnNextLesson" ${idx===items.length-1?'disabled style="opacity:0.35; pointer-events:none;"':''} style="padding:10px 16px; font-size:14px;">
+          পরের পাঠ →
+        </button>
       </div>
     `;
 
@@ -2575,7 +2779,7 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
 
     const warmUpEl = document.getElementById('warmUpBox');
     if(warmUpEl && it.warmUp){
-      warmUpEl.onclick = ()=>{ speak(it.warmUp); };
+      warmUpEl.onclick = ()=>{ speakSmart(it.warmUp); };
     }
 
     readerView.querySelectorAll('.btn-block-speak').forEach(btn=>{
@@ -2586,13 +2790,13 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
         readerView.querySelectorAll('.lesson-block-card').forEach(el=>el.classList.remove('active'));
         const targetCard = document.getElementById('lessonBlock_' + bi);
         if(targetCard) targetCard.classList.add('active');
-        speak(b.heading + '। ' + b.text);
+        speakSmart(b.heading + '। ' + b.text);
       };
     });
 
     readerView.querySelectorAll('.vocab-card').forEach(card=>{
       card.onclick = ()=>{
-        speak(card.dataset.word + '। ' + card.dataset.meaning);
+        speakSmart(card.dataset.word + '। ' + card.dataset.meaning);
       };
     });
 
@@ -2603,14 +2807,14 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
         const q = it.practiceQuestions[qi];
         if(!q) return;
         const feedbackBox = document.getElementById('quizFeedback_' + qi);
-        const isCorrect = (chosenOpt.trim() === q.correctAnswer.trim());
+        const isCorrect = (chosenOpt.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase());
         const parentCard = document.getElementById('quizCard_' + qi);
         const allBtns = parentCard.querySelectorAll('.quiz-opt-btn');
 
         if(isCorrect){
           allBtns.forEach(b=>{
             b.disabled = true;
-            if(b.dataset.opt.trim() === q.correctAnswer.trim()){
+            if(b.dataset.opt.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase()){
               b.classList.add('correct');
             }
           });
@@ -2618,18 +2822,18 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
           feedbackBox.style.background = 'rgba(139, 195, 74, 0.2)';
           feedbackBox.style.border = '1px solid #8BC34A';
           feedbackBox.style.color = '#C6FF00';
-          feedbackBox.innerHTML = '🎉 <strong>সঠিক হয়েছে!</strong> ' + escapeHtml(q.explanation || 'দারুণ পেরেছ!');
+          feedbackBox.innerHTML = '🎉 <strong>সঠিক হয়েছে!</strong> ' + escapeHtml(q.explanation || 'দারুণ পেরেছ!');
           bump(2, subjectKey);
           praise('অসাধারণ! সঠিক উত্তর! ⭐+২');
-          speak('দারুণ! সঠিক উত্তর হয়েছে। ' + (q.explanation || ''));
+          speakSmart('দারুণ! সঠিক উত্তর হয়েছে। ' + (q.explanation || ''));
         } else {
           btn.classList.add('wrong');
           feedbackBox.style.display = 'block';
           feedbackBox.style.background = 'rgba(255, 107, 53, 0.2)';
           feedbackBox.style.border = '1px solid #FF6B35';
           feedbackBox.style.color = '#FFD180';
-          feedbackBox.innerHTML = '🤔 <strong>আরেকবার চেষ্টা করো!</strong> প্রশ্নটি আরেকবার পড়ে সঠিক উত্তরটি বেছে নাও।';
-          speak('আরেকবার ভেবে দেখো তো সোনামণি!');
+          feedbackBox.innerHTML = '🤔 <strong>আরেকবার চেষ্টা করো!</strong> প্রশ্নটি আবার পড়ে সঠিক উত্তরটি বেছে নাও।';
+          speakSmart('আরেকবার ভেবে দেখো তো সোনামণি!');
           setTimeout(()=>{ btn.classList.remove('wrong'); }, 700);
         }
       };
@@ -2654,7 +2858,7 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
       let fullText = it.title + '। ';
       if(it.learningObjective) fullText += it.learningObjective + '। ';
       it.mainContent.forEach(b=>{ fullText += b.heading + '। ' + b.text + '। '; });
-      speak(fullText, {
+      speakSmart(fullText, {
         onEnd: ()=>{
           isPlayingFull = false;
           const btn = document.getElementById('btnPlayFullLesson');
@@ -2664,7 +2868,7 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
     };
 
     // Auto-speak intro upon opening
-    speak(it.title + '। ' + (it.learningObjective || ''));
+    speakSmart(it.title + '। ' + (it.learningObjective || ''));
   }
 
   window.openLessonReader = function(subjKey, lessonIndex){
@@ -2673,15 +2877,21 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
     }
   };
 
-  if(targetLessonIndex !== undefined && items[targetLessonIndex]){
+  if(typeof targetLessonIndex === 'number' && items[targetLessonIndex]){
     openSingleLesson(targetLessonIndex);
   }
 }
 function buildBangla(body){ buildLessonModule(body, 'bangla'); }
+function buildEnglish(body){ buildLessonModule(body, 'english'); }
+function buildMathLessons(body){ buildLessonModule(body, 'math'); }
 function buildIslam(body){ buildLessonModule(body, 'islam'); }
-function buildSocialStudies(body){ buildLessonModule(body, 'socialStudies'); }
+function buildGK(body){ buildLessonModule(body, 'gk'); }
+function buildScience(body){ buildLessonModule(body, 'science'); }
 function buildComputer(body){ buildLessonModule(body, 'computer'); }
-function buildMoralEducation(body){ buildLessonModule(body, 'moralEducation'); }
+function buildMoral(body){ buildLessonModule(body, 'moral'); }
+function buildDrawing(body){ buildLessonModule(body, 'drawing'); }
+function buildSocialStudies(body){ buildLessonModule(body, 'gk'); }
+function buildMoralEducation(body){ buildLessonModule(body, 'moral'); }
 
 /* ---------- Addition & subtraction ---------- */
 function buildMath(body){
@@ -3244,11 +3454,7 @@ function findLessonIndexByTitle(subjectKey, title){
 }
 // Decides whether a topic line actually has real interactive content
 // somewhere else in the app, and if so, which module (+ which specific
-// item for rhymes/lessons). Only routes to modules that truly cover that
-// exact content — everything else (grammar chapters, drawing tasks,
-// chapters with no matching LESSON_CONTENT entry yet, etc.) gets no route,
-// and the chip stays a "listen to the topic name" chip instead of
-// pretending to open something that isn't built yet.
+// item for rhymes/lessons).
 function routeForSyllabusTopic(subject, fieldKey, text){
   const fk = (fieldKey||'').toLowerCase();
   const low = text.toLowerCase();
@@ -3258,8 +3464,8 @@ function routeForSyllabusTopic(subject, fieldKey, text){
   if(/times\s*table/.test(low)) return {module:'multiplication'};
   if(subject==='bangla' && /borno|shorborno/.test(fk)) return {module:'letters'};
   if(subject==='bangla' && fk.includes('sonkha')) return {module:'numbers'};
-  if(subject==='english' && fk.includes('letter')) return {module:'english'};
-  if((subject==='mathematics'||subject==='elementaryMathematics') && /number/.test(fk)) return {module:'numbers'};
+  if(subject==='english' && fk.includes('letter')) return {module:'english_letters'};
+  if((subject==='mathematics'||subject==='elementaryMathematics'||subject==='math') && /number/.test(fk)) return {module:'numbers'};
   if(subject==='science' || subject==='primaryScience'){
     if(/pet animal|wild animal/.test(low)) return {module:'animals'};
     if(/\bfruit|vegetable|body part|about family|classroom object|\bfish\b/.test(low)) return {module:'words'};
@@ -3268,16 +3474,35 @@ function routeForSyllabusTopic(subject, fieldKey, text){
       if(hasExtraTag) return {module:'scienceExtra'};
     }
   }
-  if(['islam','socialStudies','computer','moralEducation','bangla'].includes(subject)){
-    const idx = findLessonIndexByTitle(subject, text);
-    if(idx >= 0) return {module:subject, lessonIndex:idx};
-  }
+  // Check LESSON_CONTENT for any subject
+  const mappedSubj = ({
+    bangla: 'bangla',
+    english: 'english',
+    mathematics: 'math',
+    elementaryMathematics: 'math',
+    math: 'math',
+    islam: 'islam',
+    socialStudies: 'gk',
+    generalKnowledge: 'gk',
+    gk: 'gk',
+    science: 'science',
+    primaryScience: 'science',
+    computer: 'computer',
+    computerStudies: 'computer',
+    moralEducation: 'moral',
+    moral: 'moral',
+    drawing: 'drawing',
+    art: 'drawing'
+  })[subject] || subject;
+
+  const idx = findLessonIndexByTitle(mappedSubj, text);
+  if(idx >= 0) return {module:mappedSubj, lessonIndex:idx};
+
   return null;
 }
 function openSyllabusTopic(route, text){
   if(!route){
-    const isBangla = /[\u0980-\u09FF]/.test(text);
-    if(isBangla) speak(text); else speakEn(text);
+    speakSmart(text);
     return;
   }
   if(route.module === 'rhymes'){
@@ -3286,59 +3511,241 @@ function openSyllabusTopic(route, text){
     if(idx >= 0) setTimeout(()=>openRhymeReader(idx), 30);
     return;
   }
-  openActivity(route.module);
-  if(route.lessonIndex !== undefined){
-    setTimeout(()=>{
-      if(typeof openLessonReader === 'function') openLessonReader(route.module, route.lessonIndex);
-    }, 40);
-  }
+  openActivity(route.module, route.lessonIndex);
 }
 
-/* ---------- Syllabus explorer (per-term topics from CURRICULUM) ---------- */
-function buildSyllabusModule(body){
-  const level = (childData && childData.level) || 'playgroup';
-  const term = (childData && childData.term) || 'midTerm';
-  const termData = CURRICULUM[level] && CURRICULUM[level][term];
-  if(!termData || !Object.keys(termData).length){
-    body.innerHTML = `<div class="word-sub">${t('syllabus_empty') || 'এই ক্লাসের সিলেবাস এখনো যোগ করা হয়নি'}</div>`;
-    return;
-  }
-  const visitedTopics = new Set();
-  let totalTopics = 0;
-  Object.keys(termData).forEach(sub=>{
-    const items = flattenSubjectFields(termData[sub], '');
-    totalTopics += items.length;
-  });
-  updateLessonProgress(0, Math.max(1, totalTopics));
-  body.innerHTML = `
-    <div class="word-sub" style="margin-bottom:10px;">${t('syllabus_hint') || '▶️ যেসব টপিকে অ্যাক্টিভিটি আছে সেগুলো খুলবে, বাকিগুলো 🔊 চাপ দিলে নাম শোনাবে'}</div>
-    <div id="syllabusSubjects"></div>
-  `;
-  const wrap = document.getElementById('syllabusSubjects');
-  Object.keys(termData).forEach(sub=>{
-    const label = SUBJECT_LABELS[sub] || labelizeKey(sub);
-    const items = flattenSubjectFields(termData[sub], '');
-    if(!items.length) return;
-    const card = document.createElement('div');
-    card.className = 'dash-card';
-    card.style.marginBottom = '12px';
-    const chipsHtml = items.map((item, i)=>{
-      const route = routeForSyllabusTopic(sub, item.fieldKey, item.text);
-      const icon = route ? '▶️' : '🔊';
-      return `<span class="syllabus-chip${route?' syllabus-chip-link':''}" data-idx="${i}">${icon} ${escapeHtml(item.text)}</span>`;
-    }).join('');
-    card.innerHTML = `<h3 style="margin:0 0 8px;">${escapeHtml(label)}</h3><div>${chipsHtml}</div>`;
-    card.querySelectorAll('.syllabus-chip').forEach((el,i)=>{
-      const item = items[i];
-      const route = routeForSyllabusTopic(sub, item.fieldKey, item.text);
-      el.onclick = ()=>{
-        visitedTopics.add(sub + ':' + item.text);
-        updateLessonProgress(visitedTopics.size, Math.max(1, totalTopics));
-        openSyllabusTopic(route, item.text);
+/* ---------- My Class (Digital Classroom & Syllabus Explorer) ---------- */
+function buildSyllabusModule(body, initialSubjKey){
+  let curLevel = (childData && childData.level) || 'class1';
+  let curTerm = (childData && childData.term) || 'midTerm';
+  let curSubjFilter = initialSubjKey || 'all';
+  let curSearchQuery = '';
+
+  const subjectMeta = [
+    { key: 'all', name: '🌟 সব বিষয়', nameEn: 'All Subjects', icon: '🌟' },
+    { key: 'bangla', name: '📚 বাংলা', nameEn: 'Bangla', icon: '📚' },
+    { key: 'english', name: '🅰️ English', nameEn: 'English', icon: '🅰️' },
+    { key: 'math', name: '➕ গণিত', nameEn: 'Math', icon: '➕' },
+    { key: 'islam', name: '🕌 ইসলাম শিক্ষা', nameEn: 'Islamic Studies', icon: '🕌' },
+    { key: 'gk', name: '🌍 সাধারণ জ্ঞান', nameEn: 'General Knowledge', icon: '🌍' },
+    { key: 'science', name: '🔬 বিজ্ঞান', nameEn: 'Science', icon: '🔬' },
+    { key: 'computer', name: '💻 কম্পিউটার', nameEn: 'Computer', icon: '💻' },
+    { key: 'moral', name: '💖 নৈতিক শিক্ষা', nameEn: 'Moral Education', icon: '💖' },
+    { key: 'drawing', name: '🎨 আঁকাআঁকি', nameEn: 'Drawing & Art', icon: '🎨' }
+  ];
+
+  function render(){
+    const allLessonList = [];
+    const subjectsToCollect = ['bangla','english','math','islam','gk','science','computer','moral','drawing'];
+    
+    subjectsToCollect.forEach(sk=>{
+      const list = getSubjectLessons(sk);
+      list.forEach((it, idx)=>{
+        allLessonList.push({
+          subjectKey: sk,
+          lessonIndex: idx,
+          data: it,
+          term: (it.title.toLowerCase().includes('final') || it.title.includes('ফাইনাল') || (sk==='bangla' && idx>=7) || (sk==='english' && idx>=18) || (sk==='math' && idx>=11) || (sk==='islam' && idx>=2) || (sk==='gk' && idx>=8) || (sk==='science' && idx>=4) || (sk==='computer' && idx>=2) || (sk==='moral' && idx>=4) || (sk==='drawing' && idx>=3)) ? 'finalTerm' : 'midTerm'
+        });
+      });
+    });
+
+    const isClass1OrContent = (curLevel === 'class1') || allLessonList.length > 0;
+
+    let filteredLessons = allLessonList.filter(item=>{
+      if(curSubjFilter !== 'all' && item.subjectKey !== curSubjFilter) return false;
+      if(curTerm !== 'all' && item.term !== curTerm) return false;
+      if(curSearchQuery){
+        const q = curSearchQuery.toLowerCase();
+        const tMatch = (item.data.title || '').toLowerCase().includes(q);
+        const oMatch = (item.data.learningObjective || '').toLowerCase().includes(q);
+        const wMatch = Array.isArray(item.data.mainContent) && item.data.mainContent.some(b => (b.heading+b.text).toLowerCase().includes(q));
+        if(!tMatch && !oMatch && !wMatch) return false;
+      }
+      return true;
+    });
+
+    updateLessonProgress(filteredLessons.length, allLessonList.length || 1);
+
+    body.innerHTML = `
+      <div class="syllabus-dashboard" style="display:flex; flex-direction:column; gap:16px;">
+        
+        <!-- Header Banner -->
+        <div class="dash-card" style="background:linear-gradient(135deg, rgba(255,107,53,0.16), rgba(255,193,7,0.16)); border:1px solid var(--glass-brd); padding:16px; border-radius:18px; margin:0;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <div>
+              <h2 style="margin:0 0 4px; font-family:'Baloo Da 2', sans-serif; font-size:22px; color:var(--sun); display:flex; align-items:center; gap:8px;">
+                🏫 আমার ক্লাস (My Class)
+              </h2>
+              <div class="word-sub" style="font-size:13.5px; opacity:0.95;">
+                হিড ইন্টারন্যাশনাল স্কুল ও ক্লাস ১ সিলেবাস ভিত্তিক ১১৫টি সম্পূর্ণ পাঠ, অডিও ও কুইজ
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span style="font-size:12px; background:rgba(139,195,74,0.25); color:#C6FF00; padding:4px 10px; border-radius:12px; font-weight:700; border:1px solid rgba(139,195,74,0.4);">
+                ✓ ১১৫টি পাঠ সক্রিয়
+              </span>
+            </div>
+          </div>
+
+          <!-- Filter Controls (Class, Term, Search) -->
+          <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; align-items:center;">
+            <div style="flex:1; min-width:140px;">
+              <select id="sylLevelSelect" style="width:100%; padding:8px 12px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:13.5px; font-family:'Baloo Da 2', sans-serif;">
+                <option value="class1" ${curLevel==='class1'?'selected':''}>🎓 ক্লাস ১ (Class 1 - ১১৫ পাঠ)</option>
+                <option value="kg" ${curLevel==='kg'?'selected':''}>🌱 কেজি (KG)</option>
+                <option value="nursery" ${curLevel==='nursery'?'selected':''}>🌿 নার্সারি (Nursery)</option>
+                <option value="playgroup" ${curLevel==='playgroup'?'selected':''}>👶 প্লে-গ্রুপ (Playgroup)</option>
+              </select>
+            </div>
+            <div style="flex:1; min-width:130px;">
+              <select id="sylTermSelect" style="width:100%; padding:8px 12px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:13.5px; font-family:'Baloo Da 2', sans-serif;">
+                <option value="all" ${curTerm==='all'?'selected':''}>🗓️ সব টার্ম (${allLessonList.length})</option>
+                <option value="midTerm" ${curTerm==='midTerm'?'selected':''}>📖 মিড টার্ম</option>
+                <option value="finalTerm" ${curTerm==='finalTerm'?'selected':''}>🏆 ফাইনাল টার্ম</option>
+              </select>
+            </div>
+            <div style="flex:2; min-width:200px;">
+              <input type="text" id="sylSearchInput" value="${escapeHtml(curSearchQuery)}" placeholder="🔍 পাঠের নাম বা বিষয় দিয়ে খুঁজুন..." style="width:100%; padding:8px 14px; border-radius:10px; background:rgba(0,0,0,0.35); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:13.5px; box-sizing:border-box;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Subject Tabs Scrollable Bar -->
+        <div class="syllabus-tabs-bar" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; scrollbar-width:thin;">
+          ${subjectMeta.map(s=>{
+            const count = (s.key==='all') ? allLessonList.length : (getSubjectLessons(s.key).length);
+            const isActive = (curSubjFilter === s.key);
+            return `
+              <button class="syl-tab-btn" data-subj="${s.key}" style="padding:7px 12px; border-radius:20px; font-size:13px; font-weight:600; white-space:nowrap; cursor:pointer; transition:all 0.2s ease; display:flex; align-items:center; gap:6px; border:1px solid ${isActive ? 'var(--sun)' : 'rgba(255,255,255,0.15)'}; background:${isActive ? 'var(--sun)' : 'rgba(255,255,255,0.06)'}; color:${isActive ? '#000' : '#fff'};">
+                <span>${s.name}</span>
+                <span style="font-size:11px; background:${isActive ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.15)'}; padding:2px 6px; border-radius:10px;">${count}</span>
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Results Counter -->
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0 4px;">
+          <div style="font-size:13.5px; color:var(--ink-dim);">
+            প্রদর্শিত হচ্ছে <strong>${filteredLessons.length}</strong> টি পাঠ ${curSubjFilter!=='all' ? `(${subjectMeta.find(m=>m.key===curSubjFilter)?.name || ''})` : ''}
+          </div>
+          ${curSearchQuery ? `<button id="btnClearSylSearch" style="background:none; border:none; color:var(--sun); font-size:12px; cursor:pointer; text-decoration:underline;">সার্চ মুছুন</button>` : ''}
+        </div>
+
+        <!-- Lessons Cards Grid -->
+        <div id="sylLessonsGrid" class="lesson-card-grid">
+          ${filteredLessons.length === 0 ? `
+            <div style="grid-column:1/-1; text-align:center; padding:40px 16px; background:rgba(255,255,255,0.03); border-radius:16px;">
+              <div style="font-size:40px; margin-bottom:8px;">🔍</div>
+              <div style="font-size:15px; color:#fff; font-weight:600;">কোনো পাঠ খুঁজে পাওয়া যায়নি</div>
+              <div class="word-sub" style="font-size:13px; margin-top:4px;">টার্ম ফিল্টার বা সার্চ কি-ওয়ার্ড পরিবর্তন করে দেখুন</div>
+            </div>
+          ` : filteredLessons.map((item, i)=>{
+            const it = item.data;
+            const isRich = Array.isArray(it.mainContent);
+            const snippet = isRich ? (it.learningObjective || (it.mainContent[0] && it.mainContent[0].text) || '') : (it.note || '');
+            const subjLabel = subjectMeta.find(m=>m.key===item.subjectKey)?.name || item.subjectKey;
+            const termBadge = item.term === 'midTerm' ? 'মিড টার্ম' : 'ফাইনাল টার্ম';
+
+            return `
+              <div class="dash-card syl-lesson-card" data-subj="${item.subjectKey}" data-idx="${item.lessonIndex}" style="margin:0; padding:14px; cursor:pointer; border-left:4px solid ${COLORS[(item.lessonIndex)%COLORS.length]}; display:flex; flex-direction:column; justify-content:space-between; transition:transform 0.15s ease, box-shadow 0.15s ease;">
+                <div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:6px;">
+                    <span style="font-size:11.5px; font-weight:700; color:var(--sun); background:rgba(255,193,7,0.12); padding:3px 8px; border-radius:8px;">
+                      ${subjLabel} • পাঠ ${item.lessonIndex+1}
+                    </span>
+                    <span style="font-size:11px; background:rgba(255,255,255,0.08); color:var(--ink-dim); padding:2px 7px; border-radius:8px;">
+                      ${termBadge}
+                    </span>
+                  </div>
+                  <h3 style="margin:0 0 6px; font-size:16px; line-height:1.4; color:#fff;">
+                    ${escapeHtml(it.title)}
+                  </h3>
+                  <div class="word-sub" style="line-height:1.5; font-size:13px; opacity:0.85; margin-bottom:10px;">
+                    ${escapeHtml(snippet.slice(0, 90))}${snippet.length > 90 ? '...' : ''}
+                  </div>
+                </div>
+
+                <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px; margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:12px; color:var(--sun); font-weight:700; display:flex; align-items:center; gap:4px;">
+                    ▶️ শুরু করো
+                  </span>
+                  <div style="display:flex; gap:4px;">
+                    ${it.keyVocabulary?.length ? '<span title="শব্দার্থ রয়েছে" style="font-size:11px; opacity:0.8;">🔤</span>' : ''}
+                    ${it.practiceQuestions?.length ? '<span title="কুইজ রয়েছে" style="font-size:11px; opacity:0.8;">✍️</span>' : ''}
+                    ${it.funFact ? '<span title="মজার তথ্য রয়েছে" style="font-size:11px; opacity:0.8;">💡</span>' : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Lower Grades Fallback Syllabus Topics from CURRICULUM -->
+        ${(curLevel !== 'class1' && CURRICULUM[curLevel] && CURRICULUM[curLevel][curTerm]) ? `
+          <div class="dash-card" style="margin-top:10px; background:rgba(255,255,255,0.04);">
+            <h3 style="margin:0 0 10px; font-size:16px; color:var(--sun);">${curLevel.toUpperCase()} সিলেবাস টপিকসমূহ</h3>
+            <div id="lowerGradeTopics">
+              ${Object.keys(CURRICULUM[curLevel][curTerm]).map(subKey=>{
+                const items = flattenSubjectFields(CURRICULUM[curLevel][curTerm][subKey], '');
+                if(!items.length) return '';
+                const label = SUBJECT_LABELS[subKey] || labelizeKey(subKey);
+                return `
+                  <div style="margin-bottom:12px;">
+                    <div style="font-size:13px; font-weight:700; color:var(--leaf-dark); margin-bottom:6px;">${escapeHtml(label)}</div>
+                    <div>
+                      ${items.map(it=>{
+                        const route = routeForSyllabusTopic(subKey, it.fieldKey, it.text);
+                        const icon = route ? '▶️' : '🔊';
+                        return `<span class="syllabus-chip${route?' syllabus-chip-link':''}" onclick="openSyllabusTopic(${route?JSON.stringify(route).replace(/"/g,"'"):null}, '${escapeHtml(it.text)}')">${icon} ${escapeHtml(it.text)}</span>`;
+                      }).join('')}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+      </div>
+    `;
+
+    // Event listeners
+    const levelEl = document.getElementById('sylLevelSelect');
+    if(levelEl) levelEl.onchange = (e)=>{ curLevel = e.target.value; render(); };
+
+    const termEl = document.getElementById('sylTermSelect');
+    if(termEl) termEl.onchange = (e)=>{ curTerm = e.target.value; render(); };
+
+    const searchEl = document.getElementById('sylSearchInput');
+    if(searchEl){
+      searchEl.oninput = (e)=>{
+        curSearchQuery = e.target.value;
+        const debounced = setTimeout(()=>{ render(); }, 300);
+      };
+    }
+
+    const clearSearchBtn = document.getElementById('btnClearSylSearch');
+    if(clearSearchBtn) clearSearchBtn.onclick = ()=>{ curSearchQuery = ''; render(); };
+
+    body.querySelectorAll('.syl-tab-btn').forEach(btn=>{
+      btn.onclick = ()=>{
+        curSubjFilter = btn.dataset.subj;
+        render();
       };
     });
-    wrap.appendChild(card);
-  });
+
+    body.querySelectorAll('.syl-lesson-card').forEach(card=>{
+      card.onclick = ()=>{
+        const sk = card.dataset.subj;
+        const lIdx = Number(card.dataset.idx);
+        openActivity(sk, lIdx);
+      };
+    });
+  }
+
+  render();
 }
 
 /* ---------- Matching memory game ---------- */
