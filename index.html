@@ -3123,73 +3123,144 @@ function buildSentences(body){
 // existing curated sections there are untouched). 22 kid-safe videos across
 // Bengali rhymes, English nursery rhymes, ABC/phonics and counting. ----
 const EXTRA_KIDS_VIDEOS = [
-  { tag:'বাংলা ছড়া', tagEn:'Bengali Rhymes', channel:'Bangla Rhymes', items:[
+  { tag:'বাংলা ছড়া ও বর্ণমালা', tagEn:'Bengali Rhymes & Alphabet', channel:'Bangla Kids Hub', items:[
     { type:'video', id:'9BayKCtGHSY', title:'আয় রে আয় টিয়ে' },
-    { type:'video', id:'o2Edqb1NxsQ', title:'বাংলা ছড়া সংকলন' },
     { type:'video', id:'xAIHCxxBR9U', title:'আতা গাছে তোতা পাখি' },
     { type:'video', id:'Kv7U-lo1tdQ', title:'ছোটদের ২০টি বাংলা গান' },
-    { type:'video', id:'PfNMQrxEsF0', title:'শিশুদের বাংলা ছড়া' },
-    { type:'video', id:'oAK971iluDo', title:'ছুটি — ছোটদের ছড়া' }
+    { type:'video', id:'o2Edqb1NxsQ', title:'বাংলা ছড়া সংকলন' },
+    { type:'video', id:'PfNMQrxEsF0', title:'শিশুদের বাংলা ছড়া ও গান' },
+    { type:'video', id:'oAK971iluDo', title:'ছুটি — মেঘের কোলে রোদ হেসেছে' }
   ]},
-  { tag:'ইংরেজি নার্সারি রাইম', tagEn:'English Nursery Rhymes', channel:'ChuChu TV', items:[
+  { tag:'ইংরেজি নার্সারি রাইম ও ফোনিকস', tagEn:'English Phonics & Rhymes', channel:'ChuChu TV', items:[
+    { type:'video', id:'tKsIi1MH4lw', title:'ABC Phonics Song with Sounds' },
     { type:'video', id:'VXokId-v7oU', title:'Head, Shoulders, Knees & Toes' },
     { type:'video', id:'IzVV8LjAuOE', title:'Twinkle Twinkle Little Star' },
+    { type:'video', id:'36IBDpTRVNE', title:'The Alphabet Song — Learn A to Z' },
     { type:'video', id:'-Z95SxV8PZc', title:'Rain, Rain, Go Away' },
-    { type:'playlist', listId:'PLV-cxl3VSwWHy3JvK-E9e944E_ci8j_g4', title:'Nursery Rhymes Collection' }
+    { type:'playlist', listId:'PLV-cxl3VSwWHy3JvK-E9e944E_ci8j_g4', title:'ChuChu TV Nursery Rhymes Collection' }
   ]},
-  { tag:'মজার গান', tagEn:'Fun Songs', channel:'CoComelon', items:[
+  { tag:'মজার অ্যানিমেশন ও গান', tagEn:'Fun Cartoons & Songs', channel:'CoComelon', items:[
     { type:'video', id:'020g-0hhCAU', title:'Baby Shark' },
-    { type:'video', id:'Wbk4gZz2weQ', title:'Baby Shark Submarine + More' }
+    { type:'video', id:'Wbk4gZz2weQ', title:'Baby Shark Submarine + More' },
+    { type:'video', id:'ezmsrB59mj8', title:'Alphabet Song — Nursery Rhyme' }
   ]},
-  { tag:'অক্ষর ও ধ্বনি', tagEn:'ABC & Phonics', channel:'ABC Kids', items:[
-    { type:'video', id:'tKsIi1MH4lw', title:'ABC Phonics Song with Sounds' },
-    { type:'video', id:'ezmsrB59mj8', title:'ABC Song — Learn the Alphabet' },
-    { type:'video', id:'36IBDpTRVNE', title:'Alphabet Song' },
-    { type:'video', id:'ccEpTTZW34g', title:'The Alphabet Song — Finny the Shark' },
-    { type:'video', id:'vwxNBQnhRrM', title:'Learning Letter Sounds' },
-    { type:'playlist', listId:'PLV-cxl3VSwWGVA_-1aiC1NAaicLo0rs54', title:'ABC Songs & Alphabet Fun' }
-  ]},
-  { tag:'গণনা ও সংখ্যা', tagEn:'Counting & Numbers', channel:'Kids Songs', items:[
+  { tag:'গণনা ও প্রাথমিক গণিত', tagEn:'Math, Numbers & Counting', channel:'Kids Math Fun', items:[
     { type:'video', id:'JT0MmZcJ2Vw', title:'Numbers Song — Count 1 to 10' },
-    { type:'video', id:'BUZaPCLJA3c', title:'Counting to 10' },
-    { type:'video', id:'Yt8GFgxlITs', title:'Counting 1 to 10' },
-    { type:'video', id:'HkkYaj0m6cg', title:'Funky Counting Song' }
+    { type:'video', id:'BUZaPCLJA3c', title:'Counting 1 to 10 Fun Animation' },
+    { type:'video', id:'Yt8GFgxlITs', title:'ছোটদের সংখ্যা ও গণনা শেখার গান' },
+    { type:'video', id:'HkkYaj0m6cg', title:'Funky Counting Song for Kids' }
+  ]},
+  { tag:'ছোটদের বিজ্ঞান ও মহাকাশ', tagEn:'Kids Science & Space', channel:'Kids Science Hub', items:[
+    { type:'video', id:'libKVRa01L8', title:'সৌরজগৎ ও গ্রহের পরিচিতি (Solar System)' },
+    { type:'video', id:'hWkKSkI3gkU', title:'দিন ও রাত কেন হয়? (Day and Night)' },
+    { type:'video', id:'_BkkzF9z4-g', title:'আমাদের ছয়টি ঋতু (Six Seasons for Kids)' }
+  ]},
+  { tag:'সহজ ড্রয়িং ও ছবি আঁকা', tagEn:'Kids Easy Drawing & Art', channel:'Art For Kids', items:[
+    { type:'video', id:'a2g5_n8y9-E', title:'সহজ পদ্ধতিতে ফুল ও প্রজাপতি আঁকা' },
+    { type:'video', id:'mI1i2-ZpZ5E', title:'সহজে বাড়ি ও গাছ আঁকার স্টেপ বাই স্টেপ' }
+  ]},
+  { tag:'নৈতিক শিক্ষা ও সুঅভ্যাস', tagEn:'Moral Stories & Good Habits', channel:'Kids Moral Stories', items:[
+    { type:'video', id:'V83iM4Kj39k', title:'সত্য কথা বলার সুফল — শিক্ষণীয় গল্প' },
+    { type:'video', id:'dZ4yqG3i1o0', title:'খাওয়ার আগের দোয়া ও সুন্দর আদব' }
   ]}
 ];
-// videoSections itself is declared (const/let) in content-data.js, loaded
-// before this script — mutate it in place with push (never reassign) so we
-// add to it without needing to touch that file.
+// Mutate videoSections in place so all video items are available seamlessly
 videoSections.push(...EXTRA_KIDS_VIDEOS);
+
+let currentVideoCategoryFilter = 'all';
 
 function buildVideos(body){
   let totalVids = 0;
-  videoSections.forEach(s=>{ totalVids += (s.items && s.items.length) || 0; });
+  videoSections.forEach(s => { totalVids += (s.items && s.items.length) || 0; });
   updateLessonProgress(1, Math.max(1, totalVids));
-  body.innerHTML = `<div class="video-list" id="videoList"></div><div class="video-note" data-i18n="act_videoNote">শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না</div>`;
+
+  body.innerHTML = `
+    <div class="video-corner-wrap" style="width:100%; max-width:1000px; margin:0 auto; box-sizing:border-box;">
+      <!-- Category Filter Pills Bar -->
+      <div class="video-filter-bar" style="display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:4px 2px 12px; margin-bottom:12px; scrollbar-width:thin;">
+        <button class="syl-tab-btn ${currentVideoCategoryFilter === 'all' ? 'active' : ''}" onclick="filterVideoCategory('all', this)">🌟 সব ভিডিও (${totalVids})</button>
+        <button class="syl-tab-btn ${currentVideoCategoryFilter === 'sisimpur' ? 'active' : ''}" onclick="filterVideoCategory('sisimpur', this)">🎭 সিসিমপুর</button>
+        <button class="syl-tab-btn ${currentVideoCategoryFilter === 'bangla' ? 'active' : ''}" onclick="filterVideoCategory('bangla', this)">🔤 বাংলা ছড়া</button>
+        <button class="syl-tab-btn ${currentVideoCategoryFilter === 'english' ? 'active' : ''}" onclick="filterVideoCategory('english', this)">🅰️ English Phonics</button>
+        <button class="syl-tab-btn ${currentVideoCategoryFilter === 'math' ? 'active' : ''}" onclick="filterVideoCategory('math', this)">🔢 গণিত ও সংখ্যা</button>
+        <button class="syl-tab-btn ${currentVideoCategoryFilter === 'science' ? 'active' : ''}" onclick="filterVideoCategory('science', this)">🔬 বিজ্ঞান ও মহাকাশ</button>
+        <button class="syl-tab-btn ${currentVideoCategoryFilter === 'art' ? 'active' : ''}" onclick="filterVideoCategory('art', this)">🎨 ছবি আঁকা</button>
+        <button class="syl-tab-btn ${currentVideoCategoryFilter === 'moral' ? 'active' : ''}" onclick="filterVideoCategory('moral', this)">💖 নৈতিক শিক্ষা</button>
+      </div>
+
+      <div class="video-list" id="videoList"></div>
+      
+      <!-- Video Guidance & Tip Box -->
+      <div style="background:rgba(255,255,255,0.06); border:1px dashed rgba(255,140,170,0.35); border-radius:16px; padding:16px; margin-top:20px; text-align:center; color:var(--ink);">
+        <div style="font-size:16px; font-weight:700; color:#FCD34D; margin-bottom:6px;">💡 আরও নতুন ভিডিও যোগ করতে চান?</div>
+        <p style="font-size:13.5px; opacity:0.85; margin:0 0 10px; line-height:1.5;">
+          অভিভাবক বা শিক্ষক যেকোনো পছন্দের YouTube ভিডিও আইডি বা প্লেলিস্ট লিঙ্ক সহজেই <code>videoSections</code> তালিকায় যোগ করতে পারেন।
+        </p>
+        <div style="display:inline-block; font-size:12px; background:rgba(0,0,0,0.3); padding:6px 14px; border-radius:20px; color:#A7F3D0;">
+          🔒 নিরাপদ শিশু ফিল্টার সক্রিয় — শুধুমাত্র অনুমোদিত শিক্ষণীয় ভিডিও প্লে হবে।
+        </div>
+      </div>
+      <div class="video-note" data-i18n="act_videoNote" style="margin-top:10px;">শুধু বাছাই করা ভিডিও দেখানো হচ্ছে — অন্য কোনো ভিডিও সাজেস্ট হবে না</div>
+    </div>
+  `;
+
+  renderVideoList();
+}
+
+function filterVideoCategory(catKey, btnEl) {
+  currentVideoCategoryFilter = catKey;
+  document.querySelectorAll('.video-filter-bar .syl-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  renderVideoList();
+}
+
+function renderVideoList() {
   const list = document.getElementById('videoList');
-  videoSections.forEach(section=>{
+  if (!list) return;
+  list.innerHTML = '';
+
+  const filteredSections = videoSections.filter(section => {
+    if (currentVideoCategoryFilter === 'all') return true;
+    const tag = (section.tag || '').toLowerCase() + ' ' + (section.tagEn || '').toLowerCase() + ' ' + (section.channel || '').toLowerCase();
+    if (currentVideoCategoryFilter === 'sisimpur') return tag.includes('সিসিমপুর') || tag.includes('sisimpur');
+    if (currentVideoCategoryFilter === 'bangla') return tag.includes('বাংলা') || tag.includes('bengali');
+    if (currentVideoCategoryFilter === 'english') return tag.includes('english') || tag.includes('phonics') || tag.includes('chuchu') || tag.includes('cocomelon') || tag.includes('abc');
+    if (currentVideoCategoryFilter === 'math') return tag.includes('গণনা') || tag.includes('সংখ্যা') || tag.includes('math') || tag.includes('count');
+    if (currentVideoCategoryFilter === 'science') return tag.includes('বিজ্ঞান') || tag.includes('science') || tag.includes('মহাকাশ');
+    if (currentVideoCategoryFilter === 'art') return tag.includes('ড্রয়িং') || tag.includes('আঁকা') || tag.includes('drawing') || tag.includes('art');
+    if (currentVideoCategoryFilter === 'moral') return tag.includes('নৈতিক') || tag.includes('moral') || tag.includes('দোয়া');
+    return true;
+  });
+
+  if (filteredSections.length === 0) {
+    list.innerHTML = `<div style="text-align:center; padding:30px; color:var(--ink-dim);">এই ক্যাটাগরিতে এখনো কোনো ভিডিও নেই।</div>`;
+    return;
+  }
+
+  filteredSections.forEach(section => {
     const wrap = document.createElement('div');
     wrap.className = 'video-section';
     const tagText = currentLang === 'en' ? (section.tagEn || section.tag) : section.tag;
     const initial = (section.channel || '?').trim().charAt(0).toUpperCase();
-    wrap.innerHTML = `<div class="video-section-head">
+    wrap.innerHTML = `
+      <div class="video-section-head">
         <span class="video-tag">${tagText}</span>
         <span class="channel-badge"><span class="ch-avatar">${initial}</span>${section.channel}</span>
       </div>
-      <div class="video-cards-grid"></div>`;
+      <div class="video-cards-grid"></div>
+    `;
     const grid = wrap.querySelector('.video-cards-grid');
-    section.items.forEach(v=>{
+    section.items.forEach(v => {
       const card = document.createElement('div');
       card.className = 'video-card';
-      // playlist → native YouTube playlist player (full controls + its own built-in "up next" queue,
-      // scoped to just this playlist — a whole channel page can't be embedded, this is the closest native
-      // equivalent that still can't wander outside curated content).
       const src = v.type === 'playlist'
         ? `https://www.youtube-nocookie.com/embed/videoseries?list=${v.listId}&modestbranding=1&rel=0`
         : `https://www.youtube-nocookie.com/embed/${v.id}?modestbranding=1&rel=0`;
-      card.innerHTML = `<h3>${v.title}</h3>
+      card.innerHTML = `
+        <h3>${v.title}</h3>
         <iframe src="${src}" loading="lazy"
-          title="${v.title}" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+          title="${v.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      `;
       grid.appendChild(card);
     });
     list.appendChild(wrap);
@@ -3744,6 +3815,11 @@ function buildSyllabusModule(body, initialSubjKey){
       };
     });
   }
+
+  window.switchSyllabusSubject = function(subjKey) {
+    curSubjFilter = subjKey || 'all';
+    render();
+  };
 
   render();
 }

@@ -118,6 +118,17 @@
 
   // ================= 2. TV State & Curriculum Data =================
   const TV_DATA = {
+    amar_class: [
+      { id: 'bangla', subjKey: 'bangla', title: 'বাংলা পাঠশালা', count: '১৪টি সম্পূর্ণ পাঠ', icon: '📚', badge: 'Bangla', color: '#10B981', desc: 'স্বরবর্ণ, ব্যঞ্জনবর্ণ, সহজ শব্দ ও বাক্য পাঠ' },
+      { id: 'english', subjKey: 'english', title: 'English For Today', count: '৩৬টি সম্পূর্ণ পাঠ', icon: '🅰️', badge: 'English', color: '#3B82F6', desc: 'Alphabet, Phonics, Sight Words & Reading' },
+      { id: 'math', subjKey: 'math', title: 'প্রাথমিক গণিত', count: '২২টি সম্পূর্ণ পাঠ', icon: '➕', badge: 'Math', color: '#F59E0B', desc: '১-৫০ গণনা, যোগ-বিয়োগ ও সহজ নামতা' },
+      { id: 'islam', subjKey: 'islam', title: 'ইসলাম শিক্ষা', count: '৪টি সম্পূর্ণ পাঠ', icon: '🕌', badge: 'Islamic', color: '#8B5CF6', desc: 'কালেমা, প্রয়োজনীয় দোয়া ও সুন্দর আদব' },
+      { id: 'gk', subjKey: 'gk', title: 'সাধারণ জ্ঞান ও সমাজ', count: '১৫টি সম্পূর্ণ পাঠ', icon: '🌍', badge: 'GK & Social', color: '#06B6D4', desc: 'বাংলাদেশ, জাতীয় প্রতীক ও মহাবিশ্ব' },
+      { id: 'science', subjKey: 'science', title: 'বিজ্ঞান ও পরিবেশ', count: '৭টি সম্পূর্ণ পাঠ', icon: '🔬', badge: 'Science', color: '#EC4899', desc: 'দিন-রাত, ছয় ঋতু, আবহাওয়া ও স্বাস্থ্যবিধি' },
+      { id: 'computer', subjKey: 'computer', title: 'কম্পিউটার শিক্ষা', count: '৪টি সম্পূর্ণ পাঠ', icon: '💻', badge: 'Computer', color: '#6366F1', desc: 'কম্পিউটার কি, মাউস ও কিবোর্ড পরিচিতি' },
+      { id: 'moral', subjKey: 'moral', title: 'নৈতিক শিক্ষা', count: '৭টি সম্পূর্ণ পাঠ', icon: '💖', badge: 'Moral', color: '#EF4444', desc: 'সত্যবাদিতা, বড়দের সম্মান ও নিয়মানুবর্তিতা' },
+      { id: 'drawing', subjKey: 'drawing', title: 'আঁকা ও শিল্পকলা', count: '৬টি সম্পূর্ণ পাঠ', icon: '🎨', badge: 'Art', color: '#14B8A6', desc: 'সহজ রেখা ও রঙ দিয়ে ছবি আঁকার ক্লাস' }
+    ],
     swaraborno: [
       { glyph: 'অ', word: 'অজগর', icon: '🐍', ph: 'অ তে অজগর' },
       { glyph: 'আ', word: 'আম', icon: '🥭', ph: 'আ তে আম' },
@@ -157,8 +168,10 @@
     ],
     activities: [
       { id: 'blackboard', title: 'ডিজিটাল ব্ল্যাকবোর্ড', badge: 'Chalk Mode', icon: '🖍️', desc: 'বড় পর্দায় মুক্তহস্তে আঁকো ও চক প্র্যাকটিস করো' },
+      { id: 'syllabus', title: 'আমার ক্লাস (১১৫টি পাঠ)', badge: 'Classroom', icon: '🏫', desc: 'সিলেবাস ভিত্তিক সম্পূর্ণ পাঠশালা ও কুইজ' },
       { id: 'letters', title: 'বর্ণ বাগান (অক্ষর)', badge: 'Letters', icon: '🔤', desc: 'বাংলা বর্ণমালা শোনো, চিনো ও পড়ো' },
       { id: 'numbers', title: 'সংখ্যা মৌমাছি', badge: 'Numbers', icon: '🐝', desc: 'গুনে গুনে ১ থেকে ১০ গণনা শেখা' },
+      { id: 'videos', title: 'ভিডিও কর্নার', badge: 'Video Learning', icon: '📺', desc: 'সিসিমপুর ও শিক্ষণীয় মজাদার ভিডিও' },
       { id: 'match', title: 'মিলাও তো! (স্মৃতি পরীক্ষা)', badge: 'Memory Quiz', icon: '🍎', desc: 'একই জোড়ার কার্ড খুঁজে বের করো' },
       { id: 'mathgame', title: 'সহজ যোগ-বিয়োগ', badge: 'Quick Math', icon: '➕', desc: 'মজার ছবি দিয়ে প্রাথমিক গণিত' },
       { id: 'rhymes', title: 'ছড়ার বাগান', badge: 'Rhymes', icon: '🎵', desc: 'জনপ্রিয় সব বাংলা ও ইংরেজি ছড়া' }
@@ -183,9 +196,11 @@
 
   const SIDEBAR_ITEMS = [
     { id: 'home', icon: '🏠', label: 'হোম' },
+    { id: 'amar_class', icon: '🏫', label: 'আমার ক্লাস' },
     { id: 'swaraborno', icon: '🔤', label: 'স্বরবর্ণ' },
     { id: 'byanjonborno', icon: '📖', label: 'ব্যঞ্জনবর্ণ' },
     { id: 'numbers', icon: '🔢', label: 'সংখ্যা' },
+    { id: 'videos', icon: '📺', label: 'ভিডিও লার্নিং' },
     { id: 'blackboard', icon: '🖍️', label: 'ব্ল্যাকবোর্ড' },
     { id: 'games', icon: '🎮', label: 'গেম জগৎ' },
     { id: 'dashboard', icon: '📊', label: 'প্যারেন্ট ড্যাশ' },
@@ -266,15 +281,38 @@
           </div>
         </section>
 
-        <!-- Content Row 1: Swaraborno (অ-ঔ) -->
+        <!-- Content Row 1: Amar Class (আমার ক্লাস — বিষয়ভিত্তিক পাঠশালা) -->
         <section class="tv-carousel-section" id="tvRowSection-1">
+          <div class="tv-section-header">
+            <h3 class="tv-section-title"><span>🏫</span> আমার ক্লাস (বিষয়ভিত্তিক পাঠশালা)</h3>
+            <span class="tv-section-hint">৯টি বিষয় ও ১১৫টি অধ্যায়</span>
+          </div>
+          <div class="tv-carousel-track" data-row-idx="1">
+            ${TV_DATA.amar_class.map((subj, col) => `
+              <div class="tv-card tv-card-wide" data-row="1" data-col="${col}" data-type="amar_class" data-idx="${col}" data-subj="${subj.subjKey}" tabindex="0">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:38px;">${subj.icon}</span>
+                  <span class="tv-card-badge" style="background:${subj.color}22; color:${subj.color}; border:1px solid ${subj.color}44;">${subj.badge}</span>
+                </div>
+                <div>
+                  <h4 class="tv-card-title" style="color:#FFF;">${subj.title}</h4>
+                  <div style="font-size:13px; color:#FCD34D; font-weight:700; margin:2px 0 4px;">${subj.count}</div>
+                  <p class="tv-card-desc">${subj.desc}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- Content Row 2: Swaraborno (অ-ঔ) -->
+        <section class="tv-carousel-section" id="tvRowSection-2">
           <div class="tv-section-header">
             <h3 class="tv-section-title"><span>📖</span> বাংলা স্বরবর্ণ (Bangla Vowels)</h3>
             <span class="tv-section-hint">মোট ১১টি বর্ণ</span>
           </div>
-          <div class="tv-carousel-track" data-row-idx="1">
+          <div class="tv-carousel-track" data-row-idx="2">
             ${TV_DATA.swaraborno.map((item, col) => `
-              <div class="tv-card tv-card-square" data-row="1" data-col="${col}" data-type="swaraborno" data-idx="${col}" tabindex="0">
+              <div class="tv-card tv-card-square" data-row="2" data-col="${col}" data-type="swaraborno" data-idx="${col}" tabindex="0">
                 <div class="tv-card-glyph" style="color:#34D399;">${item.glyph}</div>
                 <div class="tv-card-word">${item.word}</div>
                 <div class="tv-card-emoji">${item.icon}</div>
@@ -283,15 +321,15 @@
           </div>
         </section>
 
-        <!-- Content Row 2: Numbers (১-১০) -->
-        <section class="tv-carousel-section" id="tvRowSection-2">
+        <!-- Content Row 3: Numbers (১-১০) -->
+        <section class="tv-carousel-section" id="tvRowSection-3">
           <div class="tv-section-header">
             <h3 class="tv-section-title"><span>🔢</span> সংখ্যা ও গণনা (১ থেকে ১০)</h3>
             <span class="tv-section-hint">ছবি দেখে সংখ্যা চেনা</span>
           </div>
-          <div class="tv-carousel-track" data-row-idx="2">
+          <div class="tv-carousel-track" data-row-idx="3">
             ${TV_DATA.numbers.map((item, col) => `
-              <div class="tv-card tv-card-square" data-row="2" data-col="${col}" data-type="number" data-idx="${col}" tabindex="0">
+              <div class="tv-card tv-card-square" data-row="3" data-col="${col}" data-type="number" data-idx="${col}" tabindex="0">
                 <div class="tv-card-glyph" style="color:#60A5FA;">${item.num}</div>
                 <div class="tv-card-word" style="color:#93C5FD;">${item.word}</div>
                 <div style="font-size:16px; opacity:0.85; margin-top:2px;">${item.desc}</div>
@@ -300,15 +338,15 @@
           </div>
         </section>
 
-        <!-- Content Row 3: Byanjonborno (ক-ঞ) -->
-        <section class="tv-carousel-section" id="tvRowSection-3">
+        <!-- Content Row 4: Byanjonborno (ক-ঞ) -->
+        <section class="tv-carousel-section" id="tvRowSection-4">
           <div class="tv-section-header">
             <h3 class="tv-section-title"><span>🔤</span> বাংলা ব্যঞ্জনবর্ণ (Consonants)</h3>
             <span class="tv-section-hint">ক, খ, গ, ঘ...</span>
           </div>
-          <div class="tv-carousel-track" data-row-idx="3">
+          <div class="tv-carousel-track" data-row-idx="4">
             ${TV_DATA.byanjonborno.map((item, col) => `
-              <div class="tv-card tv-card-square" data-row="3" data-col="${col}" data-type="byanjonborno" data-idx="${col}" tabindex="0">
+              <div class="tv-card tv-card-square" data-row="4" data-col="${col}" data-type="byanjonborno" data-idx="${col}" tabindex="0">
                 <div class="tv-card-glyph" style="color:#F472B6;">${item.glyph}</div>
                 <div class="tv-card-word" style="color:#FBCFE8;">${item.word}</div>
                 <div class="tv-card-emoji">${item.icon}</div>
@@ -317,15 +355,15 @@
           </div>
         </section>
 
-        <!-- Content Row 4: Standalone Preschool Games -->
-        <section class="tv-carousel-section" id="tvRowSection-4">
+        <!-- Content Row 5: Standalone Preschool Games -->
+        <section class="tv-carousel-section" id="tvRowSection-5">
           <div class="tv-section-header">
             <h3 class="tv-section-title"><span>🎮</span> মজার ৬টি প্রি-স্কুল গেম</h3>
             <span class="tv-section-hint">ফুলস্ক্রিন গেম খেলুন</span>
           </div>
-          <div class="tv-carousel-track" data-row-idx="4">
+          <div class="tv-carousel-track" data-row-idx="5">
             ${TV_DATA.games.map((g, col) => `
-              <div class="tv-card tv-card-wide" data-row="4" data-col="${col}" data-game-file="${g.file}" tabindex="0">
+              <div class="tv-card tv-card-wide" data-row="5" data-col="${col}" data-game-file="${g.file}" tabindex="0">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <span style="font-size:40px;">${g.icon}</span>
                   <span class="tv-card-badge" style="color:#38BDF8; background:rgba(56,189,248,0.15);">${g.badge}</span>
@@ -425,8 +463,8 @@
         const tvBtn = document.createElement('button');
         tvBtn.id = 'topbarTVToggle';
         tvBtn.className = 'pill-btn tv-mode-btn';
-        tvBtn.style.marginRight = '8px';
-        tvBtn.innerHTML = `📺 <span>TV মোড (10-Foot UI)</span>`;
+        tvBtn.title = 'স্মার্ট টিভি মোড (10-Foot UI)';
+        tvBtn.innerHTML = `📺 <span class="tv-btn-label">TV মোড</span>`;
         tvBtn.onclick = () => setTVMode(true);
         const ref = topbar.querySelector('.lang-toggle') || topbar.firstChild;
         topbar.insertBefore(tvBtn, ref);
@@ -436,8 +474,8 @@
         const exitBtn = document.createElement('button');
         exitBtn.id = 'topbarExitAppBtn';
         exitBtn.className = 'pill-btn app-exit-btn';
-        exitBtn.style.marginRight = '8px';
-        exitBtn.innerHTML = `🚪 <span>প্রস্থান (Exit)</span>`;
+        exitBtn.title = 'অ্যাপ প্রস্থান (Exit)';
+        exitBtn.innerHTML = `🚪 <span class="tv-btn-label">প্রস্থান</span>`;
         exitBtn.onclick = () => openParentalGateModal();
         const ref = topbar.querySelector('.lang-toggle') || topbar.firstChild;
         topbar.insertBefore(exitBtn, ref);
@@ -744,26 +782,34 @@
         } else if (activeNav.id === 'dashboard') {
           setTVMode(false);
           if (typeof window.openDashboard === 'function') window.openDashboard();
-        } else if (activeNav.id === 'swaraborno') {
+        } else if (activeNav.id === 'amar_class') {
           focusSection = 'content';
           contentRow = 1;
           contentCol = 0;
           updateSpatialFocus();
-        } else if (activeNav.id === 'byanjonborno') {
-          focusSection = 'content';
-          contentRow = 3;
-          contentCol = 0;
-          updateSpatialFocus();
-        } else if (activeNav.id === 'numbers') {
+        } else if (activeNav.id === 'swaraborno') {
           focusSection = 'content';
           contentRow = 2;
           contentCol = 0;
           updateSpatialFocus();
-        } else if (activeNav.id === 'games') {
+        } else if (activeNav.id === 'numbers') {
+          focusSection = 'content';
+          contentRow = 3;
+          contentCol = 0;
+          updateSpatialFocus();
+        } else if (activeNav.id === 'byanjonborno') {
           focusSection = 'content';
           contentRow = 4;
           contentCol = 0;
           updateSpatialFocus();
+        } else if (activeNav.id === 'games') {
+          focusSection = 'content';
+          contentRow = 5;
+          contentCol = 0;
+          updateSpatialFocus();
+        } else if (activeNav.id === 'videos') {
+          setTVMode(false);
+          if (typeof window.openActivity === 'function') window.openActivity('videos');
         } else {
           // Home
           focusSection = 'content';
@@ -800,7 +846,7 @@
         }
       } else if (action === 'RIGHT') {
         focusSection = 'content';
-        const targetRow = Math.min(sidebarIndex, 4);
+        const targetRow = Math.min(sidebarIndex, 5);
         contentRow = targetRow;
         contentCol = rowColMemory[contentRow] || 0;
         moved = true;
@@ -808,6 +854,7 @@
     } else if (focusSection === 'content') {
       const rowItemCounts = [
         TV_DATA.activities.length,
+        TV_DATA.amar_class.length,
         TV_DATA.swaraborno.length,
         TV_DATA.numbers.length,
         TV_DATA.byanjonborno.length,
@@ -1329,6 +1376,25 @@
         window.launchGame(gameFile);
       } else {
         window.open(gameFile, '_blank');
+      }
+      return;
+    }
+
+    if (type === 'amar_class') {
+      const item = TV_DATA.amar_class[idx];
+      if (item) {
+        tvAudio.playSelect();
+        if (typeof window.openActivity === 'function') {
+          setTVMode(false);
+          window.openActivity('syllabus');
+          setTimeout(() => {
+            if (typeof window.switchSyllabusSubject === 'function') {
+              window.switchSyllabusSubject(item.subjKey);
+            }
+          }, 200);
+        } else {
+          openTVDetailModal(item.icon, item.title, item.badge, `${item.title}: ${item.desc} (${item.count})`);
+        }
       }
       return;
     }
