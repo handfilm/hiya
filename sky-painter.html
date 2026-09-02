@@ -6,6 +6,7 @@
 <title>Sky Painter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/design-tokens.css">
 <style>
   :root{
     --coral:#FF6F59;
@@ -178,7 +179,7 @@
     <canvas id="skyCanvas"></canvas>
     <canvas id="drawCanvas"></canvas>
 
-    <div class="topbar">
+    <div class="topbar hiya-topbar" data-variant="game">
       <div class="greet" id="greetText">Hi!</div>
       <div class="top-actions">
         <button class="btn secondary btn-round" id="skyToggleBtn" title="Change sky">☀️</button>
@@ -234,16 +235,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="shared/firebase-config.js"></script>
 <script>
 /* =========================================================================
-   SKY PAINTER — single file kids app
-   Replace firebaseConfig with your own Firebase project credentials to
-   enable email/Google auth + Storage/Firestore gallery sync.
-   Suggested Firestore/Storage rules: restrict children/{uid} and
-   artwork/{uid}/** paths to request.auth.uid == uid.
+   SKY PAINTER — single file kids app (Centralized Firebase Config)
    ========================================================================= */
 
-const firebaseConfig = {
+const firebaseConfig = (typeof HIYA_FIREBASE_CONFIG !== 'undefined') ? HIYA_FIREBASE_CONFIG : {
   apiKey: "AIzaSyA9kOUaQK0V4s9ZNV1ezgYQnq_OBFpVoSo",
   authDomain: "hiya-2cd78.firebaseapp.com",
   projectId: "hiya-2cd78",
@@ -255,7 +253,13 @@ const firebaseConfig = {
 let firebaseReady = false;
 let auth = null, db = null, storage = null;
 try{
-  if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
+  if(typeof HiyaFirebase !== 'undefined'){
+    const fb = HiyaFirebase.init();
+    auth = fb.auth;
+    db = fb.db;
+    storage = fb.storage;
+    firebaseReady = !!(auth && db);
+  } else if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
     firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db = firebase.firestore();
@@ -361,16 +365,34 @@ function loadLocalProfile(){ try{ const raw = localStorage.getItem(profileKey())
 async function saveRemoteProfile(){
   if(!firebaseReady || !db || !currentUser || currentUser.guest) return;
   try{
-    const update = {};
-    update['games.skypainter'] = {
-      name: childProfile.name, age: childProfile.age, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    const payload = {
+      gameId: 'skypainter',
+      name: childProfile.name,
+      age: childProfile.age,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-    await db.collection('users').doc(currentUser.uid).set(update, { merge:true });
+    // 1. Dual-Write: Legacy Monolith field
+    const update = {};
+    update['games.skypainter'] = payload;
+    db.collection('users').doc(currentUser.uid).set(update, { merge:true }).catch(()=>{});
+
+    // 2. Dual-Write: Subcollection doc
+    await db.collection('users').doc(currentUser.uid).collection('games').doc('skypainter').set(payload, { merge:true });
   }catch(e){ console.warn('Firestore profile save failed.', e); }
 }
 async function loadRemoteProfile(){
   if(!firebaseReady || !db || !currentUser || currentUser.guest) return null;
-  try{ const doc = await db.collection('users').doc(currentUser.uid).get(); if(doc.exists) return (doc.data().games && doc.data().games.skypainter) || null; }
+  try{
+    // 1. Try Subcollection read first
+    const subDoc = await db.collection('users').doc(currentUser.uid).collection('games').doc('skypainter').get();
+    if(subDoc.exists) return subDoc.data();
+
+    // 2. Fallback to Monolith root doc
+    const doc = await db.collection('users').doc(currentUser.uid).get();
+    if(doc.exists && doc.data().games && doc.data().games.skypainter){
+      return doc.data().games.skypainter;
+    }
+  }
   catch(e){ console.warn('Firestore profile load failed.', e); }
   return null;
 }

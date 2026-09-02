@@ -10,6 +10,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="shared/firebase-config.js"></script>
+<link rel="stylesheet" href="shared/design-tokens.css">
+<link rel="stylesheet" href="shared/teacher-admin.css">
 <style>
   :root{
     /* legacy variable names kept — referenced directly inline in the HTML/JS below,
@@ -613,12 +616,34 @@
   <div class="sun"></div>
 </div>
 
-<!-- ---------- Global topbar: menu + language ---------- -->
-<div class="global-topbar">
-  <button class="icon-btn" onclick="openDrawer()" aria-label="Menu">☰</button>
-  <div class="lang-toggle">
-    <button class="lang-opt" id="langBtnBn" onclick="setLanguage('bn')">বাং</button>
-    <button class="lang-opt" id="langBtnEn" onclick="setLanguage('en')">EN</button>
+<!-- ---------- Global topbar: menu + language + child status ---------- -->
+<div class="global-topbar hiya-topbar" data-variant="home">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <button class="icon-btn" onclick="openDrawer()" aria-label="Menu" title="মেনু">☰</button>
+    <div class="child-status-pill btn-micro" id="topbarChildBadge" onclick="openAvatarModal()" style="display:none; cursor:pointer; align-items:center; gap:6px; background:linear-gradient(155deg, var(--glass-hi), var(--glass)); border:1px solid var(--glass-border); padding:4px 10px; border-radius:var(--radius-pill); font-family:var(--font-display); font-size:13px; color:var(--text-hi); box-shadow:var(--shadow-sm);" title="অ্যাভাটার ও মেডেল পরিবর্তন করো">
+      <span id="topbarAvatarIcon" style="font-size:16px;">🦋</span>
+      <span id="topbarChildName" style="font-weight:700; max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">সোনামণি</span>
+    </div>
+  </div>
+
+  <div style="display:flex; align-items:center; gap:6px;">
+    <!-- Daily Streak Counter -->
+    <div class="topbar-streak-badge btn-micro" id="topbarStreakBadge" style="display:none; align-items:center; gap:4px; background:linear-gradient(135deg, rgba(255,107,53,0.25), rgba(255,59,78,0.3)); border:1px solid rgba(255,111,89,0.5); padding:4px 10px; border-radius:var(--radius-pill); font-family:var(--font-display); font-weight:800; font-size:13px; color:#FFD866; box-shadow:0 0 12px rgba(255,107,53,0.35);" title="ধারাবাহিক দৈনিক পড়াশোনা (Daily Streak)">
+      <span>🔥</span>
+      <span id="topbarStreakCount">১</span>
+      <span style="font-size:11px; opacity:0.85; font-weight:600;">দিন</span>
+    </div>
+
+    <!-- Total Stars Counter -->
+    <div class="topbar-stars-badge btn-micro" id="topbarStarsBadge" onclick="openDashboard()" style="display:none; align-items:center; gap:4px; background:linear-gradient(135deg, rgba(255,216,102,0.25), rgba(255,196,0,0.3)); border:1px solid rgba(255,216,102,0.5); padding:4px 10px; border-radius:var(--radius-pill); font-family:var(--font-display); font-weight:800; font-size:13px; color:#FFEAA7; cursor:pointer;" title="মোট অর্জিত স্টার">
+      <span>⭐</span>
+      <span id="topbarStarCount">০</span>
+    </div>
+
+    <div class="lang-toggle">
+      <button class="lang-opt" id="langBtnBn" onclick="setLanguage('bn')">বাং</button>
+      <button class="lang-opt" id="langBtnEn" onclick="setLanguage('en')">EN</button>
+    </div>
   </div>
 </div>
 
@@ -636,6 +661,8 @@
   <div class="drawer-item" onclick="openAvatarModal()"><span class="di-icon">🦸‍♂️</span><span>আমার অ্যাভাটার ও মেডেল</span></div>
   <div class="drawer-item" onclick="openSchoolDiscoveryModal('discovery')"><span class="di-icon">🏫</span><span>টপ ১০০ স্কুল ডিরেক্টরি</span></div>
   <div class="drawer-item" onclick="openSchoolDiscoveryModal('rbac')"><span class="di-icon">⚡</span><span>RBAC ও লোড টেস্ট</span></div>
+  <div class="drawer-item" onclick="drawerGo('teacher')"><span class="di-icon">👩‍🏫</span><span>শিক্ষক ড্যাশবোর্ড (Teacher)</span></div>
+  <div class="drawer-item" onclick="drawerGo('school-admin')"><span class="di-icon">🏛️</span><span>অ্যাডমিন ড্যাশবোর্ড (Admin)</span></div>
   <div class="drawer-item" onclick="drawerGo('bangla')"><span class="di-icon">📚</span><span data-i18n="m_bangla">আমার বাংলা পাঠ (১৪)</span></div>
   <div class="drawer-item" onclick="drawerGo('english')"><span class="di-icon">🅰️</span><span>English পাঠ (৩৬)</span></div>
   <div class="drawer-item" onclick="drawerGo('math')"><span class="di-icon">➕</span><span>গণিত / Math (২২)</span></div>
@@ -663,6 +690,7 @@
   <div class="drawer-item" onclick="launchGame('sky-painter.html')"><span class="di-icon">🎨</span><span data-i18n="m_skypainter">স্কাই পেইন্টার</span></div>
   <div class="drawer-item" onclick="launchGame('shape-builder-city.html')"><span class="di-icon">🧩</span><span data-i18n="m_shapebuilder">শেইপ বিল্ডার সিটি</span></div>
   <div class="drawer-item" onclick="launchGame('melody-farm.html')"><span class="di-icon">🎵</span><span data-i18n="m_melodyfarm">মেলোডি ফার্ম</span></div>
+  <div class="drawer-item" onclick="launchGame('glimmer-glow.html')"><span class="di-icon">💄</span><span data-i18n="m_glimmerglow">Glimmer & Glow</span></div>
 
   <div class="drawer-section-title" data-i18n="drawerSoon">শীঘ্রই আসছে</div>
   <div class="drawer-item soon"><span class="di-icon">🤖</span><span data-i18n="soon_bot">চ্যাট বন্ধুর সাথে child/parent মোড</span><span class="badge" data-i18n="soonBadge">শীঘ্রই</span></div>
@@ -898,15 +926,15 @@
       <div><h2 data-i18n="m_melodyfarm">মেলোডি ফার্ম</h2><p data-i18n="d_melodyfarm">খামারের প্রাণী দিয়ে গান বাজাও</p></div>
     </div>
     <div class="flower-stop game-stop" tabindex="0" role="button" data-module="glimmerglow" onclick="launchGame('glimmer-glow.html')">
-      <span class="game-badge">নতুন</span>
+      <span class="game-badge" data-i18n="gameBadge">নতুন</span>
       <div class="flower-icon c11">💄</div>
-      <div><h2>Glimmer &amp; Glow</h2><p>মেকআপ ও সাজগোজ করে সাজো নিজের মতো</p></div>
+      <div><h2 data-i18n="m_glimmerglow">Glimmer &amp; Glow</h2><p data-i18n="d_glimmerglow">মেকআপ ও সাজগোজ করে সাজো নিজের মতো</p></div>
     </div>
   </div>
 </div>
 
 <div id="activity">
-  <div class="topbar" id="actTopbar">
+  <div class="topbar hiya-topbar" id="actTopbar" data-variant="activity">
     <div class="topbar-nav">
       <button class="backBtn labeled" id="actHomeBtn" onclick="closeActivity()" title="হোমে ফিরুন">← <span data-i18n="drawerHome">হোম</span></button>
       <button class="back-to-syllabus-btn" id="actBackToSyllabusBtn" style="display:none;" onclick="openActivity('syllabus')" title="আমার ক্লাসে ফিরুন">
@@ -919,7 +947,7 @@
     </div>
     <div class="topbar-actions">
       <button class="listen-btn" onclick="speakActivityIntro()" title="শোনো">🔊</button>
-      <div class="stars">⭐ <span id="starCount">0</span></div>
+      <div class="stars" id="actStarsBadge">⭐ <span id="starCount">0</span></div>
     </div>
   </div>
   <div class="activity-progress-wrap" id="actProgressWrap">
@@ -928,9 +956,30 @@
   <div class="activity-body" id="actBody"></div>
 </div>
 
+<!-- ---------- In-App Standalone Game Player Modal ---------- -->
+<div id="gamePlayerModal" class="game-player-modal" role="dialog" aria-modal="true" aria-label="Game Viewport" style="display:none;">
+  <div class="game-player-topbar">
+    <div class="game-player-nav">
+      <button class="game-close-btn" id="gameCloseBtn" onclick="closeGamePlayer()" title="বাগানে ফিরে যান">
+        <span>← 🌸</span> <span data-i18n="backToGarden">বাগানে ফিরুন</span>
+      </button>
+    </div>
+    <div class="game-player-title-wrap">
+      <h2 id="gamePlayerTitle">🎮 বাবল ওশেন</h2>
+    </div>
+    <div class="game-player-actions">
+      <button class="game-tool-btn" onclick="reloadGameIframe()" title="পুনরায় শুরু করুন">🔄 <span class="game-action-text" data-i18n="reloadGame">রিলোড</span></button>
+      <button class="game-tool-btn" onclick="openCurrentGameInNewTab()" title="নতুন ট্যাবে খুলুন">↗ <span class="game-action-text" data-i18n="openNewTab">নতুন ট্যাব</span></button>
+    </div>
+  </div>
+  <div class="game-player-frame-container" id="gameFrameWrap">
+    <iframe id="gamePlayerIframe" src="about:blank" allow="autoplay; fullscreen; accelerometer; gyroscope" frameborder="0"></iframe>
+  </div>
+</div>
+
 <!-- ---------- Parent dashboard ---------- -->
 <div id="dashboard">
-  <div class="topbar">
+  <div class="topbar hiya-topbar" data-variant="drawer">
     <button class="backBtn labeled" onclick="closeDashboard()">← <span data-i18n="drawerHome">হোম</span></button>
     <h2 class="display" id="dashTitle" style="margin:0; font-size:20px;">প্যারেন্ট ড্যাশবোর্ড</h2>
   </div>
@@ -988,6 +1037,12 @@
     </div>
   </div>
 </div>
+
+<!-- ---------- Teacher Dashboard Container ---------- -->
+<div id="teacherDashboardContainer" style="display:none; position:fixed; inset:0; z-index:var(--z-drawer, 1100); background:var(--night-canvas, #0D041A); overflow-y:auto;"></div>
+
+<!-- ---------- School Admin Dashboard Container ---------- -->
+<div id="schoolAdminDashboardContainer" style="display:none; position:fixed; inset:0; z-index:var(--z-drawer, 1100); background:var(--night-canvas, #0D041A); overflow-y:auto;"></div>
 
 <!-- ---------- ENTERPRISE MULTI-TENANT, SCHOOL DISCOVERY & LOAD TESTING MODAL ---------- -->
 <div class="discovery-modal-overlay" id="schoolDiscoveryModal">
@@ -1148,6 +1203,14 @@
             <div class="load-stat-lbl">ডেটা আইসোলেশন স্ট্যাটাস</div>
           </div>
         </div>
+        <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+          <button class="primary-btn" style="margin:0; font-size:13px; padding:10px 18px; background:linear-gradient(135deg, #FF3B4E, #FF7B54);" onclick="closeSchoolDiscoveryModal(); openTeacherDashboard();">
+            👩‍🏫 শিক্ষক ড্যাশবোর্ড খুলুন (Teacher View)
+          </button>
+          <button class="primary-btn" style="margin:0; font-size:13px; padding:10px 18px; background:linear-gradient(135deg, #8A2BE2, #4A00E0);" onclick="closeSchoolDiscoveryModal(); openSchoolAdminDashboard();">
+            🏛️ অ্যাডমিন ড্যাশবোর্ড খুলুন (Admin View)
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1199,63 +1262,101 @@
 </div>
 
 <!-- ---------- KIDS DIGITAL AVATAR & MEDAL TROPHY SHELF MODAL ---------- -->
-<div class="discovery-modal-overlay" id="avatarBadgeModal">
-  <div class="discovery-modal-card" style="max-width: 680px;">
-    <div class="discovery-modal-header">
-      <div class="discovery-modal-title">
+<div class="hiya-modal-overlay discovery-modal-overlay" id="avatarBadgeModal">
+  <div class="hiya-modal-card discovery-modal-card" style="max-width: 680px;">
+    <div class="discovery-modal-header" style="border-bottom:1px solid var(--glass-border); padding:16px 20px;">
+      <div class="discovery-modal-title" style="display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--text-hi);">
         <span>🦸‍♂️</span>
         <span>আমার অ্যাভাটার ও অর্জিত মেডেল</span>
       </div>
-      <button class="pill-btn" style="background:rgba(255,255,255,0.1); color:#fff; border:none; padding:6px 14px; font-weight:800; cursor:pointer;" onclick="closeAvatarModal()">✕ বন্ধ</button>
+      <button class="pill-btn btn-micro" style="background:rgba(255,255,255,0.12); color:#fff; border:1px solid var(--glass-border); padding:6px 14px; font-weight:800; cursor:pointer;" onclick="closeAvatarModal()">✕ বন্ধ</button>
     </div>
-    <div class="discovery-modal-body">
+    <div class="discovery-modal-body" style="padding:20px;">
       <!-- Active Avatar Display -->
-      <div style="text-align:center; padding:18px 0; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:18px;">
-        <div class="avatar-icon-large" id="currentAvatarIcon">🦋</div>
-        <h3 style="font-size:20px; color:#ffd866; margin-bottom:4px;" id="currentAvatarName">রঙিন প্রজাপতি</h3>
-        <p style="font-size:13px; color:rgba(255,243,246,0.7);">বাচ্চার প্রোফাইল ব্যক্তিত্ব ও প্রিয় সঙ্গী</p>
+      <div style="text-align:center; padding:16px 0; border-bottom:1px solid var(--glass-border); margin-bottom:18px;">
+        <div class="avatar-icon-large" id="currentAvatarIcon" style="font-size:48px; animation:characterCelebrationBounce 3s ease-in-out infinite;">🦋</div>
+        <h3 style="font-family:var(--font-display); font-size:20px; color:#ffd866; margin:6px 0 2px;" id="currentAvatarName">রঙিন প্রজাপতি</h3>
+        <p style="font-size:13px; color:var(--text-mid); margin:0;">বাচ্চার প্রোফাইল ব্যক্তিত্ব ও প্রিয় সঙ্গী</p>
       </div>
 
       <!-- Choose Avatar -->
-      <h4 style="font-size:15px; color:#3febc9; margin-bottom:10px;">✨ পছন্দের অ্যাভাটার বেছে নাও:</h4>
-      <div class="avatar-grid">
-        <div class="avatar-option-card selected" id="av_butterfly" onclick="selectAvatar('🦋', 'রঙিন প্রজাপতি', 'av_butterfly')">
+      <h4 style="font-family:var(--font-display); font-size:15px; color:#3febc9; margin-bottom:12px;">✨ পছন্দের অ্যাভাটার বেছে নাও:</h4>
+      <div class="avatar-grid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;">
+        <div class="avatar-option-card selected btn-micro" id="av_butterfly" onclick="selectAvatar('🦋', 'রঙিন প্রজাপতি', 'av_butterfly')">
           <div style="font-size:32px; margin-bottom:4px;">🦋</div>
           <div style="font-size:13px; font-weight:700;">প্রজাপতি</div>
         </div>
-        <div class="avatar-option-card" id="av_tiger" onclick="selectAvatar('🐯', 'সাহসী বাঘ মামা', 'av_tiger')">
+        <div class="avatar-option-card btn-micro" id="av_tiger" onclick="selectAvatar('🐯', 'সাহসী বাঘ মামা', 'av_tiger')">
           <div style="font-size:32px; margin-bottom:4px;">🐯</div>
           <div style="font-size:13px; font-weight:700;">বাঘ মামা</div>
         </div>
-        <div class="avatar-option-card" id="av_firefly" onclick="selectAvatar('✨', 'টুনটুনি জোনাকি', 'av_firefly')">
+        <div class="avatar-option-card btn-micro" id="av_firefly" onclick="selectAvatar('✨', 'টুনটুনি জোনাকি', 'av_firefly')">
           <div style="font-size:32px; margin-bottom:4px;">✨</div>
           <div style="font-size:13px; font-weight:700;">টুনটুনি</div>
         </div>
-        <div class="avatar-option-card" id="av_rocket" onclick="selectAvatar('🚀', 'মহাকাশ অভিযাত্রী', 'av_rocket')">
+        <div class="avatar-option-card btn-micro" id="av_rocket" onclick="selectAvatar('🚀', 'মহাকাশ অভিযাত্রী', 'av_rocket')">
           <div style="font-size:32px; margin-bottom:4px;">🚀</div>
           <div style="font-size:13px; font-weight:700;">রকেট হিরো</div>
         </div>
       </div>
 
       <!-- Achievement Medals & Trophies -->
-      <h4 style="font-size:15px; color:#ff6fb0; margin:24px 0 10px 0;">🏆 অর্জিত শিক্ষা মেডেল ও সম্মাননা:</h4>
+      <h4 style="font-family:var(--font-display); font-size:15px; color:#ff6fb0; margin:24px 0 12px 0;">🏆 অর্জিত শিক্ষা মেডেল ও সম্মাননা:</h4>
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:12px;">
-        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,216,102,0.3); border-radius:14px; padding:12px; text-align:center;">
+        <div class="dash-card" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,216,102,0.3); border-radius:14px; padding:14px 10px; text-align:center;">
           <div style="font-size:28px; margin-bottom:4px;">🥇</div>
-          <div style="font-size:13px; font-weight:800; color:#ffd866;">বর্ণমালার জাদুকর</div>
-          <div style="font-size:11px; color:rgba(255,255,255,0.6);">বাংলা ৫০টি স্বরবর্ণ ও ব্যঞ্জনবর্ণ চেনা</div>
+          <div style="font-family:var(--font-display); font-size:13.5px; font-weight:800; color:#ffd866;">বর্ণমালার জাদুকর</div>
+          <div style="font-size:11px; color:var(--text-dim);">বাংলা ৫০টি স্বরবর্ণ ও ব্যঞ্জনবর্ণ চেনা</div>
         </div>
-        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(63,235,201,0.3); border-radius:14px; padding:12px; text-align:center;">
+        <div class="dash-card" style="background:rgba(255,255,255,0.04); border:1px solid rgba(63,235,201,0.3); border-radius:14px; padding:14px 10px; text-align:center;">
           <div style="font-size:28px; margin-bottom:4px;">🎖️</div>
-          <div style="font-size:13px; font-weight:800; color:#3febc9;">গণিত মৌমাছি</div>
-          <div style="font-size:11px; color:rgba(255,255,255,0.6);">১ থেকে ২০ পর্যন্ত সংখ্যা গণনা সম্পন্ন</div>
+          <div style="font-family:var(--font-display); font-size:13.5px; font-weight:800; color:#3febc9;">গণিত মৌমাছি</div>
+          <div style="font-size:11px; color:var(--text-dim);">১ থেকে ২০ পর্যন্ত সংখ্যা গণনা সম্পন্ন</div>
         </div>
-        <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,111,176,0.3); border-radius:14px; padding:12px; text-align:center;">
+        <div class="dash-card" style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,111,176,0.3); border-radius:14px; padding:14px 10px; text-align:center;">
           <div style="font-size:28px; margin-bottom:4px;">🎨</div>
-          <div style="font-size:13px; font-weight:800; color:#ff6fb0;">রঙিন তুলির মাস্টার</div>
-          <div style="font-size:11px; color:rgba(255,255,255,0.6);">স্কাই পেইন্টার ও ড্রইং ক্যানভাস মাস্টার</div>
+          <div style="font-family:var(--font-display); font-size:13.5px; font-weight:800; color:#ff6fb0;">রঙিন তুলির মাস্টার</div>
+          <div style="font-size:11px; color:var(--text-dim);">স্কাই পেইন্টার ও ড্রইং ক্যানভাস মাস্টার</div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ---------- LESSON COMPLETION MOMENT CELEBRATION MODAL ---------- -->
+<div class="hiya-modal-overlay" id="lessonCelebrationOverlay">
+  <div class="lesson-celebration-card" role="dialog" aria-modal="true" aria-labelledby="celebHeading">
+    <div class="lesson-celebration-character" id="celebChar">🌸</div>
+    <h2 id="celebHeading" style="font-family:var(--font-display); font-size:24px; font-weight:800; color:#FFFDF6; margin:0 0 6px;">পাঠ সম্পন্ন হয়েছে! 🎉</h2>
+    <div style="font-size:14px; color:var(--text-mid); margin-bottom:10px;" id="celebLessonTitle">মূল পাঠ</div>
+    
+    <div class="celebration-star-pill" id="celebStarGain">+২ স্টার অর্জিত! ⭐</div>
+    
+    <div class="celebration-stats-row">
+      <div class="celebration-stat-box">
+        <div style="font-size:11.5px; color:var(--text-dim); margin-bottom:2px;">মোট স্টার</div>
+        <div style="font-family:var(--font-display); font-size:18px; font-weight:800; color:#FFEAA7;">⭐ <span id="celebTotalStars">০</span></div>
+      </div>
+      <div class="celebration-stat-box">
+        <div style="font-size:11.5px; color:var(--text-dim); margin-bottom:2px;">দৈনিক স্ট্রিক</div>
+        <div style="font-family:var(--font-display); font-size:18px; font-weight:800; color:#FFD866;">🔥 <span id="celebStreakDays">১</span> দিন</div>
+      </div>
+    </div>
+
+    <!-- Milestone & Medal Unlock Alert (if unlocked) -->
+    <div id="celebMedalUnlockBox" style="display:none; background:linear-gradient(135deg, rgba(255,216,102,0.2), rgba(255,111,176,0.2)); border:1px solid rgba(255,216,102,0.6); border-radius:var(--radius-md); padding:10px 14px; margin-bottom:18px; animation:medalGlowPulse 2s infinite;">
+      <div style="font-family:var(--font-display); font-weight:800; font-size:14px; color:#FFEAA7;" id="celebMedalTitle">🥇 নতুন মেডেল অর্জিত!</div>
+      <div style="font-size:11.5px; color:rgba(255,255,255,0.85); margin-top:2px;">তুমি দারুণ উন্নতি করছ!</div>
+    </div>
+
+    <!-- Quick Action Buttons -->
+    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+      <button class="primary-btn btn-micro" id="celebBtnNext" style="flex:1; min-width:140px; margin:0; padding:12px 18px; background:linear-gradient(180deg, #00e0a8, #00a67d); color:#051410; font-weight:800;">
+        পরের পাঠে যাই →
+      </button>
+      <button class="pill-btn btn-micro" id="celebBtnGarden" style="flex:1; min-width:140px; margin:0; padding:12px 18px; background:rgba(255,255,255,0.12); color:#fff; border:1px solid var(--glass-border); font-weight:700;">
+        🏡 বাগানে ফিরি
+      </button>
     </div>
   </div>
 </div>
@@ -1274,9 +1375,14 @@
 <script src="content-data.js"></script>
 
 <script>
-// ================= Firebase setup =================
-// নিচের কনফিগ Firebase Console থেকে কপি করে বসান (SETUP_GUIDE.md দেখুন)
-const firebaseConfig = {
+// ================= Firebase setup (Centralized via firebase-config.js) =================
+const { app: fbApp, auth, db, storage } = (typeof HiyaFirebase !== 'undefined') ? HiyaFirebase.init() : {
+  app: firebase.app(),
+  auth: firebase.auth(),
+  db: firebase.firestore(),
+  storage: firebase.storage()
+};
+const firebaseConfig = (typeof HIYA_FIREBASE_CONFIG !== 'undefined') ? HIYA_FIREBASE_CONFIG : {
   apiKey: "AIzaSyA9kOUaQK0V4s9ZNV1ezgYQnq_OBFpVoSo",
   authDomain: "hiya-2cd78.firebaseapp.com",
   projectId: "hiya-2cd78",
@@ -1284,11 +1390,6 @@ const firebaseConfig = {
   messagingSenderId: "473906193558",
   appId: "1:473906193558:web:304cde07e050faaa308eb7"
 };
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-const storage = firebase.storage(); // kept for now; gallery uploads below use R2 instead
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
 // ================= R2 asset Worker (audio + gallery images) =================
@@ -1364,6 +1465,8 @@ const I18N = {
     m_skypainter:'স্কাই পেইন্টার', d_skypainter:'আকাশ জুড়ে রং দিয়ে ছবি আঁকো',
     m_shapebuilder:'শেইপ বিল্ডার সিটি', d_shapebuilder:'আকৃতি দিয়ে গাড়ি-বাড়ি বানাও',
     m_melodyfarm:'মেলোডি ফার্ম', d_melodyfarm:'খামারের প্রাণী দিয়ে গান বাজাও',
+    m_glimmerglow:'Glimmer & Glow', d_glimmerglow:'মেকআপ ও সাজগোজ করে সাজো নিজের মতো',
+    backToGarden:'বাগানে ফিরুন', reloadGame:'রিলোড', openNewTab:'নতুন ট্যাব',
     dashAgeLbl:'বয়স', dashStreamLbl:'স্ট্রিম', dashStarsLbl:'মোট স্টার',
     dashLevelTitle:'ক্লাস / লেভেল', dashLevelHint:'লেভেল বদলালে হোম স্ক্রিনের মডিউলগুলো বাচ্চার বয়স উপযোগী করে দেখানো হবে',
     dashTermHint:'এই টার্মে কতটুকু শেখা হয়েছে তার উপর ভিত্তি করে অক্ষর/সংখ্যা মডিউলে দেখানো কনটেন্টের পরিমাণ ঠিক হবে',
@@ -1453,6 +1556,8 @@ const I18N = {
     m_skypainter:'Sky Painter', d_skypainter:'Paint across the sky with glowing colours',
     m_shapebuilder:'Shape Builder City', d_shapebuilder:'Build cars and houses out of shapes',
     m_melodyfarm:'Melody Farm', d_melodyfarm:'Play music with the farm animals',
+    m_glimmerglow:'Glimmer & Glow', d_glimmerglow:'Dress up, style and create makeover art',
+    backToGarden:'Back to Garden', reloadGame:'Reload', openNewTab:'New Tab',
     dashAgeLbl:'Age', dashStreamLbl:'Stream', dashStarsLbl:'Total stars',
     dashLevelTitle:'Class / Level', dashLevelHint:"Changing the level will show modules suited to the child's age on the home screen",
     dashTermHint:"How much has been taught this term decides how much content shows in the letters/numbers modules",
@@ -1547,11 +1652,79 @@ function closeDrawer(){
 }
 function drawerGo(target){
   closeDrawer();
-  if(!currentUser || !childData){ return; }
-  if(target === 'home'){ closeActivity(); closeDashboard(); }
-  else if(target === 'dashboard'){ closeActivity(); openDashboard(); }
-  else { closeDashboard(); openActivity(target); }
+  if(target === 'home'){ 
+    closeActivity(); 
+    closeDashboard(); 
+    closeTeacherDashboard(); 
+    closeSchoolAdminDashboard(); 
+    closeGamePlayer();
+  }
+  else if(target === 'dashboard'){ 
+    closeActivity(); 
+    closeTeacherDashboard(); 
+    closeSchoolAdminDashboard(); 
+    closeGamePlayer();
+    openDashboard(); 
+  }
+  else if(target === 'teacher'){ 
+    closeActivity(); 
+    closeDashboard(); 
+    closeSchoolAdminDashboard(); 
+    closeGamePlayer();
+    openTeacherDashboard(); 
+  }
+  else if(target === 'school-admin'){ 
+    closeActivity(); 
+    closeDashboard(); 
+    closeTeacherDashboard(); 
+    closeGamePlayer();
+    openSchoolAdminDashboard(); 
+  }
+  else if((typeof GAMES_CATALOG !== 'undefined' && GAMES_CATALOG[target]) || (typeof target === 'string' && target.endsWith('.html'))){
+    launchGame(target);
+  }
+  else { 
+    closeDashboard(); 
+    closeTeacherDashboard(); 
+    closeSchoolAdminDashboard(); 
+    closeGamePlayer();
+    openActivity(target); 
+  }
 }
+
+window.openTeacherDashboard = function() {
+  closeActivity();
+  closeDashboard();
+  closeSchoolAdminDashboard();
+  closeGamePlayer();
+  const c = document.getElementById('teacherDashboardContainer');
+  if (c) c.style.display = 'block';
+  if (window.TeacherAdminPortal) {
+    window.TeacherAdminPortal.renderTeacherDashboard();
+  }
+};
+
+window.closeTeacherDashboard = function() {
+  const c = document.getElementById('teacherDashboardContainer');
+  if (c) c.style.display = 'none';
+};
+
+window.openSchoolAdminDashboard = function() {
+  closeActivity();
+  closeDashboard();
+  closeTeacherDashboard();
+  closeGamePlayer();
+  const c = document.getElementById('schoolAdminDashboardContainer');
+  if (c) c.style.display = 'block';
+  if (window.TeacherAdminPortal) {
+    window.TeacherAdminPortal.renderSchoolAdminDashboard();
+  }
+};
+
+window.closeSchoolAdminDashboard = function() {
+  const c = document.getElementById('schoolAdminDashboardContainer');
+  if (c) c.style.display = 'none';
+};
 
 const STREAM_LABELS = {bangla:'বাংলা মিডিয়াম', english_version:'ইংলিশ ভার্সন', english_medium:'ইংলিশ মিডিয়াম'};
 const LEVEL_LABELS = {playgroup:'প্লে-গ্রুপ', nursery:'নার্সারি', kg:'কেজি (KG)', class1:'ক্লাস ১'};
@@ -1560,7 +1733,7 @@ const MODULE_LABELS = {letters:'বর্ণ বাগান', numbers:'সং�
   animals:'প্রাণী জগৎ', words:'শব্দ পড়ি', mathgame:'যোগ-বিয়োগ', english:'ABC গার্ডেন',
   multiplication:'নামতা শিখি', sentences:'বাক্য পড়ি', bangla:'আমার বাংলা পাঠ',
   bubbleocean:'বাবল ওশেন', tinychef:'টাইনি শেফ কিচেন', skypainter:'স্কাই পেইন্টার',
-  shapebuilder:'শেইপ বিল্ডার সিটি', melodyfarm:'মেলোডি ফার্ম'};
+  shapebuilder:'শেইপ বিল্ডার সিটি', melodyfarm:'মেলোডি ফার্ম', glimmerglow:'Glimmer & Glow'};
 function streamLabel(key){ return t('stream_' + key) || STREAM_LABELS[key] || key; }
 // প্রতিটা মডিউল কোন কোন লেভেলে দেখানো হবে
 const MODULE_LEVELS = {
@@ -1581,16 +1754,18 @@ const MODULE_LEVELS = {
   tinychef:['nursery','kg','class1'],
   skypainter:['playgroup','nursery','kg','class1'],
   shapebuilder:['nursery','kg','class1'],
-  melodyfarm:['playgroup','nursery','kg']
+  melodyfarm:['playgroup','nursery','kg'],
+  glimmerglow:['playgroup','nursery','kg','class1']
 };
-// Each of the 5 standalone games saves under childData.games.<id> with its own
+// Each of the standalone games saves under childData.games.<id> with its own
 // shape; this pulls one friendly headline stat out of each for the dashboard.
 const GAME_SUMMARY = [
   { id:'bubbleocean', summarize:d => `🫧 ${(d.reef||[]).length}/12` },
   { id:'tinychef', summarize:d => `🍳 ${Object.values(d.progress||{}).filter(p=>p.completed).length}` },
   { id:'skypainter', summarize:d => d.name ? '🎨 ✓' : '—' },
   { id:'shapebuilder', summarize:d => `🧩 ${Object.values(d.progress||{}).filter(p=>p.completed).length}` },
-  { id:'melodyfarm', summarize:d => `🎵 ${(d.unlockedAnimals||[]).length}` }
+  { id:'melodyfarm', summarize:d => `🎵 ${(d.unlockedAnimals||[]).length}` },
+  { id:'glimmerglow', summarize:d => d.savedLook ? '💄 ✓' : '💄 Ready' }
 ];
 function filterHomeByLevel(){
   const level = (childData && childData.level) || 'playgroup';
@@ -1682,11 +1857,85 @@ auth.onAuthStateChanged(async (user)=>{
     return;
   }
   document.getElementById('authScreen').style.display='none';
+
+  // Sync / Mint Custom Claims (RBAC Role & School ID) in background
+  if(typeof HiyaFirebase !== 'undefined' && HiyaFirebase.syncUserCustomClaims){
+    HiyaFirebase.syncUserCustomClaims(user).catch(()=>{});
+  }
+
   const doc = await db.collection('users').doc(user.uid).get();
   if(doc.exists && doc.data().childName){
     childData = doc.data();
     if(!childData.term) childData.term = 'midTerm'; // accounts created before term existed
     if(!childData.weakSpots) childData.weakSpots = {}; // accounts created before weakness-tracking existed
+    if(!childData.stars) childData.stars = {};
+    if(!childData.galleryUrls) childData.galleryUrls = [];
+    if(!childData.games) childData.games = {};
+    if(typeof childData.streakDays !== 'number') childData.streakDays = 1;
+
+    // Dual-Read: Hydrate from new subcollections if populated
+    try {
+      const userRef = db.collection('users').doc(user.uid);
+
+      // 1. Progress subcollection
+      const progSnap = await userRef.collection('progress').get();
+      if(!progSnap.empty){
+        const subStars = {};
+        progSnap.forEach(pDoc => {
+          const pData = pDoc.data();
+          if(pData.moduleId === 'streak'){
+            if(typeof pData.streakDays === 'number') childData.streakDays = pData.streakDays;
+            if(pData.lastActiveDate) childData.lastActiveDate = pData.lastActiveDate;
+          } else if(pData.moduleId && typeof pData.stars === 'number'){
+            subStars[pData.moduleId] = pData.stars;
+          }
+        });
+        childData.stars = { ...childData.stars, ...subStars };
+      }
+
+      // 2. Weak spots subcollection
+      const weakSnap = await userRef.collection('weakSpots').get();
+      if(!weakSnap.empty){
+        const subWeak = {};
+        weakSnap.forEach(wDoc => {
+          const wData = wDoc.data();
+          if(wData.moduleKey && wData.itemKey && typeof wData.errorCount === 'number'){
+            if(!subWeak[wData.moduleKey]) subWeak[wData.moduleKey] = {};
+            subWeak[wData.moduleKey][wData.itemKey] = wData.errorCount;
+          }
+        });
+        childData.weakSpots = { ...childData.weakSpots, ...subWeak };
+      }
+
+      // 3. Gallery subcollection
+      const galSnap = await userRef.collection('gallery').orderBy('createdAt', 'desc').get();
+      if(!galSnap.empty){
+        const subGallery = [];
+        galSnap.forEach(gDoc => {
+          const gData = gDoc.data();
+          if(gData.url && !subGallery.includes(gData.url)){
+            subGallery.push(gData.url);
+          }
+        });
+        if(subGallery.length > 0){
+          childData.galleryUrls = subGallery;
+        }
+      }
+
+      // 4. Games subcollection
+      const gamesSnap = await userRef.collection('games').get();
+      if(!gamesSnap.empty){
+        const subGames = {};
+        gamesSnap.forEach(gmDoc => {
+          subGames[gmDoc.id] = gmDoc.data();
+        });
+        childData.games = { ...childData.games, ...subGames };
+      }
+    } catch(dualReadErr) {
+      console.warn('[DualRead] Subcollection hydrate notice, falling back to monolith root:', dualReadErr);
+    }
+
+    calculateDailyStreak();
     showHome();
   } else {
     document.getElementById('setupScreen').style.display='flex';
@@ -1702,13 +1951,33 @@ function handleSetupSubmit(){
   const level = document.getElementById('setupLevel').value;
   const errEl = document.getElementById('setupError');
   if(!name || !age){ errEl.textContent = t('err_setupRequired'); return; }
-  childData = { childName:name, childAge:Number(age), stream, level, term:'midTerm', stars:{}, totalStars:0, galleryUrls:[], weakSpots:{} };
+  const todayStr = new Date().toISOString().slice(0, 10);
+  childData = {
+    childName: name,
+    childAge: Number(age),
+    stream,
+    level,
+    term: 'midTerm',
+    stars: {},
+    totalStars: 0,
+    streakDays: 1,
+    lastActiveDate: todayStr,
+    lastPracticedAt: new Date().toISOString(),
+    galleryUrls: [],
+    weakSpots: {},
+    games: {}
+  };
+  
   db.collection('users').doc(currentUser.uid).set(childData)
-    .then(()=>{ document.getElementById('setupScreen').style.display='none'; showHome(); })
+    .then(()=>{ 
+      document.getElementById('setupScreen').style.display='none'; 
+      showHome(); 
+    })
     .catch(()=>{ errEl.textContent = t('err_setupSave'); });
 }
 
 function handleGuestMode(){
+  const todayStr = new Date().toISOString().slice(0, 10);
   childData = {
     childName: 'সোনামণি',
     childAge: 6,
@@ -1717,8 +1986,12 @@ function handleGuestMode(){
     term: 'midTerm',
     stars: { syllabus: 5, bangla: 4, english: 8, math: 6, islam: 2, gk: 4, science: 3, computer: 2, moral: 3, drawing: 2 },
     totalStars: 39,
+    streakDays: 3,
+    lastActiveDate: todayStr,
+    lastPracticedAt: new Date().toISOString(),
     galleryUrls: [],
-    weakSpots: {}
+    weakSpots: {},
+    games: {}
   };
   currentUser = { uid: 'guest_' + Date.now(), isAnonymous: true };
   document.getElementById('authScreen').style.display = 'none';
@@ -1728,12 +2001,94 @@ function handleGuestMode(){
 }
 window.handleGuestMode = handleGuestMode;
 
+// Helper: Bengali digits conversion
+function toBengaliNumber(num){
+  if(num === null || num === undefined) return '০';
+  const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  return String(num).replace(/[0-9]/g, d => bnDigits[d]);
+}
+window.toBengaliNumber = toBengaliNumber;
+
+// Daily Streak Engine
+function calculateDailyStreak(){
+  if(!childData) return 1;
+  const now = new Date();
+  const todayStr = now.toISOString().slice(0, 10);
+  const lastDateStr = childData.lastActiveDate || localStorage.getItem('kb_last_active_date');
+
+  if(!lastDateStr){
+    childData.streakDays = Math.max(1, childData.streakDays || 1);
+    childData.lastActiveDate = todayStr;
+    childData.lastPracticedAt = now.toISOString();
+  } else if(lastDateStr === todayStr){
+    childData.streakDays = Math.max(1, childData.streakDays || 1);
+  } else {
+    try {
+      const lastDate = new Date(lastDateStr + 'T00:00:00Z');
+      const todayDate = new Date(todayStr + 'T00:00:00Z');
+      const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+      if(diffDays === 1){
+        childData.streakDays = (childData.streakDays || 0) + 1;
+      } else if(diffDays > 1){
+        childData.streakDays = 1;
+      }
+      childData.lastActiveDate = todayStr;
+      childData.lastPracticedAt = now.toISOString();
+    } catch(e){
+      childData.streakDays = Math.max(1, childData.streakDays || 1);
+    }
+  }
+
+  localStorage.setItem('kb_last_active_date', childData.lastActiveDate);
+  localStorage.setItem('kb_streak_days', String(childData.streakDays));
+  return childData.streakDays;
+}
+window.calculateDailyStreak = calculateDailyStreak;
+
+// Topbar Child Status Badges updater
+function updateTopbarStatusUI(){
+  if(!childData) return;
+  const topbarBadge = document.getElementById('topbarChildBadge');
+  const streakBadge = document.getElementById('topbarStreakBadge');
+  const starsBadge = document.getElementById('topbarStarsBadge');
+  const streakCount = document.getElementById('topbarStreakCount');
+  const starCount = document.getElementById('topbarStarCount');
+  const actStarCount = document.getElementById('starCount');
+  const childNameEl = document.getElementById('topbarChildName');
+  const avatarIconEl = document.getElementById('topbarAvatarIcon');
+  
+  if(topbarBadge) topbarBadge.style.display = 'flex';
+  if(streakBadge) streakBadge.style.display = 'flex';
+  if(starsBadge) starsBadge.style.display = 'flex';
+  
+  const currentStreak = childData.streakDays || 1;
+  const totalStars = childData.totalStars || stars || 0;
+  
+  if(streakCount) streakCount.textContent = toBengaliNumber(currentStreak);
+  if(starCount) starCount.textContent = toBengaliNumber(totalStars);
+  if(actStarCount) actStarCount.textContent = totalStars;
+  if(childNameEl) childNameEl.textContent = childData.childName || 'সোনামণি';
+  
+  const savedAvatar = localStorage.getItem('kb_selected_avatar');
+  if(savedAvatar){
+    try {
+      const parsed = JSON.parse(savedAvatar);
+      if(parsed && parsed.icon && avatarIconEl) avatarIconEl.textContent = parsed.icon;
+    } catch(e){}
+  }
+}
+window.updateTopbarStatusUI = updateTopbarStatusUI;
+
 function showHome(){
   applyStreamLanguageDefault();
+  calculateDailyStreak();
   document.getElementById('appHeader').style.display='block';
   document.getElementById('home').style.display='block';
   filterHomeByLevel();
   updateAppTitle();
+  updateTopbarStatusUI();
   bump.__loaded = true;
   if(!sessionStorage.getItem('khukirWelcomed')){
     sessionStorage.setItem('khukirWelcomed','1');
@@ -1741,17 +2096,108 @@ function showHome(){
   }
 }
 
-// ================= Progress sync (per-module stars) =================
+// ================= Progress sync (Dual-Write to Monolith & Subcollections) =================
 let saveTimer = null;
 function persistProgress(){
   if(!currentUser || !childData) return;
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(()=>{
-    db.collection('users').doc(currentUser.uid).update({
-      stars: childData.stars, totalStars: childData.totalStars, weakSpots: childData.weakSpots || {}
-    }).catch(e=>console.error('progress save failed', e));
+  saveTimer = setTimeout(async ()=>{
+    const uid = currentUser.uid;
+    if(!uid || currentUser.isAnonymous) return;
+
+    // 1. Dual-Write: Legacy Monolithic Update (Ensures zero downtime for existing clients)
+    db.collection('users').doc(uid).update({
+      stars: childData.stars || {},
+      totalStars: childData.totalStars || 0,
+      streakDays: childData.streakDays || 1,
+      lastActiveDate: childData.lastActiveDate || new Date().toISOString().slice(0,10),
+      lastPracticedAt: childData.lastPracticedAt || new Date().toISOString(),
+      weakSpots: childData.weakSpots || {},
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(e=>console.warn('[MonolithSave] Notice:', e));
+
+    // 2. Dual-Write: New Scalable Subcollections
+    try {
+      const userRef = db.collection('users').doc(uid);
+      const batch = db.batch();
+
+      // Subcollection: users/{uid}/progress/streak
+      const streakRef = userRef.collection('progress').doc('streak');
+      batch.set(streakRef, {
+        moduleId: 'streak',
+        streakDays: Number(childData.streakDays) || 1,
+        lastActiveDate: childData.lastActiveDate || new Date().toISOString().slice(0,10),
+        lastPracticedAt: childData.lastPracticedAt || new Date().toISOString(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      // Subcollection: users/{uid}/progress/{moduleId}
+      if(childData.stars){
+        for(const [modKey, starCount] of Object.entries(childData.stars)){
+          if(modKey === 'streak') continue;
+          const progRef = userRef.collection('progress').doc(modKey);
+          batch.set(progRef, {
+            moduleId: modKey,
+            stars: Number(starCount) || 0,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        }
+      }
+
+      // Subcollection: users/{uid}/weakSpots/{itemId}
+      if(childData.weakSpots){
+        for(const [modKey, itemsMap] of Object.entries(childData.weakSpots)){
+          if(itemsMap && typeof itemsMap === 'object'){
+            for(const [itemKey, errCount] of Object.entries(itemsMap)){
+              const sanitizedKey = encodeURIComponent(String(itemKey)).replace(/%/g, '_');
+              const docId = `${modKey}_${sanitizedKey}`;
+              const weakRef = userRef.collection('weakSpots').doc(docId);
+              batch.set(weakRef, {
+                itemId: docId,
+                moduleKey: modKey,
+                itemKey: String(itemKey),
+                errorCount: Number(errCount) || 0,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+              }, { merge: true });
+            }
+          }
+        }
+      }
+
+      await batch.commit();
+    } catch(subErr) {
+      console.warn('[DualWrite] Subcollection persist notice:', subErr);
+    }
   }, 800);
 }
+
+// Client-side test trigger for subcollection migration
+window.migrateCurrentAccountToSubcollections = async function(){
+  if(!currentUser || currentUser.isAnonymous){
+    alert('Please sign in with a registered account to test migration.');
+    return;
+  }
+  try {
+    const idToken = await currentUser.getIdToken();
+    const res = await fetch('/api/migration/migrate-user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`
+      },
+      body: JSON.stringify({
+        uid: currentUser.uid,
+        monolithicData: childData
+      })
+    });
+    const result = await res.json();
+    console.log('[Migration] Result:', result);
+    return result;
+  } catch(e) {
+    console.error('[Migration] Failed:', e);
+    throw e;
+  }
+};
 
 // ================= Curriculum (syllabus) browser =================
 // Renders CURRICULUM[level][term][subject] (from content-data.js) into
@@ -1897,24 +2343,163 @@ function handleTermChange(newTerm){
 }
 
 let stars = 0;
+
+function animateStarIncrement(n){
+  const numGained = n || 1;
+  const badges = [
+    document.getElementById('topbarStarsBadge'),
+    document.getElementById('actStarsBadge'),
+    document.querySelector('.topbar-actions .stars'),
+    document.querySelector('.topbar .stars')
+  ].filter(Boolean);
+
+  const uniqueBadges = Array.from(new Set(badges));
+
+  uniqueBadges.forEach(badge => {
+    // 1. Pop & burst animation on badge container
+    badge.classList.remove('star-badge-pop');
+    void badge.offsetWidth; // force DOM reflow
+    badge.classList.add('star-badge-pop');
+    setTimeout(() => badge.classList.remove('star-badge-pop'), 800);
+
+    // 2. Floating +n ⭐ indicator
+    const floatEl = document.createElement('div');
+    floatEl.className = 'star-increment-float';
+    floatEl.textContent = `+${typeof toBengaliNumber === 'function' ? toBengaliNumber(numGained) : numGained} ⭐`;
+    badge.appendChild(floatEl);
+    setTimeout(() => {
+      if(floatEl.parentNode) floatEl.parentNode.removeChild(floatEl);
+    }, 950);
+  });
+
+  // 3. Roll / pop animation on number counters
+  const starCountEl = document.getElementById('starCount');
+  const topbarStarCountEl = document.getElementById('topbarStarCount');
+  [starCountEl, topbarStarCountEl].filter(Boolean).forEach(el => {
+    el.classList.remove('number-roll-pop');
+    void el.offsetWidth;
+    el.classList.add('number-roll-pop');
+    setTimeout(() => el.classList.remove('number-roll-pop'), 550);
+  });
+}
+window.animateStarIncrement = animateStarIncrement;
+
 function bump(n, moduleKey){
   stars += n;
-  document.getElementById('starCount').textContent = stars;
+  const starCountEl = document.getElementById('starCount');
+  if(starCountEl) starCountEl.textContent = stars;
   if(childData){
     childData.totalStars = (childData.totalStars||0) + n;
     if(moduleKey){
       childData.stars = childData.stars || {};
       childData.stars[moduleKey] = (childData.stars[moduleKey]||0) + n;
     }
+    calculateDailyStreak();
+    updateTopbarStatusUI();
     persistProgress();
   }
+  animateStarIncrement(n);
 }
+
 function praise(msg){
   const p = document.getElementById('praise');
-  p.textContent = msg || t('praiseDefault');
-  p.classList.add('show');
-  setTimeout(()=>p.classList.remove('show'), 1100);
+  if(p){
+    p.textContent = msg || t('praiseDefault');
+    p.classList.add('show');
+    setTimeout(()=>p.classList.remove('show'), 1100);
+  }
+  if(window.tvAudio){
+    try { window.tvAudio.playSuccess(); } catch(e){}
+  }
 }
+
+// Lesson Completion Celebration Modal
+window.showLessonCelebrationModal = function(opts){
+  opts = opts || {};
+  const overlay = document.getElementById('lessonCelebrationOverlay');
+  if(!overlay) return;
+
+  const charEl = document.getElementById('celebChar');
+  const titleEl = document.getElementById('celebLessonTitle');
+  const starGainEl = document.getElementById('celebStarGain');
+  const totalStarsEl = document.getElementById('celebTotalStars');
+  const streakDaysEl = document.getElementById('celebStreakDays');
+  const medalBox = document.getElementById('celebMedalUnlockBox');
+  const medalTitle = document.getElementById('celebMedalTitle');
+  const btnNext = document.getElementById('celebBtnNext');
+  const btnGarden = document.getElementById('celebBtnGarden');
+
+  const savedAvatar = localStorage.getItem('kb_selected_avatar');
+  let charIcon = '🌸';
+  if(savedAvatar){
+    try {
+      const p = JSON.parse(savedAvatar);
+      if(p && p.icon) charIcon = p.icon;
+    } catch(e){}
+  }
+  if(charEl) charEl.textContent = charIcon;
+  if(titleEl) titleEl.textContent = opts.title || 'পাঠ সম্পন্ন হয়েছে!';
+  if(starGainEl) starGainEl.textContent = `+${opts.starsEarned || 2} স্টার অর্জিত! ⭐`;
+  if(totalStarsEl) totalStarsEl.textContent = toBengaliNumber(childData?.totalStars || stars || 0);
+  if(streakDaysEl) streakDaysEl.textContent = toBengaliNumber(childData?.streakDays || 1);
+
+  // Check Milestone unlocks
+  const currentTotal = childData?.totalStars || stars || 0;
+  if(medalBox){
+    if(currentTotal >= 50 && !localStorage.getItem('kb_medal_50')){
+      localStorage.setItem('kb_medal_50', '1');
+      medalBox.style.display = 'block';
+      if(medalTitle) medalTitle.textContent = '🥇 বর্ণমালার জাদুকর মেডেল আনলক!';
+    } else if(currentTotal >= 20 && !localStorage.getItem('kb_medal_20')){
+      localStorage.setItem('kb_medal_20', '1');
+      medalBox.style.display = 'block';
+      if(medalTitle) medalTitle.textContent = '🎖️ গণিত ও জ্ঞান মৌমাছি মেডেল আনলক!';
+    } else if(currentTotal >= 10 && !localStorage.getItem('kb_medal_10')){
+      localStorage.setItem('kb_medal_10', '1');
+      medalBox.style.display = 'block';
+      if(medalTitle) medalTitle.textContent = '🎨 রঙিন তুলির স্টার মেডেল আনলক!';
+    } else {
+      medalBox.style.display = 'none';
+    }
+  }
+
+  if(btnNext){
+    if(typeof opts.nextLessonIdx === 'number' && opts.nextLessonIdx < (opts.totalLessons || 999)){
+      btnNext.style.display = 'inline-flex';
+      btnNext.onclick = ()=>{
+        closeLessonCelebration();
+        if(opts.onNext) opts.onNext();
+      };
+    } else {
+      btnNext.style.display = 'none';
+    }
+  }
+
+  if(btnGarden){
+    btnGarden.onclick = ()=>{
+      closeLessonCelebration();
+      if(opts.onGarden) opts.onGarden();
+      else {
+        document.getElementById('activity').classList.remove('open');
+        showHome();
+      }
+    };
+  }
+
+  overlay.classList.add('open');
+  if(window.tvAudio){
+    try { window.tvAudio.playSuccess(); } catch(e){}
+  }
+  if(typeof triggerStarCelebration === 'function'){
+    triggerStarCelebration(window.innerWidth / 2, window.innerHeight / 2, 45);
+  }
+  speakSmart('চমৎকার! তুমি এই পাঠটি সফলভাবে শেষ করেছ। দারুণ শিখেছ!');
+};
+
+window.closeLessonCelebration = function(){
+  const overlay = document.getElementById('lessonCelebrationOverlay');
+  if(overlay) overlay.classList.remove('open');
+};
 
 /* ================= Weakness-tracking (Priority 1) =================
    childData.weakSpots shape: { moduleKey: { itemKey: missCount } }.
@@ -2155,6 +2740,7 @@ let drawGallery = []; // in-memory only for this session — each save creates a
 
 function updateLessonProgress(current, total){
   const bar = document.getElementById('actProgressBar');
+  const wrap = document.getElementById('actProgressWrap');
   if(!bar) return;
   if(!total || total <= 0){
     bar.style.width = '0%';
@@ -2164,6 +2750,15 @@ function updateLessonProgress(current, total){
   const pct = Math.min(100, Math.max(0, Math.round((current / total) * 100)));
   bar.style.width = pct + '%';
   bar.setAttribute('aria-valuenow', String(pct));
+
+  if(wrap){
+    wrap.classList.remove('step-ping');
+    void wrap.offsetWidth; // Force DOM reflow to restart CSS animation smoothly
+    wrap.classList.add('step-ping');
+    setTimeout(() => {
+      if(wrap) wrap.classList.remove('step-ping');
+    }, 650);
+  }
 }
 window.updateLessonProgress = updateLessonProgress;
 
@@ -2172,7 +2767,107 @@ function speakActivityIntro(){
   const msg = t('d_' + window.currentModule);
   if(currentLang === 'en'){ speakEn(msg); } else { speak(msg); }
 }
+// ---- Games (standalone single-file apps) Catalog & In-App Runner ----
+const GAMES_CATALOG = {
+  'bubble-ocean.html': { id: 'bubbleocean', file: 'bubble-ocean.html', titleBn: '🫧 বাবল ওশেন', titleEn: '🫧 Bubble Ocean', desc: 'বুদবুদ ফাটাও, সমুদ্রের বন্ধুদের চেনো' },
+  'tiny-chef-kitchen.html': { id: 'tinychef', file: 'tiny-chef-kitchen.html', titleBn: '🍳 টাইনি শেফ কিচেন', titleEn: '🍳 Tiny Chef Kitchen', desc: 'নিজে নিজে মজার খাবার রান্না করো' },
+  'sky-painter.html': { id: 'skypainter', file: 'sky-painter.html', titleBn: '🎨 স্কাই পেইন্টার', titleEn: '🎨 Sky Painter', desc: 'আকাশ জুড়ে রং দিয়ে ছবি আঁকো' },
+  'shape-builder-city.html': { id: 'shapebuilder', file: 'shape-builder-city.html', titleBn: '🧩 শেইপ বিল্ডার সিটি', titleEn: '🧩 Shape Builder City', desc: 'আকৃতি দিয়ে গাড়ি-বাড়ি বানাও' },
+  'melody-farm.html': { id: 'melodyfarm', file: 'melody-farm.html', titleBn: '🎵 মেলোডি ফার্ম', titleEn: '🎵 Melody Farm', desc: 'খামারের প্রাণী দিয়ে গান বাজাও' },
+  'glimmer-glow.html': { id: 'glimmerglow', file: 'glimmer-glow.html', titleBn: '💄 Glimmer & Glow', titleEn: '💄 Glimmer & Glow', desc: 'মেকআপ ও সাজগোজ করে সাজো নিজের মতো' },
+  // Module ID Aliases
+  'bubbleocean': { id: 'bubbleocean', file: 'bubble-ocean.html', titleBn: '🫧 বাবল ওশেন', titleEn: '🫧 Bubble Ocean', desc: 'বুদবুদ ফাটাও, সমুদ্রের বন্ধুদের চেনো' },
+  'tinychef': { id: 'tinychef', file: 'tiny-chef-kitchen.html', titleBn: '🍳 টাইনি শেফ কিচেন', titleEn: '🍳 Tiny Chef Kitchen', desc: 'নিজে নিজে মজার খাবার রান্না করো' },
+  'skypainter': { id: 'skypainter', file: 'sky-painter.html', titleBn: '🎨 স্কাই পেইন্টার', titleEn: '🎨 Sky Painter', desc: 'আকাশ জুড়ে রং দিয়ে ছবি আঁকো' },
+  'shapebuilder': { id: 'shapebuilder', file: 'shape-builder-city.html', titleBn: '🧩 শেইপ বিল্ডার সিটি', titleEn: '🧩 Shape Builder City', desc: 'আকৃতি দিয়ে গাড়ি-বাড়ি বানাও' },
+  'melodyfarm': { id: 'melodyfarm', file: 'melody-farm.html', titleBn: '🎵 মেলোডি ফার্ম', titleEn: '🎵 Melody Farm', desc: 'খামারের প্রাণী দিয়ে গান বাজাও' },
+  'glimmerglow': { id: 'glimmerglow', file: 'glimmer-glow.html', titleBn: '💄 Glimmer & Glow', titleEn: '💄 Glimmer & Glow', desc: 'মেকআপ ও সাজগোজ করে সাজো নিজের মতো' }
+};
+
+let currentGameFile = '';
+
+function launchGame(fileOrId){
+  closeDrawer();
+  closeActivity();
+  closeDashboard();
+  if (typeof closeTeacherDashboard === 'function') closeTeacherDashboard();
+  if (typeof closeSchoolAdminDashboard === 'function') closeSchoolAdminDashboard();
+
+  const gameInfo = GAMES_CATALOG[fileOrId] || {
+    id: fileOrId,
+    file: (typeof fileOrId === 'string' && fileOrId.endsWith('.html')) ? fileOrId : `${fileOrId}.html`,
+    titleBn: '🎮 মজার গেম',
+    titleEn: '🎮 Fun Game'
+  };
+
+  currentGameFile = gameInfo.file;
+
+  const modal = document.getElementById('gamePlayerModal');
+  const iframe = document.getElementById('gamePlayerIframe');
+  const titleEl = document.getElementById('gamePlayerTitle');
+
+  if(modal && iframe){
+    if(titleEl){
+      titleEl.textContent = (currentLang === 'en' ? gameInfo.titleEn : gameInfo.titleBn) || gameInfo.titleBn;
+    }
+    iframe.src = gameInfo.file;
+    modal.style.display = 'flex';
+    requestAnimationFrame(() => {
+      modal.classList.add('open');
+    });
+    document.body.style.overflow = 'hidden';
+  } else {
+    window.open(gameInfo.file, '_blank');
+  }
+}
+window.launchGame = launchGame;
+
+function closeGamePlayer(){
+  const modal = document.getElementById('gamePlayerModal');
+  const iframe = document.getElementById('gamePlayerIframe');
+  if(iframe){
+    iframe.src = 'about:blank';
+  }
+  if(modal){
+    modal.classList.remove('open');
+    modal.style.display = 'none';
+  }
+  document.body.style.overflow = '';
+  currentGameFile = '';
+}
+window.closeGamePlayer = closeGamePlayer;
+
+function reloadGameIframe(){
+  const iframe = document.getElementById('gamePlayerIframe');
+  if(iframe && currentGameFile){
+    iframe.src = currentGameFile;
+  }
+}
+window.reloadGameIframe = reloadGameIframe;
+
+function openCurrentGameInNewTab(){
+  if(currentGameFile){
+    window.open(currentGameFile, '_blank');
+  }
+}
+window.openCurrentGameInNewTab = openCurrentGameInNewTab;
+
+// Escape key closes game player modal safely
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const gameModal = document.getElementById('gamePlayerModal');
+    if (gameModal && (gameModal.style.display === 'flex' || gameModal.classList.contains('open'))) {
+      closeGamePlayer();
+    }
+  }
+});
+
 function openActivity(name, customArg){
+  if(GAMES_CATALOG[name]){
+    launchGame(name);
+    return;
+  }
+  closeGamePlayer();
   window.currentModule = name;
   document.getElementById('activity').classList.add('open');
   document.getElementById('actTitle').textContent = moduleLabel(name) || 'পাঠশালা';
@@ -2232,15 +2927,6 @@ function openActivity(name, customArg){
   else if(name==='drawing') buildLessonModule(body, 'drawing', customArg);
   else buildLessonModule(body, name, customArg);
   applyLanguage();
-}
-// ---- Games (standalone single-file apps) ----
-// Each game is its own complete app (own login/guest flow, own Firebase-backed
-// progress) sharing this project's Firebase config, so a child's stars/gallery/
-// unlocks are saved per game. They open in a new tab so this Garden stays open
-// in the background and the child can hop back with one tap.
-function launchGame(file){
-  closeDrawer();
-  window.open(file, '_blank');
 }
 
 function closeActivity(){
@@ -2759,14 +3445,14 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
 
       <!-- Bottom Navigation Footer -->
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:24px; gap:10px; flex-wrap:wrap; padding-top:14px; border-top:1px solid rgba(255,255,255,0.1);">
-        <button class="tool-btn" id="btnPrevLesson" ${idx===0?'disabled style="opacity:0.35; pointer-events:none;"':''} style="padding:10px 16px; font-size:14px;">
+        <button class="tool-btn btn-micro" id="btnPrevLesson" ${idx===0?'disabled style="opacity:0.35; pointer-events:none;"':''} style="padding:10px 16px; font-size:14px;">
           ← আগের পাঠ
         </button>
-        <button class="back-to-syllabus-btn" onclick="openActivity('syllabus')">
+        <button class="back-to-syllabus-btn btn-micro" onclick="openActivity('syllabus')">
           <span>← 🏫</span> <span>আমার ক্লাস (My Class)</span>
         </button>
-        <button class="tool-btn" id="btnNextLesson" ${idx===items.length-1?'disabled style="opacity:0.35; pointer-events:none;"':''} style="padding:10px 16px; font-size:14px;">
-          পরের পাঠ →
+        <button class="tool-btn btn-micro" id="btnNextLesson" style="padding:10px 16px; font-size:14px; background:linear-gradient(180deg, #00e0a8, #00a67d); color:#051410; font-weight:800;">
+          ${idx===items.length-1 ? '🎉 পাঠ শেষ করো' : 'পরের পাঠ →'}
         </button>
       </div>
     `;
@@ -2800,6 +3486,9 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
       };
     });
 
+    let solvedQuizzes = 0;
+    const totalLessonQuizzes = (it.practiceQuestions && it.practiceQuestions.length) || 0;
+
     readerView.querySelectorAll('.quiz-opt-btn').forEach(btn=>{
       btn.onclick = ()=>{
         const qi = Number(btn.dataset.qi);
@@ -2826,6 +3515,24 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
           bump(2, subjectKey);
           praise('অসাধারণ! সঠিক উত্তর! ⭐+২');
           speakSmart('দারুণ! সঠিক উত্তর হয়েছে। ' + (q.explanation || ''));
+
+          solvedQuizzes++;
+          if(solvedQuizzes >= totalLessonQuizzes && totalLessonQuizzes > 0){
+            setTimeout(()=>{
+              showLessonCelebrationModal({
+                title: `${it.title} পাঠ সমাপ্ত!`,
+                subjectKey: subjectKey,
+                starsEarned: totalLessonQuizzes * 2,
+                nextLessonIdx: idx + 1,
+                totalLessons: items.length,
+                onNext: ()=>openSingleLesson(idx + 1),
+                onGarden: ()=>{
+                  readerView.style.display = 'none';
+                  listView.style.display = 'block';
+                }
+              });
+            }, 900);
+          }
         } else {
           btn.classList.add('wrong');
           feedbackBox.style.display = 'block';
@@ -2843,7 +3550,24 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
     if(prevBtn && idx > 0) prevBtn.onclick = ()=>openSingleLesson(idx - 1);
 
     const nextBtn = document.getElementById('btnNextLesson');
-    if(nextBtn && idx < items.length - 1) nextBtn.onclick = ()=>openSingleLesson(idx + 1);
+    if(nextBtn){
+      nextBtn.onclick = ()=>{
+        if(idx < items.length - 1){
+          openSingleLesson(idx + 1);
+        } else {
+          showLessonCelebrationModal({
+            title: `${it.title} বিষয় সম্পন্ন!`,
+            subjectKey: subjectKey,
+            starsEarned: 5,
+            totalLessons: items.length,
+            onGarden: ()=>{
+              readerView.style.display = 'none';
+              listView.style.display = 'block';
+            }
+          });
+        }
+      };
+    }
 
     document.getElementById('btnPlayFullLesson').onclick = function(){
       if(isPlayingFull){
@@ -3312,7 +4036,9 @@ function buildRhymes(body){
     note.className = 'word-sub';
     note.style.cssText = 'margin-bottom:10px; opacity:.7;';
     note.textContent = t('rhyme_noSyllabusMatch') || 'এই ক্লাসের জন্য এখনো নির্দিষ্ট ছড়া যোগ হয়নি — পুরো তালিকা দেখানো হচ্ছে';
-    list.parentNode.insertBefore(note, list);
+    if(list && list.parentNode){
+      list.parentNode.insertBefore(note, list);
+    }
   }
   toShow.forEach(({r,i,matched})=>{
     const card = document.createElement('div');
@@ -3856,7 +4582,17 @@ function buildMatch(body){
             bump(2, 'match');
             praise();
             if(matchedCount===emojiSet.length){
-              setTimeout(()=>praise(t('praiseMatchWin')), 300);
+              setTimeout(()=>{
+                praise(t('praiseMatchWin'));
+                showLessonCelebrationModal({
+                  title: 'মিলাও তো খেলা সম্পন্ন! 🧩',
+                  subjectKey: 'match',
+                  starsEarned: 6,
+                  onGarden: ()=>{
+                    closeActivity();
+                  }
+                });
+              }, 400);
             }
           } else {
             flipped.forEach(f=>{ f.classList.remove('flipped'); f.textContent='❓'; });
@@ -4067,8 +4803,16 @@ function buildDraw(body){
     bump(3, 'draw');
     updateLessonProgress(targetStrokes, targetStrokes);
     praise(t('draw_saved'));
+    showLessonCelebrationModal({
+      title: 'রঙিন ছবি আঁকা সংরক্ষিত! 🎨',
+      subjectKey: 'draw',
+      starsEarned: 3,
+      onGarden: ()=>{
+        closeActivity();
+      }
+    });
     // R2 (via Worker)-এ আপলোড করে স্থায়ীভাবে গ্যালারিতে রাখা হয় (লগইন করা থাকলে)।
-    // Firestore-এ URL সেভ করার অংশ আগের মতোই আছে — শুধু ফাইল কোথায় যায় সেটা বদলেছে।
+    // Firestore-এ URL সেভ করার অংশ Dual-Write (Monolith + Subcollection) হিসেবে কাজ করে
     if(currentUser){
       canvas.toBlob(async (blob)=>{
         try{
@@ -4085,7 +4829,22 @@ function buildDraw(body){
           const { url } = await res.json();
           childData.galleryUrls = childData.galleryUrls || [];
           childData.galleryUrls.push(url);
-          await db.collection('users').doc(currentUser.uid).update({ galleryUrls: childData.galleryUrls });
+
+          // 1. Dual-Write: Legacy Monolith Array
+          await db.collection('users').doc(currentUser.uid).update({ 
+            galleryUrls: childData.galleryUrls,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(e=>console.warn('[MonolithGallery] Notice:', e));
+
+          // 2. Dual-Write: Subcollection Document users/{uid}/gallery/{docId}
+          const docId = 'art_' + Date.now() + '_' + Math.random().toString(36).substring(2,6);
+          await db.collection('users').doc(currentUser.uid).collection('gallery').doc(docId).set({
+            itemId: docId,
+            url: url,
+            type: 'image/png',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          }).catch(e=>console.warn('[SubcollectionGallery] Notice:', e));
+
         }catch(e){ console.error('gallery upload failed', e); }
       }, 'image/png');
     }
@@ -4360,6 +5119,16 @@ window.addEventListener('DOMContentLoaded', () => {
     openSchoolDiscoveryModal('rbac');
     selectSchoolForLinkage(linkSchool, 'Selected School');
   }
+  function handleHashNavigation() {
+    const hash = window.location.hash;
+    if (hash === '#teacher' || hash === '#teacherDashboard') {
+      openTeacherDashboard();
+    } else if (hash === '#school-admin' || hash === '#schoolAdminDashboard') {
+      openSchoolAdminDashboard();
+    }
+  }
+  window.addEventListener('hashchange', handleHashNavigation);
+  handleHashNavigation();
   initDailyQuest();
   initCelebrationCanvas();
 });
@@ -4733,5 +5502,7 @@ applyLanguage();
 
 <!-- ============ 📺 TV WILL BE THE NEXT BLACKBOARD: Spatial Navigation & 10-Foot UI Engine ============ -->
 <script src="tv-engine.js"></script>
+<!-- ============ 👩‍🏫 TEACHER & SCHOOL ADMIN DASHBOARDS ENGINE (PHASE 4) ============ -->
+<script src="teacher-admin-portal.js"></script>
 </body>
 </html>

@@ -459,26 +459,36 @@
   function injectTVModeButtons() {
     const topbar = document.querySelector('.global-topbar') || document.querySelector('.home-topbar');
     if (topbar) {
+      const langToggle = topbar.querySelector('.lang-toggle');
+      const targetContainer = langToggle ? langToggle.parentNode : topbar;
+      const ref = langToggle || targetContainer.firstChild;
+
       if (!document.getElementById('topbarTVToggle')) {
         const tvBtn = document.createElement('button');
         tvBtn.id = 'topbarTVToggle';
-        tvBtn.className = 'pill-btn tv-mode-btn';
+        tvBtn.className = 'pill-btn tv-mode-btn btn-micro';
         tvBtn.title = 'স্মার্ট টিভি মোড (10-Foot UI)';
         tvBtn.innerHTML = `📺 <span class="tv-btn-label">TV মোড</span>`;
         tvBtn.onclick = () => setTVMode(true);
-        const ref = topbar.querySelector('.lang-toggle') || topbar.firstChild;
-        topbar.insertBefore(tvBtn, ref);
+        if (ref && ref.parentNode === targetContainer) {
+          targetContainer.insertBefore(tvBtn, ref);
+        } else {
+          targetContainer.appendChild(tvBtn);
+        }
       }
 
       if (!document.getElementById('topbarExitAppBtn')) {
         const exitBtn = document.createElement('button');
         exitBtn.id = 'topbarExitAppBtn';
-        exitBtn.className = 'pill-btn app-exit-btn';
+        exitBtn.className = 'pill-btn app-exit-btn btn-micro';
         exitBtn.title = 'অ্যাপ প্রস্থান (Exit)';
         exitBtn.innerHTML = `🚪 <span class="tv-btn-label">প্রস্থান</span>`;
         exitBtn.onclick = () => openParentalGateModal();
-        const ref = topbar.querySelector('.lang-toggle') || topbar.firstChild;
-        topbar.insertBefore(exitBtn, ref);
+        if (ref && ref.parentNode === targetContainer) {
+          targetContainer.insertBefore(exitBtn, ref);
+        } else {
+          targetContainer.appendChild(exitBtn);
+        }
       }
     }
 
@@ -496,8 +506,10 @@
           setTVMode(true);
         };
         const head = drawer.querySelector('.drawer-head');
-        if (head && head.nextElementSibling) {
+        if (head && head.nextElementSibling && head.parentNode === drawer) {
           drawer.insertBefore(item, head.nextElementSibling);
+        } else {
+          drawer.appendChild(item);
         }
       }
 

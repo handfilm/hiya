@@ -1,0 +1,550 @@
+/**
+ * Hiya / Khukir Bagan — Shared Design Tokens & Unified UI System
+ * 
+ * Provides unified color tokens, a centralized z-index scale, typography,
+ * spacing, and normalized card/topbar/modal styles across the main SPA
+ * and all 6 standalone mini-games.
+ */
+
+:root {
+  /* =========================================================================
+     1. COLOR SYSTEM (Theme & Game Consolidations)
+     ========================================================================= */
+  /* Core Brand & Night Garden Palette */
+  --abyss: #071B2E;
+  --midwater: #0F3A57;
+  --shallows: #1C86A0;
+  --sungold: #FFD866;
+  --sun: #FFC400;
+  --coral: #FF6F59;
+  --coral-dark: #E0543F;
+  --bubble: #EAFBFF;
+  --reef-cream: #FFF6E4;
+  --reef-cream-dark: #F5E6C8;
+  --cream: #FFF6E0;
+  --plum: #FFE3EC;
+
+  /* Night Garden & Aurora System */
+  --night-1: #080D24;
+  --night-2: #0F1740;
+  --night-3: #1B2560;
+  --aurora-teal: #3FEBC9;
+  --aurora-violet: #9C7CFF;
+  --aurora-pink: #FF6FB0;
+  --firefly-gold: #FFD866;
+
+  /* Ruby Carnival & Deep Palettes */
+  --bg-0: #170826;
+  --bg-1: #3a0d3e;
+  --bg-2: #6e0f2e;
+  --bg-3: #9c1030;
+
+  /* Typography Contrast */
+  --ink: #FFF3F6;
+  --ink-dim: rgba(255, 243, 246, 0.7);
+  --ink-faint: rgba(255, 243, 246, 0.42);
+  --ink-deep: #2a0e22;
+  --text-hi: #F6F8FF;
+  --text-mid: rgba(246, 248, 255, 0.74);
+  --text-dim: rgba(246, 248, 255, 0.5);
+
+  /* Glass Surfaces */
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-hi: rgba(255, 255, 255, 0.16);
+  --glass-brd: rgba(255, 140, 170, 0.28);
+  --glass-brd-soft: rgba(255, 140, 170, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg-hi: rgba(255, 255, 255, 0.11);
+  --glass-border: rgba(255, 255, 255, 0.16);
+
+  /* Pop Candy Accents */
+  --leaf: #00E0A8;
+  --leaf-dark: #7CFF6B;
+  --sky: #FF2D55;
+  --lilac: #FF3D68;
+  --pop-lime: #7CFF6B;
+  --pop-lime-dark: #2FBF4C;
+  --pop-red: #FF3B4E;
+  --pop-red-dark: #D6112B;
+  --pop-green: #00E0A8;
+  --pop-green-dark: #00A67D;
+  --pop-blue: #4EA8FF;
+  --pop-blue-dark: #1E6FE0;
+
+  /* =========================================================================
+     2. CENTRALIZED Z-INDEX SCALE
+     ========================================================================= */
+  --z-bg: 0;
+  --z-base: 1;
+  --z-canvas: 2;
+  --z-deco: 5;
+  --z-badge: 10;
+  --z-controls: 20;
+  --z-sticky: 50;
+  --z-dropdown: 100;
+  --z-topbar: 500;
+  --z-drawer-overlay: 700;
+  --z-drawer: 800;
+  --z-modal-overlay: 1000;
+  --z-modal: 1100;
+  --z-toast: 2000;
+  --z-max: 9999;
+
+  /* =========================================================================
+     3. SPACING, RADIUS & SHADOW TOKENS
+     ========================================================================= */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+
+  --font-display: 'Baloo Da 2', 'Baloo 2', system-ui, sans-serif;
+  --font-body: 'Hind Siliguri', 'Quicksand', system-ui, sans-serif;
+
+  /* =========================================================================
+     4. MOTION TIERS & DURATION TOKENS
+     ========================================================================= */
+  --motion-micro: 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-standard: 240ms cubic-bezier(0.2, 0.9, 0.3, 1);
+  --motion-expressive: 550ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.3);
+  --shadow-deep: 0 20px 50px rgba(0, 0, 0, 0.45);
+  --shadow-glow-teal: 0 0 24px rgba(63, 235, 201, 0.35);
+  --shadow-glow-gold: 0 0 28px rgba(255, 216, 102, 0.4);
+  --shadow-glow-amber: 0 0 20px rgba(255, 183, 3, 0.35);
+}
+
+/* =========================================================================
+   4. CONSOLIDATED TOPBAR PATTERN (.hiya-topbar / [data-variant])
+   ========================================================================= */
+.hiya-topbar,
+.global-topbar,
+.topbar {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: var(--z-topbar);
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+/* Variant: Main SPA Home Topbar */
+.hiya-topbar[data-variant="home"],
+.global-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 58px;
+  padding: 0 16px;
+  background: rgba(8, 10, 24, 0.65);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border-bottom: 1px solid var(--glass-brd-soft);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Variant: Activity / Lesson Topbar */
+.hiya-topbar[data-variant="activity"],
+#actTopbar {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  min-height: 56px;
+  padding: 8px 14px;
+  background: rgba(12, 17, 40, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--glass-brd-soft);
+}
+
+/* Variant: Game Screen Topbar */
+.hiya-topbar[data-variant="game"],
+.screen .topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0.9rem 1.1rem;
+  pointer-events: none;
+}
+.hiya-topbar[data-variant="game"] > *,
+.screen .topbar > * {
+  pointer-events: auto;
+}
+
+/* =========================================================================
+   5. CONSOLIDATED CARD SYSTEM (.hiya-card / Modifiers)
+   ========================================================================= */
+.hiya-card,
+.dash-card {
+  box-sizing: border-box;
+  background: linear-gradient(155deg, var(--glass-hi), var(--glass));
+  border: 1px solid var(--glass-brd);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-md);
+  color: var(--text-hi);
+  transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+/* Card Modifier: Flower Stop (Syllabus & Learning Hub Path) */
+.hiya-card--flower,
+.flower-stop {
+  min-width: 220px;
+  width: 220px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  background: linear-gradient(155deg, var(--glass-bg-hi), var(--glass-bg));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(8px);
+  user-select: none;
+  cursor: pointer;
+}
+.flower-stop:hover,
+.hiya-card--flower:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.flower-stop:focus,
+.flower-stop.dpad-active {
+  outline: none;
+  transform: scale(1.08) translateY(-6px);
+  z-index: var(--z-controls);
+  border-color: var(--firefly-gold);
+  box-shadow: 0 0 0 4px var(--firefly-gold), var(--shadow-glow-gold);
+}
+
+/* Card Modifier: Lesson List & Subject Cards */
+.hiya-card--lesson,
+.lesson-item-card,
+.syl-lesson-card {
+  width: 100%;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  cursor: pointer;
+  word-break: break-word;
+}
+.lesson-item-card:hover,
+.syl-lesson-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 216, 102, 0.5);
+  box-shadow: var(--shadow-deep);
+}
+
+/* Card Modifier: School Discovery & Directory Card */
+.hiya-card--school,
+.school-card {
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  cursor: pointer;
+}
+
+/* =========================================================================
+   6. CONSOLIDATED MODAL & OVERLAY PATTERN
+   ========================================================================= */
+.hiya-modal-overlay,
+.discovery-modal-overlay,
+.modal-overlay,
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal-overlay);
+  background: rgba(5, 8, 20, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hiya-modal-overlay.open,
+.discovery-modal-overlay.open,
+.modal-overlay.open,
+.drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+  display: flex;
+}
+
+.drawer-overlay {
+  z-index: var(--z-drawer-overlay);
+  display: none;
+}
+.drawer-overlay.open {
+  display: block;
+}
+
+.hiya-modal-card,
+.discovery-modal-card,
+.modal {
+  box-sizing: border-box;
+  background: linear-gradient(170deg, rgba(27, 37, 96, 0.95), rgba(15, 23, 64, 0.98));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-deep);
+  color: var(--text-hi);
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: hidden;
+  z-index: var(--z-modal);
+  transform: scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.hiya-modal-overlay.open .hiya-modal-card,
+.discovery-modal-overlay.open .discovery-modal-card,
+.modal-overlay.open .modal {
+  transform: scale(1);
+}
+
+.drawer {
+  z-index: var(--z-drawer);
+}
+
+/* =========================================================================
+   7. CHILD EXPERIENCE POLISH: MOTION TIERS & MICRO-INTERACTIONS (PHASE 5)
+   ========================================================================= */
+
+/* Micro Motion Tier (80–150ms): Touch & Click Feedback */
+.btn-micro,
+.flower-stop,
+.pill-btn,
+.primary-btn,
+.tool-btn,
+.ans-btn,
+.quiz-opt-btn,
+.soundscape-btn,
+.mini-btn,
+.icon-btn,
+.avatar-option-card,
+.quest-step-pill {
+  transition: transform var(--motion-micro), box-shadow var(--motion-micro), border-color var(--motion-micro);
+  will-change: transform;
+}
+
+.flower-stop:active,
+.pill-btn:active,
+.primary-btn:active,
+.tool-btn:active,
+.mini-btn:active,
+.icon-btn:active,
+.avatar-option-card:active {
+  transform: scale(0.96);
+}
+
+/* Standard Motion Tier (180–300ms): Card Transitions & State Switches */
+.flower-stop:hover,
+.dash-card:hover,
+.lesson-item-card:hover,
+.avatar-option-card:hover {
+  transition: transform var(--motion-standard), box-shadow var(--motion-standard), border-color var(--motion-standard);
+}
+
+/* Expressive Motion Tier (400–800ms): Celebrations & Reward Reveals */
+@keyframes expressiveStarPop {
+  0% { transform: scale(0.4) rotate(-15deg); opacity: 0; }
+  60% { transform: scale(1.22) rotate(6deg); opacity: 1; }
+  85% { transform: scale(0.95) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+@keyframes gentleWiggle {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes characterCelebrationBounce {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  30% { transform: translateY(-16px) rotate(4deg) scale(1.08); }
+  60% { transform: translateY(0) rotate(-3deg); }
+  80% { transform: translateY(-8px) rotate(2deg) scale(1.04); }
+}
+
+@keyframes medalGlowPulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(255, 216, 102, 0.4); transform: scale(1); }
+  50% { box-shadow: 0 0 32px rgba(255, 216, 102, 0.8), 0 0 48px rgba(255, 111, 176, 0.4); transform: scale(1.05); }
+}
+
+/* Positive & Non-Punishing Quiz Answer Styling */
+.quiz-opt-btn {
+  background: linear-gradient(155deg, var(--glass-hi), var(--glass));
+  border: 1px solid var(--glass-border);
+  color: var(--text-hi);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+}
+
+.quiz-opt-btn:hover {
+  border-color: var(--firefly-gold);
+  transform: translateY(-2px);
+}
+
+.quiz-opt-btn:active {
+  transform: scale(0.96);
+}
+
+/* Correct Answer: Joyful Emerald Glow & Bounce */
+.quiz-opt-btn.correct,
+.ans-btn.correct {
+  background: linear-gradient(135deg, rgba(0, 224, 168, 0.35), rgba(0, 166, 125, 0.45)) !important;
+  border-color: var(--pop-green) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 0 0 3px rgba(0, 224, 168, 0.4), var(--shadow-glow-teal) !important;
+  animation: expressiveStarPop var(--motion-expressive) ease forwards !important;
+}
+
+/* Wrong Answer: Gentle Non-Punishing Feedback (Soft Amber Warmth, No Red Buzzer) */
+.quiz-opt-btn.wrong,
+.ans-btn.wrong {
+  background: linear-gradient(135deg, rgba(255, 183, 3, 0.22), rgba(255, 140, 0, 0.28)) !important;
+  border-color: rgba(255, 183, 3, 0.75) !important;
+  color: #FFF3E0 !important;
+  box-shadow: 0 0 0 2px rgba(255, 183, 3, 0.35), var(--shadow-glow-amber) !important;
+  animation: gentleWiggle 420ms ease-in-out !important;
+}
+
+/* Lesson Completion Screen & Celebration Modal */
+.lesson-celebration-card {
+  box-sizing: border-box;
+  background: linear-gradient(170deg, rgba(27, 37, 96, 0.98), rgba(15, 23, 64, 0.99));
+  border: 2px solid rgba(255, 216, 102, 0.4);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-deep), var(--shadow-glow-gold);
+  color: var(--text-hi);
+  max-width: 480px;
+  width: 100%;
+  padding: 28px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: expressiveStarPop var(--motion-expressive) ease forwards;
+}
+
+.lesson-celebration-character {
+  font-size: 72px;
+  line-height: 1;
+  display: inline-block;
+  margin-bottom: 12px;
+  animation: characterCelebrationBounce 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 10px 20px rgba(255, 216, 102, 0.4));
+}
+
+.celebration-star-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(255, 216, 102, 0.25), rgba(255, 196, 0, 0.35));
+  border: 1px solid rgba(255, 216, 102, 0.6);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: #FFEAA7;
+  box-shadow: 0 0 16px rgba(255, 216, 102, 0.35);
+  margin: 12px 0 16px;
+}
+
+.celebration-stats-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.celebration-stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  min-width: 120px;
+}
+
+/* Avatar Card Selection Highlighting */
+.avatar-option-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-option-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.avatar-option-card.selected {
+  background: linear-gradient(135deg, rgba(255, 216, 102, 0.22), rgba(255, 111, 176, 0.25));
+  border-color: var(--firefly-gold);
+  box-shadow: 0 0 0 3px rgba(255, 216, 102, 0.4), var(--shadow-glow-gold);
+}
+
+/* Mobile Responsive Precision (320px–414px) */
+@media (max-width: 480px) {
+  .global-topbar {
+    height: 54px;
+    padding: 0 10px;
+  }
+  .child-status-pill span#topbarChildName {
+    max-width: 75px !important;
+  }
+  .topbar-streak-badge,
+  .topbar-stars-badge {
+    padding: 3px 8px !important;
+    font-size: 12px !important;
+  }
+  .flower-stop {
+    min-width: 175px !important;
+    width: 175px !important;
+    padding: 16px 12px !important;
+  }
+  .flower-icon {
+    width: 54px !important;
+    height: 54px !important;
+    min-width: 54px !important;
+    font-size: 28px !important;
+  }
+  .flower-stop h2 {
+    font-size: 15px !important;
+  }
+  .lesson-celebration-card {
+    padding: 20px 16px !important;
+    border-radius: var(--radius-lg) !important;
+  }
+}
+

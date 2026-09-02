@@ -6,6 +6,7 @@
 <title>Bubble Ocean</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/design-tokens.css">
 <style>
   :root{
     --abyss:#071B2E;
@@ -329,7 +330,7 @@
     <svg class="coral-fg coral-front" viewBox="0 0 400 100" preserveAspectRatio="none" style="height:11vh;" xmlns="http://www.w3.org/2000/svg">
       <path d="M0,100 L0,50 Q15,15 30,50 Q42,5 55,50 Q70,20 82,50 Q95,25 105,50 L105,100 Z" fill="#020B14" transform="scale(4,1)"></path>
     </svg>
-    <div class="topbar">
+    <div class="topbar hiya-topbar" data-variant="game">
       <div class="greet" id="greetText">Hi!</div>
       <button class="btn gold reef-btn btn-round" id="reefOpenBtn" title="My Reef">📖<span class="reef-badge" id="reefBadge">0</span></button>
     </div>
@@ -360,15 +361,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="shared/firebase-config.js"></script>
 <script>
 /* =========================================================================
-   BUBBLE OCEAN — single file kids app
-   Replace firebaseConfig below with your own Firebase project credentials.
-   Firestore rules should restrict each child doc to its own uid, e.g.:
-     match /children/{uid} { allow read, write: if request.auth.uid == uid; }
+   BUBBLE OCEAN — single file kids app (Centralized Firebase Config)
    ========================================================================= */
 
-const firebaseConfig = {
+const firebaseConfig = (typeof HIYA_FIREBASE_CONFIG !== 'undefined') ? HIYA_FIREBASE_CONFIG : {
   apiKey: "AIzaSyA9kOUaQK0V4s9ZNV1ezgYQnq_OBFpVoSo",
   authDomain: "hiya-2cd78.firebaseapp.com",
   projectId: "hiya-2cd78",
@@ -380,7 +379,12 @@ const firebaseConfig = {
 let firebaseReady = false;
 let auth = null, db = null;
 try{
-  if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
+  if(typeof HiyaFirebase !== 'undefined'){
+    const fb = HiyaFirebase.init();
+    auth = fb.auth;
+    db = fb.db;
+    firebaseReady = !!(auth && db);
+  } else if(firebaseConfig.apiKey !== "YOUR_API_KEY"){
     firebase.initializeApp(firebaseConfig);
     auth = firebase.auth();
     db = firebase.firestore();
@@ -587,21 +591,34 @@ function saveLocalProfile(){
 async function saveRemoteProfile(){
   if(!firebaseReady || !db || !currentUser || currentUser.guest) return;
   try{
-    const update = {};
-    update['games.bubbleocean'] = {
+    const payload = {
+      gameId: 'bubbleocean',
       name: childProfile.name,
       age: childProfile.age,
       reef: childProfile.reef,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     };
-    await db.collection('users').doc(currentUser.uid).set(update, { merge:true });
+    // 1. Dual-Write: Legacy Monolith field
+    const update = {};
+    update['games.bubbleocean'] = payload;
+    db.collection('users').doc(currentUser.uid).set(update, { merge:true }).catch(()=>{});
+
+    // 2. Dual-Write: Subcollection document
+    await db.collection('users').doc(currentUser.uid).collection('games').doc('bubbleocean').set(payload, { merge:true });
   }catch(e){ console.warn('Firestore save failed, staying local.', e); }
 }
 async function loadRemoteProfile(){
   if(!firebaseReady || !db || !currentUser || currentUser.guest) return null;
   try{
+    // 1. Try Subcollection read first
+    const subDoc = await db.collection('users').doc(currentUser.uid).collection('games').doc('bubbleocean').get();
+    if(subDoc.exists) return subDoc.data();
+
+    // 2. Fallback to Monolith root doc
     const doc = await db.collection('users').doc(currentUser.uid).get();
-    if(doc.exists) return (doc.data().games && doc.data().games.bubbleocean) || null;
+    if(doc.exists && doc.data().games && doc.data().games.bubbleocean){
+      return doc.data().games.bubbleocean;
+    }
   }catch(e){ console.warn('Firestore load failed, using local.', e); }
   return null;
 }

@@ -53,6 +53,34 @@ service cloud.firestore {
                        request.resource.data.role == 'parent';
       allow update: if isOwner(userId) || isSuperAdmin();
       allow delete: if isSuperAdmin();
+
+      // 2a. Subcollection: Module Progress & Stars
+      match /progress/{moduleId} {
+        allow read: if isOwner(userId) || 
+                       (isAuthenticated() && (isSchoolTeacher(getSchoolId()) || isSuperAdmin()));
+        allow write: if isOwner(userId) || isSuperAdmin();
+      }
+
+      // 2b. Subcollection: Weak Spots Practice Tracking
+      match /weakSpots/{itemId} {
+        allow read: if isOwner(userId) || 
+                       (isAuthenticated() && (isSchoolTeacher(getSchoolId()) || isSuperAdmin()));
+        allow write: if isOwner(userId) || isSuperAdmin();
+      }
+
+      // 2c. Subcollection: Drawing & Art Gallery
+      match /gallery/{itemId} {
+        allow read: if isOwner(userId) || 
+                       (isAuthenticated() && (isSchoolTeacher(getSchoolId()) || isSuperAdmin()));
+        allow write: if isOwner(userId) || isSuperAdmin();
+      }
+
+      // 2d. Subcollection: Mini-Game Saves & Levels
+      match /games/{gameId} {
+        allow read: if isOwner(userId) || 
+                       (isAuthenticated() && (isSchoolTeacher(getSchoolId()) || isSuperAdmin()));
+        allow write: if isOwner(userId) || isSuperAdmin();
+      }
     }
 
     // 3. Learning Progress Collection: Secure tenant data isolation

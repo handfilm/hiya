@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/design-tokens.css">
 <style>
   :root{
     --sky:#BEE3F5;
@@ -169,7 +170,7 @@
 
   <!-- HOME -->
   <section id="homeScreen" class="screen">
-    <div class="home-top">
+    <div class="home-top hiya-topbar" data-variant="game">
       <div class="chef-badge"><span class="av" id="homeAvatar">👷</span><span id="homeName">Builder</span></div>
       <div class="piece-count">🏙️ <span id="homePieces">0</span>/6</div>
     </div>
@@ -208,10 +209,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="shared/firebase-config.js"></script>
 
 <script>
-/* ============ FIREBASE (fill in your own config) ============ */
-const firebaseConfig = {
+/* ============ FIREBASE (Centralized via firebase-config.js) ============ */
+const firebaseConfig = (typeof HIYA_FIREBASE_CONFIG !== 'undefined') ? HIYA_FIREBASE_CONFIG : {
   apiKey: "AIzaSyA9kOUaQK0V4s9ZNV1ezgYQnq_OBFpVoSo",
   authDomain: "hiya-2cd78.firebaseapp.com",
   projectId: "hiya-2cd78",
@@ -221,10 +223,17 @@ const firebaseConfig = {
 };
 let fbReady=false, auth=null, db=null, currentUid=null;
 try{
-  firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth();
-  db = firebase.firestore();
-  fbReady = true;
+  if(typeof HiyaFirebase !== 'undefined'){
+    const fb = HiyaFirebase.init();
+    auth = fb.auth;
+    db = fb.db;
+    fbReady = !!(auth && db);
+  } else {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    fbReady = true;
+  }
 }catch(e){ console.warn("Firebase not configured, using local storage fallback.", e); }
 
 /* ============ AUDIO CHIME (synthesized, no file) ============ */
@@ -327,12 +336,18 @@ function loadLocal(){
 async function saveProgressRemote(){
   if(fbReady && currentUid){
     try{
-      const update = {};
-      update["games.shapebuilder"] = {
+      const payload = {
+        gameId: "shapebuilder",
         childName:state.childName, avatar:state.avatar, progress:state.progress,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       };
-      await db.collection("users").doc(currentUid).set(update, {merge:true});
+      // 1. Dual-Write: Legacy Monolith field
+      const update = {};
+      update["games.shapebuilder"] = payload;
+      db.collection("users").doc(currentUid).set(update, {merge:true}).catch(()=>{});
+
+      // 2. Dual-Write: Subcollection document
+      await db.collection("users").doc(currentUid).collection("games").doc("shapebuilder").set(payload, {merge:true});
     }catch(e){ console.warn("Firestore save failed, using local only.", e); }
   }
   saveLocal();
@@ -340,6 +355,16 @@ async function saveProgressRemote(){
 async function loadProgressRemote(){
   if(fbReady && currentUid){
     try{
+      // 1. Try Subcollection read first
+      const subDoc = await db.collection("users").doc(currentUid).collection("games").doc("shapebuilder").get();
+      if(subDoc.exists){
+        const d = subDoc.data();
+        state.childName = d.childName || "";
+        state.avatar = d.avatar || "👷";
+        state.progress = d.progress || {};
+        return true;
+      }
+      // 2. Fallback to Monolith root document
       const doc = await db.collection("users").doc(currentUid).get();
       const d = doc.exists ? (doc.data().games && doc.data().games.shapebuilder) : null;
       if(d){

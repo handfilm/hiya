@@ -53,6 +53,35 @@ const inMemoryDb = {
         schoolId: 'SCH_DHK_001',
         schoolName: 'Viqarunnisa Noon School and College',
         assignedGrades: ['Playgroup', 'Nursery', 'KG'],
+        activeStudentsCount: 42,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    [
+      'usr_teacher_vnsc_02',
+      {
+        uid: 'usr_teacher_vnsc_02',
+        email: 'teacher.nasreen@vnsc.edu.bd',
+        fullName: 'Nasreen Akhtar (Teacher)',
+        role: 'teacher',
+        schoolId: 'SCH_DHK_001',
+        schoolName: 'Viqarunnisa Noon School and College',
+        assignedGrades: ['KG', 'Class 1'],
+        activeStudentsCount: 38,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+    [
+      'usr_teacher_vnsc_03',
+      {
+        uid: 'usr_teacher_vnsc_03',
+        email: 'teacher.razia@vnsc.edu.bd',
+        fullName: 'Sultana Razia (Teacher)',
+        role: 'teacher',
+        schoolId: 'SCH_DHK_001',
+        schoolName: 'Viqarunnisa Noon School and College',
+        assignedGrades: ['Nursery', 'Class 1'],
+        activeStudentsCount: 45,
         createdAt: new Date().toISOString(),
       },
     ],
@@ -69,13 +98,232 @@ const inMemoryDb = {
           {
             childId: 'chld_001',
             name: 'Ayesha Siddiqua',
+            avatar: '🌸',
             grade: 'Nursery',
             rollNumber: '14',
             section: 'Lily',
+            totalStars: 135,
+            masteryPercentage: 92,
+            streakDays: 6,
+            lastPracticedAt: new Date(Date.now() - 3600000).toISOString(),
+            status: 'EXCELLENT',
+            statusLabel: 'অগ্রণী শিক্ষার্থী',
+            subcollections: {
+              progress: {
+                bangla: { moduleId: 'bangla', moduleName: 'বাংলা বর্ণ ও শব্দ', stars: 35, mastery: 95, totalItems: 14, completedCount: 14, lastPracticed: 'আজ দুপুর ১২:৩০' },
+                english: { moduleId: 'english', moduleName: 'English Alphabets & Words', stars: 30, mastery: 90, totalItems: 12, completedCount: 11, lastPracticed: 'গতকাল বিকাল ৫:১৫' },
+                math: { moduleId: 'math', moduleName: 'গণিত ও সংখ্যা গণনা', stars: 28, mastery: 82, totalItems: 10, completedCount: 8, lastPracticed: '২ দিন আগে' },
+                science: { moduleId: 'science', moduleName: 'বিজ্ঞান ও পরিবেশ', stars: 22, mastery: 94, totalItems: 8, completedCount: 8, lastPracticed: '৩ দিন আগে' },
+                drawing: { moduleId: 'drawing', moduleName: 'আঁকা ও শিল্পকলা', stars: 20, mastery: 100, totalItems: 6, completedCount: 6, lastPracticed: 'আজ সকাল ১০:০০' },
+              },
+              weakSpots: {
+                letters_kho: { moduleKey: 'bangla', itemKey: 'খ', label: "বর্ণ 'খ'", errorCount: 2, note: "উচ্চারণ ও লেখায় আরও অনুশীলন ফলপ্রসূ হবে" },
+                numbers_seven: { moduleKey: 'math', itemKey: '৭', label: "সংখ্যা '৭'", errorCount: 3, note: "৯ ও ৭ এর মধ্যে বিভ্রান্তি" }
+              }
+            }
           },
         ],
         createdAt: new Date().toISOString(),
       },
+    ],
+    [
+      'usr_parent_zayan',
+      {
+        uid: 'usr_parent_zayan',
+        email: 'parent.tanvir@gmail.com',
+        fullName: 'Tanvir Ahmed',
+        role: 'parent',
+        schoolId: 'SCH_DHK_001',
+        schoolName: 'Viqarunnisa Noon School and College',
+        children: [
+          {
+            childId: 'chld_002',
+            name: 'Zayan Ahmed',
+            avatar: '🚀',
+            grade: 'Nursery',
+            rollNumber: '08',
+            section: 'Lily',
+            totalStars: 102,
+            masteryPercentage: 84,
+            streakDays: 4,
+            lastPracticedAt: new Date(Date.now() - 7200000).toISOString(),
+            status: 'ON_TRACK',
+            statusLabel: 'ভালো অগ্রগতি',
+            subcollections: {
+              progress: {
+                bangla: { moduleId: 'bangla', moduleName: 'বাংলা বর্ণ ও শব্দ', stars: 28, mastery: 86, totalItems: 14, completedCount: 12, lastPracticed: 'আজ সকাল ১১:০০' },
+                english: { moduleId: 'english', moduleName: 'English Alphabets & Words', stars: 26, mastery: 82, totalItems: 12, completedCount: 10, lastPracticed: 'গতকাল রাত ৮:০০' },
+                math: { moduleId: 'math', moduleName: 'গণিত ও সংখ্যা গণনা', stars: 24, mastery: 78, totalItems: 10, completedCount: 7, lastPracticed: 'গতকাল' },
+                science: { moduleId: 'science', moduleName: 'বিজ্ঞান ও পরিবেশ', stars: 14, mastery: 88, totalItems: 8, completedCount: 7, lastPracticed: '৪ দিন আগে' },
+                drawing: { moduleId: 'drawing', moduleName: 'আঁকা ও শিল্পকলা', stars: 10, mastery: 90, totalItems: 6, completedCount: 5, lastPracticed: 'আজ' },
+              },
+              weakSpots: {
+                math_subtraction: { moduleKey: 'math', itemKey: 'বিয়োগ', label: "সাধারণ বিয়োগ", errorCount: 4, note: "ছবি দেখে বস্তুর বিয়োগ সহজে বুঝতে সাহায্য প্রয়োজন" },
+                bangla_gho: { moduleKey: 'bangla', itemKey: 'ঘ', label: "বর্ণ 'ঘ'", errorCount: 2, note: "ধ ও ঘ বর্ণের পার্থক্যকরণ" }
+              }
+            }
+          }
+        ],
+        createdAt: new Date().toISOString()
+      }
+    ],
+    [
+      'usr_parent_tahmeed',
+      {
+        uid: 'usr_parent_tahmeed',
+        email: 'parent.shama@yahoo.com',
+        fullName: 'Shama Islam',
+        role: 'parent',
+        schoolId: 'SCH_DHK_001',
+        schoolName: 'Viqarunnisa Noon School and College',
+        children: [
+          {
+            childId: 'chld_003',
+            name: 'Tahmeed Islam',
+            avatar: '🦁',
+            grade: 'Nursery',
+            rollNumber: '02',
+            section: 'Lily',
+            totalStars: 158,
+            masteryPercentage: 98,
+            streakDays: 9,
+            lastPracticedAt: new Date(Date.now() - 1800000).toISOString(),
+            status: 'EXCELLENT',
+            statusLabel: 'অগ্রণী শিক্ষার্থী',
+            subcollections: {
+              progress: {
+                bangla: { moduleId: 'bangla', moduleName: 'বাংলা বর্ণ ও শব্দ', stars: 40, mastery: 100, totalItems: 14, completedCount: 14, lastPracticed: 'আজ' },
+                english: { moduleId: 'english', moduleName: 'English Alphabets & Words', stars: 36, mastery: 98, totalItems: 12, completedCount: 12, lastPracticed: 'আজ' },
+                math: { moduleId: 'math', moduleName: 'গণিত ও সংখ্যা গণনা', stars: 32, mastery: 96, totalItems: 10, completedCount: 10, lastPracticed: 'আজ' },
+                science: { moduleId: 'science', moduleName: 'বিজ্ঞান ও পরিবেশ', stars: 25, mastery: 98, totalItems: 8, completedCount: 8, lastPracticed: 'গতকাল' },
+                drawing: { moduleId: 'drawing', moduleName: 'আঁকা ও শিল্পকলা', stars: 25, mastery: 100, totalItems: 6, completedCount: 6, lastPracticed: 'গতকাল' },
+              },
+              weakSpots: {}
+            }
+          }
+        ],
+        createdAt: new Date().toISOString()
+      }
+    ],
+    [
+      'usr_parent_ananya',
+      {
+        uid: 'usr_parent_ananya',
+        email: 'parent.debashish@gmail.com',
+        fullName: 'Debashish Sen',
+        role: 'parent',
+        schoolId: 'SCH_DHK_001',
+        schoolName: 'Viqarunnisa Noon School and College',
+        children: [
+          {
+            childId: 'chld_004',
+            name: 'Ananya Sen',
+            avatar: '🦋',
+            grade: 'KG',
+            rollNumber: '05',
+            section: 'Rose',
+            totalStars: 124,
+            masteryPercentage: 89,
+            streakDays: 5,
+            lastPracticedAt: new Date(Date.now() - 86400000).toISOString(),
+            status: 'ON_TRACK',
+            statusLabel: 'ভালো অগ্রগতি',
+            subcollections: {
+              progress: {
+                bangla: { moduleId: 'bangla', moduleName: 'বাংলা বর্ণ ও শব্দ', stars: 32, mastery: 92, totalItems: 14, completedCount: 13, lastPracticed: 'গতকাল' },
+                english: { moduleId: 'english', moduleName: 'English Alphabets & Words', stars: 30, mastery: 85, totalItems: 12, completedCount: 10, lastPracticed: 'গতকাল' },
+                math: { moduleId: 'math', moduleName: 'গণিত ও সংখ্যা গণনা', stars: 30, mastery: 88, totalItems: 10, completedCount: 9, lastPracticed: '২ দিন আগে' },
+                science: { moduleId: 'science', moduleName: 'বিজ্ঞান ও পরিবেশ', stars: 18, mastery: 90, totalItems: 8, completedCount: 7, lastPracticed: '৩ দিন আগে' },
+                drawing: { moduleId: 'drawing', moduleName: 'আঁকা ও শিল্পকলা', stars: 14, mastery: 92, totalItems: 6, completedCount: 5, lastPracticed: 'গতকাল' },
+              },
+              weakSpots: {
+                english_phonics: { moduleKey: 'english', itemKey: 'th_sound', label: "Phonics 'th'", errorCount: 3, note: "উচ্চারণে অতিরিক্ত অডিও গাইড কার্যকর" }
+              }
+            }
+          }
+        ],
+        createdAt: new Date().toISOString()
+      }
+    ],
+    [
+      'usr_parent_samia',
+      {
+        uid: 'usr_parent_samia',
+        email: 'parent.mahbub@gmail.com',
+        fullName: 'Mahbub Rahman',
+        role: 'parent',
+        schoolId: 'SCH_DHK_001',
+        schoolName: 'Viqarunnisa Noon School and College',
+        children: [
+          {
+            childId: 'chld_005',
+            name: 'Samia Rahman',
+            avatar: '🐱',
+            grade: 'KG',
+            rollNumber: '19',
+            section: 'Rose',
+            totalStars: 82,
+            masteryPercentage: 74,
+            streakDays: 3,
+            lastPracticedAt: new Date(Date.now() - 172800000).toISOString(),
+            status: 'NEEDS_ATTENTION',
+            statusLabel: 'গণিতে সহায়তা প্রয়োজন',
+            subcollections: {
+              progress: {
+                bangla: { moduleId: 'bangla', moduleName: 'বাংলা বর্ণ ও শব্দ', stars: 24, mastery: 80, totalItems: 14, completedCount: 10, lastPracticed: '২ দিন আগে' },
+                english: { moduleId: 'english', moduleName: 'English Alphabets & Words', stars: 22, mastery: 75, totalItems: 12, completedCount: 8, lastPracticed: '৩ দিন আগে' },
+                math: { moduleId: 'math', moduleName: 'গণিত ও সংখ্যা গণনা', stars: 16, mastery: 64, totalItems: 10, completedCount: 5, lastPracticed: '২ দিন আগে' },
+                science: { moduleId: 'science', moduleName: 'বিজ্ঞান ও পরিবেশ', stars: 12, mastery: 76, totalItems: 8, completedCount: 5, lastPracticed: '৫ দিন আগে' },
+                drawing: { moduleId: 'drawing', moduleName: 'আঁকা ও শিল্পকলা', stars: 8, mastery: 80, totalItems: 6, completedCount: 4, lastPracticed: '৩ দিন আগে' },
+              },
+              weakSpots: {
+                math_addition: { moduleKey: 'math', itemKey: 'যোগ', label: "যোগের ধারণা", errorCount: 5, note: "মৌখিক ও ভিজ্যুয়াল কাউন্টিং সাহায্য করবে" },
+                bangla_vowels: { moduleKey: 'bangla', itemKey: 'ঋ', label: "স্বরবর্ণ 'ঋ'", errorCount: 3, note: "কারচিহ্ন 'ঋ-কার' প্রয়োগ" }
+              }
+            }
+          }
+        ],
+        createdAt: new Date().toISOString()
+      }
+    ],
+    [
+      'usr_parent_arif',
+      {
+        uid: 'usr_parent_arif',
+        email: 'parent.hossain@gmail.com',
+        fullName: 'Golam Hossain',
+        role: 'parent',
+        schoolId: 'SCH_DHK_001',
+        schoolName: 'Viqarunnisa Noon School and College',
+        children: [
+          {
+            childId: 'chld_006',
+            name: 'Arif Hossain',
+            avatar: '🐼',
+            grade: 'Playgroup',
+            rollNumber: '04',
+            section: 'Tulip',
+            totalStars: 68,
+            masteryPercentage: 86,
+            streakDays: 4,
+            lastPracticedAt: new Date(Date.now() - 43200000).toISOString(),
+            status: 'ON_TRACK',
+            statusLabel: 'ভালো অগ্রগতি',
+            subcollections: {
+              progress: {
+                bangla: { moduleId: 'bangla', moduleName: 'বাংলা বর্ণ ও শব্দ', stars: 22, mastery: 88, totalItems: 14, completedCount: 10, lastPracticed: 'আজ' },
+                english: { moduleId: 'english', moduleName: 'English Alphabets & Words', stars: 18, mastery: 84, totalItems: 12, completedCount: 8, lastPracticed: 'গতকাল' },
+                math: { moduleId: 'math', moduleName: 'গণিত ও সংখ্যা গণনা', stars: 16, mastery: 85, totalItems: 10, completedCount: 7, lastPracticed: 'আজ' },
+                drawing: { moduleId: 'drawing', moduleName: 'আঁকা ও শিল্পকলা', stars: 12, mastery: 90, totalItems: 6, completedCount: 5, lastPracticed: 'গতকাল' },
+              },
+              weakSpots: {
+                drawing_shapes: { moduleKey: 'drawing', itemKey: 'বৃত্ত', label: "গোল বৃত্ত আঁকা", errorCount: 2, note: "হাত ঘোরানোর খেলা চালিয়ে যাওয়া উচিত" }
+              }
+            }
+          }
+        ],
+        createdAt: new Date().toISOString()
+      }
     ],
   ]),
   learningProgress: new Map([
@@ -240,6 +488,62 @@ app.get('/api/users/:uid/profile', (req, res) => {
   res.json({ user });
 });
 
+// Custom Claims Minting / Sync Endpoint for Client Auth Flow
+app.post('/api/auth/set-custom-claims', (req, res) => {
+  const { uid, role = 'parent', schoolId = null, email } = req.body;
+  if (!uid) {
+    return res.status(400).json({ error: 'UID is required to set custom claims' });
+  }
+
+  const validRoles = ['parent', 'teacher', 'schoolAdmin', 'superAdmin'];
+  const assignedRole = validRoles.includes(role) ? role : 'parent';
+
+  const claims = {
+    role: assignedRole,
+    schoolId: schoolId,
+    syncedAt: new Date().toISOString()
+  };
+
+  // Upsert user in in-memory tenant database
+  let user = inMemoryDb.users.get(uid);
+  if (user) {
+    user.role = assignedRole;
+    user.schoolId = schoolId;
+    user.customClaims = claims;
+    user.updatedAt = new Date().toISOString();
+  } else {
+    user = {
+      uid,
+      email: email || `${uid}@user.khukirbagan.edu.bd`,
+      role: assignedRole,
+      schoolId: schoolId,
+      customClaims: claims,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    inMemoryDb.users.set(uid, user);
+  }
+
+  res.json({
+    success: true,
+    message: `Custom claims minted successfully for UID: ${uid}`,
+    claims
+  });
+});
+
+app.get('/api/auth/claims/:uid', (req, res) => {
+  const user = inMemoryDb.users.get(req.params.uid);
+  if (!user || !user.customClaims) {
+    return res.json({
+      claims: {
+        role: 'parent',
+        schoolId: null
+      }
+    });
+  }
+  res.json({ claims: user.customClaims });
+});
+
 // -------------------------------------------------------------
 // 3. Multi-Tenant Learning Progress Sync
 // -------------------------------------------------------------
@@ -276,8 +580,127 @@ app.post('/api/learning-progress/sync', (req, res) => {
 });
 
 // -------------------------------------------------------------
-// 4. Multi-Tenant School Analytics (Teacher / Admin RBAC)
+// 4. Multi-Tenant School Analytics & Roster (Teacher / Admin RBAC)
 // -------------------------------------------------------------
+app.get('/api/schools/:schoolId/students', (req, res) => {
+  const { schoolId } = req.params;
+  const { grade, section } = req.query;
+
+  const school = inMemoryDb.schools.get(schoolId);
+  if (!school) {
+    return res.status(404).json({ error: 'School not found' });
+  }
+
+  // Gather all students enrolled under parents linked to this school
+  const students = [];
+  for (const user of inMemoryDb.users.values()) {
+    if (user.role === 'parent' && user.schoolId === schoolId && Array.isArray(user.children)) {
+      for (const child of user.children) {
+        if (grade && grade !== 'ALL' && child.grade !== grade) continue;
+        if (section && section !== 'ALL' && child.section !== section) continue;
+
+        students.push({
+          childId: child.childId,
+          parentId: user.uid,
+          parentName: user.fullName,
+          parentEmail: user.email,
+          parentPhone: user.phoneNumber || '+880 1711-XXXXXX',
+          name: child.name,
+          avatar: child.avatar || '🧒',
+          grade: child.grade || 'Nursery',
+          rollNumber: child.rollNumber || '01',
+          section: child.section || 'A',
+          totalStars: child.totalStars || 45,
+          masteryPercentage: child.masteryPercentage || 85,
+          streakDays: child.streakDays || 3,
+          status: child.status || 'ON_TRACK',
+          statusLabel: child.statusLabel || 'ভালো অগ্রগতি',
+          lastPracticedAt: child.lastPracticedAt || new Date().toISOString(),
+          subcollections: child.subcollections || {
+            progress: {
+              bangla: { moduleId: 'bangla', moduleName: 'বাংলা বর্ণ ও শব্দ', stars: 25, mastery: 85, totalItems: 14, completedCount: 12 },
+              math: { moduleId: 'math', moduleName: 'গণিত ও সংখ্যা', stars: 20, mastery: 80, totalItems: 10, completedCount: 8 }
+            },
+            weakSpots: {}
+          }
+        });
+      }
+    }
+  }
+
+  // Sort by roll number or name
+  students.sort((a, b) => (parseInt(a.rollNumber) || 99) - (parseInt(b.rollNumber) || 99));
+
+  res.json({
+    schoolId,
+    schoolName: school.name,
+    totalCount: students.length,
+    students
+  });
+});
+
+app.get('/api/schools/:schoolId/teachers', (req, res) => {
+  const { schoolId } = req.params;
+  const school = inMemoryDb.schools.get(schoolId);
+  if (!school) {
+    return res.status(404).json({ error: 'School not found' });
+  }
+
+  const teachers = [];
+  for (const user of inMemoryDb.users.values()) {
+    if (user.role === 'teacher' && user.schoolId === schoolId) {
+      teachers.push({
+        uid: user.uid,
+        fullName: user.fullName,
+        email: user.email,
+        assignedGrades: user.assignedGrades || ['Nursery', 'KG'],
+        activeStudentsCount: user.activeStudentsCount || 40,
+        status: 'ACTIVE',
+        createdAt: user.createdAt
+      });
+    }
+  }
+
+  res.json({
+    schoolId,
+    schoolName: school.name,
+    totalTeachers: teachers.length,
+    teachers
+  });
+});
+
+app.get('/api/schools/:schoolId/student/:studentId', (req, res) => {
+  const { schoolId, studentId } = req.params;
+
+  for (const user of inMemoryDb.users.values()) {
+    if (user.role === 'parent' && user.schoolId === schoolId && Array.isArray(user.children)) {
+      const child = user.children.find(c => c.childId === studentId);
+      if (child) {
+        return res.json({
+          childId: child.childId,
+          parentId: user.uid,
+          parentName: user.fullName,
+          parentEmail: user.email,
+          name: child.name,
+          avatar: child.avatar || '🧒',
+          grade: child.grade,
+          rollNumber: child.rollNumber,
+          section: child.section,
+          totalStars: child.totalStars || 0,
+          masteryPercentage: child.masteryPercentage || 80,
+          streakDays: child.streakDays || 1,
+          status: child.status || 'ON_TRACK',
+          statusLabel: child.statusLabel || 'অগ্রগতি চলমান',
+          lastPracticedAt: child.lastPracticedAt || new Date().toISOString(),
+          subcollections: child.subcollections || { progress: {}, weakSpots: {} }
+        });
+      }
+    }
+  }
+
+  res.status(404).json({ error: 'Student not found in this school' });
+});
+
 app.get('/api/schools/:schoolId/analytics', (req, res) => {
   const { schoolId } = req.params;
   const school = inMemoryDb.schools.get(schoolId);
@@ -285,25 +708,77 @@ app.get('/api/schools/:schoolId/analytics', (req, res) => {
     return res.status(404).json({ error: 'School not found' });
   }
 
-  // Aggregate student progress belonging to this school
-  const progressList = Array.from(inMemoryDb.learningProgress.values()).filter(
-    (p) => p.schoolId === schoolId
-  );
+  // Calculate live classroom & school-wide stats
+  let totalStudentCount = 0;
+  let totalStarsAccumulated = 0;
+  let masterySum = 0;
 
-  const totalStarsInSchool = progressList.reduce((acc, p) => acc + (p.starsEarned || 0), 0);
-  const averageMastery = progressList.length
-    ? Math.round(progressList.reduce((acc, p) => acc + (p.masteryPercentage || 0), 0) / progressList.length)
-    : 88;
+  for (const user of inMemoryDb.users.values()) {
+    if (user.role === 'parent' && user.schoolId === schoolId && Array.isArray(user.children)) {
+      for (const child of user.children) {
+        totalStudentCount++;
+        totalStarsAccumulated += (child.totalStars || 0);
+        masterySum += (child.masteryPercentage || 85);
+      }
+    }
+  }
+
+  const avgMasteryVal = totalStudentCount > 0 ? Math.round(masterySum / totalStudentCount) : 89;
 
   res.json({
     schoolId,
     schoolName: school.name,
+    banglaName: school.banglaName || school.name,
     ranking: school.metrics?.ranking || 1,
-    totalStudents: school.metrics?.totalStudents || 4200,
-    totalTeachers: school.metrics?.totalTeachers || 180,
-    totalStarsEarned: totalStarsInSchool + (school.metrics?.averageWeeklyStars || 15000),
-    averageMastery: `${averageMastery}%`,
-    activeModules: ['letters', 'numbers', 'rhymes', 'drawing', 'animals', 'math'],
+    totalStudents: school.metrics?.totalStudents || 14500,
+    totalTeachers: school.metrics?.totalTeachers || 380,
+    totalStarsEarned: (school.metrics?.averageWeeklyStars || 48200) + totalStarsAccumulated,
+    averageMastery: `${avgMasteryVal}%`,
+    averageMasteryNumeric: avgMasteryVal,
+    activeLearningRate: '96.4%',
+    dailyActiveMinutesAvg: 22,
+    weeklyActiveStudents: Math.round((school.metrics?.totalStudents || 14500) * 0.94),
+    activeModules: ['bangla', 'english', 'math', 'science', 'drawing', 'gk', 'moral', 'computer'],
+    subjectMastery: [
+      { id: 'bangla', name: 'বাংলা ভাষা ও সাহিত্য', nameEn: 'Bangla Language', mastery: 94, completionRate: 92, stars: 12400, status: 'EXCELLENT' },
+      { id: 'english', name: 'ইংরেজি ও শব্দভাণ্ডার', nameEn: 'English & Phonics', mastery: 88, completionRate: 86, stars: 10800, status: 'GOOD' },
+      { id: 'math', name: 'গণিত ও সংখ্যা পরিচিতি', nameEn: 'Math & Numbers', mastery: 81, completionRate: 79, stars: 9200, status: 'ATTENTION_NEEDED' },
+      { id: 'science', name: 'বিজ্ঞান ও পরিবেশ', nameEn: 'Science & Nature', mastery: 92, completionRate: 89, stars: 7400, status: 'EXCELLENT' },
+      { id: 'drawing', name: 'আঁকা ও শিল্পকলা', nameEn: 'Creative Art', mastery: 96, completionRate: 95, stars: 5800, status: 'EXCELLENT' },
+      { id: 'gk', name: 'সাধারণ জ্ঞান ও নৈতিকতা', nameEn: 'General Knowledge', mastery: 90, completionRate: 88, stars: 2600, status: 'GOOD' }
+    ],
+    gradeDistribution: [
+      { grade: 'Playgroup', label: 'প্লে-গ্রুপ', studentsCount: 950, avgMastery: 91, avgStars: 85 },
+      { grade: 'Nursery', label: 'নার্সারি', studentsCount: 1420, avgMastery: 89, avgStars: 110 },
+      { grade: 'KG', label: 'কেজি (KG)', studentsCount: 1850, avgMastery: 87, avgStars: 135 },
+      { grade: 'Class 1', label: 'ক্লাস ১', studentsCount: 2200, avgMastery: 92, avgStars: 160 }
+    ],
+    commonDifficulties: [
+      {
+        topic: "বাংলা বর্ণমালা: 'খ' ও 'ঘ' বর্ণ শনাক্তকরণ",
+        subject: "বাংলা",
+        affectedPercentage: "৩২%",
+        recommendation: "ছবিযুক্ত ফ্ল্যাশকার্ড ও অডিও উচ্চারণ রিপিটেশন অনুশীলন বৃদ্ধি করুন।"
+      },
+      {
+        topic: "গণিত: দুই অঙ্কের সংখ্যার সাথে এক অঙ্কের সাধারণ বিয়োগ",
+        subject: "গণিত",
+        affectedPercentage: "৩৮%",
+        recommendation: "বাস্তব ফল/ফুলের কাউন্টিং অ্যানিমেশন ভিত্তিক পাঠ দিন।"
+      },
+      {
+        topic: "English: Sight words phonics ('th' and 'sh' sounds)",
+        subject: "English",
+        affectedPercentage: "২৭%",
+        recommendation: "রাইমস কর্নারের অডিও স্টোরি শুনে সাথে সাথে বলার খেলা করান।"
+      },
+      {
+        topic: "সংখ্যা গণনা: সংখ্যা '৭' ও '৯' এর মধ্যকার পার্থক্য",
+        subject: "গণিত",
+        affectedPercentage: "২২%",
+        recommendation: "আঙুল দিয়ে ট্রেসিং ও আঁকার খাতায় লেখার প্র্যাকটিস।"
+      }
+    ]
   });
 });
 
@@ -609,6 +1084,120 @@ app.post('/upload/gallery', (req, res) => {
     key: `gallery/local/${id}.png`,
   });
 });
+
+// -------------------------------------------------------------
+// 4. Data Model Migration Endpoints (Dual-Write & Subcollections)
+// -------------------------------------------------------------
+app.post('/api/migration/migrate-user', (req, res) => {
+  const { uid, monolithicData } = req.body;
+  if (!uid) {
+    return res.status(400).json({ error: 'UID is required for migration' });
+  }
+
+  let user = inMemoryDb.users.get(uid);
+  const data = monolithicData || user || {};
+
+  const migrated = {
+    progress: {},
+    weakSpots: {},
+    gallery: [],
+    games: {}
+  };
+
+  // 1. Progress
+  if (data.stars && typeof data.stars === 'object') {
+    Object.entries(data.stars).forEach(([mod, count]) => {
+      migrated.progress[mod] = {
+        moduleId: mod,
+        stars: Number(count) || 0,
+        migratedAt: new Date().toISOString()
+      };
+    });
+  }
+
+  // 2. Weak spots
+  if (data.weakSpots && typeof data.weakSpots === 'object') {
+    Object.entries(data.weakSpots).forEach(([modKey, itemMap]) => {
+      if (itemMap && typeof itemMap === 'object') {
+        Object.entries(itemMap).forEach(([itemKey, errCount]) => {
+          if (Number(errCount) > 0) {
+            const key = `${modKey}_${encodeURIComponent(itemKey).replace(/%/g, '_')}`;
+            migrated.weakSpots[key] = {
+              itemId: key,
+              moduleKey: modKey,
+              itemKey: itemKey,
+              errorCount: Number(errCount),
+              migratedAt: new Date().toISOString()
+            };
+          }
+        });
+      }
+    });
+  }
+
+  // 3. Gallery
+  if (Array.isArray(data.galleryUrls)) {
+    data.galleryUrls.forEach((url, i) => {
+      migrated.gallery.push({
+        itemId: `art_${i}_${Date.now().toString(36)}`,
+        url: url,
+        type: 'image/png',
+        index: i,
+        migratedAt: new Date().toISOString()
+      });
+    });
+  }
+
+  // 4. Games
+  if (data.games && typeof data.games === 'object') {
+    Object.entries(data.games).forEach(([gameId, gData]) => {
+      migrated.games[gameId] = {
+        gameId: gameId,
+        ...gData,
+        migratedAt: new Date().toISOString()
+      };
+    });
+  }
+
+  // Update in-memory user with migrated subcollections while retaining original fields
+  if (user) {
+    user.subcollections = migrated;
+    user.migrationStatus = {
+      subcollectionsMigrated: true,
+      migratedAt: new Date().toISOString(),
+      counts: {
+        progress: Object.keys(migrated.progress).length,
+        weakSpots: Object.keys(migrated.weakSpots).length,
+        gallery: migrated.gallery.length,
+        games: Object.keys(migrated.games).length
+      }
+    };
+  }
+
+  res.json({
+    success: true,
+    uid,
+    migrationStatus: user ? user.migrationStatus : { subcollectionsMigrated: true },
+    migrated
+  });
+});
+
+app.get('/api/migration/status/:uid', (req, res) => {
+  const user = inMemoryDb.users.get(req.params.uid);
+  if (!user) {
+    return res.json({
+      uid: req.params.uid,
+      migrated: false,
+      message: 'User document not found or unmigrated.'
+    });
+  }
+  res.json({
+    uid: req.params.uid,
+    migrated: !!(user.migrationStatus && user.migrationStatus.subcollectionsMigrated),
+    migrationStatus: user.migrationStatus || null
+  });
+});
+
 
 // Serve static assets from project directory
 app.use(express.static(__dirname));

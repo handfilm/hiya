@@ -1,3 +1,5 @@
+@import "shared/design-tokens.css";
+
 /* =====================================================================
    KHUKIR BAGAN — "Tuni's Night Garden" design system
    A single cohesive upgrade layered on top of the base app styles:
@@ -48,7 +50,7 @@
 
 /* ---------- Gentle recall-check overlay (letters/numbers/animals/words) ---------- */
 .recall-overlay{
-  position:fixed; inset:0; z-index:9999;
+  position:fixed; inset:0; z-index:var(--z-modal-overlay);
   display:flex; align-items:center; justify-content:center;
   background:rgba(6,10,20,.55); backdrop-filter:blur(6px);
   opacity:0; pointer-events:none; transition:opacity .25s ease;
@@ -238,21 +240,117 @@ h1{
 }
 .activity-progress-wrap{
   width:100%;
-  height:4px;
-  background:rgba(255,255,255,.08);
+  height:6px;
+  background:rgba(255,255,255,.09);
   position:relative;
-  overflow:hidden;
+  overflow:visible;
   z-index:5;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.25);
 }
 .activity-progress-bar{
   height:100%;
   width:0%;
-  background:linear-gradient(90deg, var(--aurora-teal), var(--aurora-violet), var(--aurora-pink));
-  border-radius:0 2px 2px 0;
-  box-shadow:0 0 10px rgba(63,235,201,.7);
-  transition:width .35s cubic-bezier(.4,0,.2,1);
+  background:linear-gradient(90deg, var(--aurora-teal, #3febc9), var(--aurora-violet, #9c7cff), var(--aurora-pink, #ff6fb0), #ffd866);
+  background-size:200% 100%;
+  border-radius:0 3px 3px 0;
+  box-shadow:0 0 12px rgba(63,235,201,.75), 0 0 4px rgba(255,255,255,.6);
+  transition:width 0.55s cubic-bezier(0.34, 1.25, 0.64, 1), filter 0.35s ease;
+  position:relative;
+  animation:progressGradientFlow 3.5s linear infinite;
 }
-.stars{ background:rgba(255,255,255,.14) !important; color:var(--firefly-gold); }
+.activity-progress-bar::after{
+  content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  width:16px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,0.9));
+  filter:blur(1px);
+  border-radius:50%;
+  animation:progressGlowSweep 1.6s ease-in-out infinite alternate;
+}
+.activity-progress-wrap.step-ping .activity-progress-bar{
+  filter:brightness(1.4) drop-shadow(0 0 10px rgba(255,216,102,0.95));
+}
+
+@keyframes progressGradientFlow{
+  0%{ background-position:0% 50%; }
+  100%{ background-position:200% 50%; }
+}
+@keyframes progressGlowSweep{
+  0%{ opacity:0.4; transform:scaleX(0.8); }
+  100%{ opacity:1; transform:scaleX(1.4); }
+}
+
+.stars{
+  background:rgba(255,255,255,.14) !important;
+  color:var(--firefly-gold);
+  position:relative;
+  transition:transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+}
+
+/* Star increment burst and floating badge animations */
+.star-badge-pop{
+  animation:starBadgeBurst 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+@keyframes starBadgeBurst{
+  0%{ transform:scale(1); }
+  25%{ transform:scale(1.22) rotate(-3deg); box-shadow:0 0 20px rgba(255,216,102,0.95), 0 0 32px rgba(255,107,53,0.65); filter:brightness(1.25); }
+  55%{ transform:scale(1.08) rotate(2deg); }
+  100%{ transform:scale(1) rotate(0deg); filter:brightness(1); }
+}
+
+.star-increment-float{
+  position:absolute;
+  top:-10px;
+  left:50%;
+  transform:translate(-50%, 0);
+  background:linear-gradient(135deg, #FF6B35, #FF3B4E);
+  color:#FFFDF6;
+  font-family:var(--font-display, 'Baloo Da 2', sans-serif);
+  font-weight:800;
+  font-size:12.5px;
+  padding:2px 8px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.7);
+  box-shadow:0 4px 12px rgba(255,59,78,0.5), 0 0 10px rgba(255,216,102,0.85);
+  pointer-events:none;
+  z-index:999;
+  white-space:nowrap;
+  animation:starFloatRise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes starFloatRise{
+  0%{
+    opacity:0;
+    transform:translate(-50%, 4px) scale(0.6);
+  }
+  20%{
+    opacity:1;
+    transform:translate(-50%, -10px) scale(1.15);
+  }
+  70%{
+    opacity:0.95;
+    transform:translate(-50%, -24px) scale(1.02);
+  }
+  100%{
+    opacity:0;
+    transform:translate(-50%, -36px) scale(0.85);
+  }
+}
+
+.number-roll-pop{
+  display:inline-block;
+  animation:numberRollPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes numberRollPop{
+  0%{ transform:translateY(5px) scale(0.75); opacity:0.5; }
+  50%{ transform:translateY(-2px) scale(1.3); color:#FFF; filter:drop-shadow(0 0 6px #FFD866); opacity:1; }
+  100%{ transform:translateY(0) scale(1); opacity:1; }
+}
 .backBtn{ background:rgba(255,255,255,.14) !important; }
 
 /* Stage tile — the lantern in the middle of every learning screen */
@@ -987,7 +1085,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
 .tv-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: var(--z-modal-overlay);
   background: rgba(4, 7, 20, 0.88);
   backdrop-filter: blur(24px);
   display: flex;
@@ -1074,7 +1172,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
 .tv-blackboard-screen {
   position: fixed;
   inset: 0;
-  z-index: 10000;
+  z-index: var(--z-modal);
   background: #0C1E14;
   border: 18px solid #3B2412;
   box-sizing: border-box;
@@ -1371,7 +1469,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
 .tv-exit-screen {
   position: fixed;
   inset: 0;
-  z-index: 9999999;
+  z-index: var(--z-max);
   background: #050814;
   display: flex;
   flex-direction: column;
@@ -1388,7 +1486,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
 .tv-ambient-screensaver {
   position: fixed;
   inset: 0;
-  z-index: 9999998;
+  z-index: var(--z-max);
   background: radial-gradient(circle at 50% 50%, #0d1527 0%, #040714 80%, #01030a 100%);
   display: flex;
   align-items: center;
@@ -1528,7 +1626,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
 .discovery-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: var(--z-modal-overlay);
   background: rgba(8, 5, 20, 0.85);
   backdrop-filter: blur(16px);
   display: none;
@@ -2124,7 +2222,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
   pointer-events: none !important;
 }
 #celebrationCanvas {
-  z-index: 99999 !important;
+  z-index: var(--z-modal-overlay) !important;
 }
 #fireflyCanvas {
   z-index: 1 !important;
@@ -2177,7 +2275,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .flower-stop:fo
   width: 100vw;
   height: 100vh;
   background: radial-gradient(circle at 50% 50%, #0c142b 0%, #050814 70%, #02040a 100%);
-  z-index: 999999;
+  z-index: var(--z-max);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -2822,6 +2920,170 @@ html, body {
     font-size: 13px !important;
   }
 }
+
+/* =====================================================================
+   In-App Fullscreen Game Player Overlay
+   Seamlessly embeds standalone mini-games in-app without popup blocking
+   ===================================================================== */
+.game-player-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  background: #071B2E;
+  display: none;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-in-out;
+}
+
+.game-player-modal.open {
+  display: flex !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.game-player-topbar {
+  height: 56px;
+  min-height: 56px;
+  background: rgba(8, 13, 36, 0.95);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 12px;
+  z-index: 20;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.game-player-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-close-btn {
+  background: linear-gradient(135deg, #ff477e, #d6112b);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 14px rgba(255, 71, 126, 0.45);
+  transition: transform 0.15s ease, filter 0.15s ease;
+  white-space: nowrap;
+}
+
+.game-close-btn:hover {
+  transform: scale(1.03);
+  filter: brightness(1.1);
+}
+
+.game-close-btn:active {
+  transform: scale(0.97);
+}
+
+.game-player-title-wrap {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 8px;
+}
+
+.game-player-title-wrap h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--firefly-gold, #FFD866);
+  font-family: 'Baloo Da 2', sans-serif;
+  font-weight: 800;
+  text-shadow: 0 0 12px rgba(255, 216, 102, 0.35);
+  letter-spacing: 0.2px;
+}
+
+.game-player-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.game-tool-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+
+.game-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.game-tool-btn:active {
+  transform: translateY(1px);
+}
+
+.game-player-frame-container {
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 56px);
+  position: relative;
+  background: #071B2E;
+  overflow: hidden;
+}
+
+#gamePlayerIframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #071B2E;
+}
+
+@media (max-width: 600px) {
+  .game-player-topbar {
+    padding: 0 10px;
+    gap: 6px;
+  }
+  .game-action-text {
+    display: none;
+  }
+  .game-tool-btn {
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .game-close-btn {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+  .game-player-title-wrap h2 {
+    font-size: 15px;
+  }
+}
+
 
 
 
