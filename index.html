@@ -1373,6 +1373,7 @@
 <!-- ---------- Curriculum content: rhymes, letters, words, videos, syllabus tags ----------
      Kept in its own file so content can grow without touching app logic below. -->
 <script src="content-data.js"></script>
+<script src="lessons-by-level.js"></script>
 
 <script>
 // ================= Firebase setup (Centralized via firebase-config.js) =================
@@ -1737,7 +1738,8 @@ const MODULE_LABELS = {letters:'বর্ণ বাগান', numbers:'সং�
 function streamLabel(key){ return t('stream_' + key) || STREAM_LABELS[key] || key; }
 // প্রতিটা মডিউল কোন কোন লেভেলে দেখানো হবে
 const MODULE_LEVELS = {
-  bangla:['class1'],
+  syllabus:['playgroup','nursery','kg','class1'],
+  bangla:['playgroup','nursery','kg','class1'],
   letters:['playgroup','nursery','kg','class1'],
   numbers:['playgroup','nursery','kg','class1'],
   match:['playgroup','nursery'],
@@ -1745,9 +1747,9 @@ const MODULE_LEVELS = {
   animals:['playgroup','nursery','kg'],
   words:['nursery','kg','class1'],
   mathgame:['kg','class1'],
-  english:['kg','class1'],
+  english:['playgroup','nursery','kg','class1'],
   multiplication:['class1'],
-  sentences:['class1'],
+  sentences:['kg','class1'],
   videos:['playgroup','nursery','kg','class1'],
   // games: age ranges taken from each game's target-age design brief
   bubbleocean:['playgroup','nursery','kg'],
@@ -1774,6 +1776,16 @@ function filterHomeByLevel(){
     const allowed = MODULE_LEVELS[mod] ? MODULE_LEVELS[mod].includes(level) : true;
     el.style.display = allowed ? 'flex' : 'none';
   });
+  const banglaStop = document.querySelector('.flower-stop[data-module="bangla"] p');
+  if(banglaStop){
+    const levelLabels = {
+      playgroup: 'প্লে-গ্রুপ বাংলা বর্ণ ও ছড়া পাঠ',
+      nursery: 'নার্সারি বাংলা স্বরবর্ণ, ব্যঞ্জনবর্ণ ও শব্দ পাঠ',
+      kg: 'কেজি বাংলা কারচিহ্ন ও সহজ পাঠ',
+      class1: 'ক্লাস ১ বাংলা পাঠ, শব্দ, ব্যাকরণ ও অনুচ্ছেদ'
+    };
+    banglaStop.textContent = levelLabels[level] || levelLabels.class1;
+  }
 }
 function bnDigitsOf(num){
   const map = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
@@ -1793,26 +1805,62 @@ function handleAuthSubmit(){
   const email = document.getElementById('authEmail').value.trim();
   const pass = document.getElementById('authPass').value;
   const errEl = document.getElementById('authError');
-  errEl.textContent = '';
+  errEl.innerHTML = '';
   if(!email || pass.length<6){ errEl.textContent = t('err_authRequired'); return; }
   const action = isSignupMode
     ? auth.createUserWithEmailAndPassword(email, pass)
     : auth.signInWithEmailAndPassword(email, pass);
-  action.catch(e => { errEl.textContent = translateAuthError(e.code); });
+  action.catch(e => { errEl.innerHTML = translateAuthError(e.code, e.message); });
 }
 function handleGoogleLogin(){
   const errEl = document.getElementById('authError');
-  errEl.textContent = '';
+  errEl.innerHTML = '';
   auth.signInWithPopup(googleProvider).catch(e=>{
     // মোবাইলে অনেক সময় popup ব্লক হয়ে যায় — তখন redirect দিয়ে ট্রাই করি
     if(e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment' || e.code === 'auth/cancelled-popup-request'){
-      auth.signInWithRedirect(googleProvider).catch(e2=>{ errEl.textContent = translateAuthError(e2.code); });
+      auth.signInWithRedirect(googleProvider).catch(e2=>{ errEl.innerHTML = translateAuthError(e2.code, e2.message); });
     } else if(e.code !== 'auth/popup-closed-by-user'){
-      errEl.textContent = translateAuthError(e.code);
+      errEl.innerHTML = translateAuthError(e.code, e.message);
     }
   });
 }
-function translateAuthError(code){
+function translateAuthError(code, rawMsg){
+  if(code === 'auth/unauthorized-domain'){
+    const host = window.location.hostname || 'domain';
+    return `⚠️ এই ডোমেনটি (${host}) Firebase Authentication-এর অনুমোদিত ডোমেইন তালিকায় নেই।<br><small style="display:block; margin-top:4px; opacity:0.9;">Firebase Console > Authentication > Settings > Authorized domains-এ <strong>${host}</strong> যুক্ত করুন। অথবা নিচের বাটনে চাপ দিয়ে সরাসরি <strong>অতিথি হিসেবে শুরু করুন</strong>।</small>`;
+  }
+  if(code === 'auth/invalid-credential' || code === 'auth/wrong-password'){
+    return isSignupMode
+      ? 'অ্যাকাউন্ট তৈরি করা যায়নি, তথ্যগুলো আবার পরীক্ষা করুন।'
+      : 'ইমেইল বা পাসওয়ার্ড সঠিক নয়। আপনি কি নতুন? নিচে "নতুন এখানে? অ্যাকাউন্ট বানান" চাপুন।';
+  }
+  if(code === 'auth/user-not-found'){
+    return 'এই ইমেইলে কোনো অ্যাকাউন্ট পাওয়া যায়নি। নিচে "নতুন এখানে? অ্যাকাউন্ট বানান" চাপুন।';
+  }
+  if(code === 'auth/email-already-in-use'){
+    return 'এই ইমেইল দিয়ে আগেই অ্যাকাউন্ট খোলা আছে। অনুগ্রহ করে পাসওয়ার্ড দিয়ে লগইন করুন।';
+  }
+  if(code === 'auth/invalid-email'){
+    return 'অনুগ্রহ করে সঠিক ইমেইল ঠিকানা লিখুন (যেমন: name@example.com)।';
+  }
+  if(code === 'auth/weak-password'){
+    return 'পাসওয়ার্ড খুব ছোট। কমপক্ষে ৬টি অক্ষর বা সংখ্যা দিন।';
+  }
+  if(code === 'auth/operation-not-allowed'){
+    return 'Firebase Console-এ এই লগইন পদ্ধতিটি সক্রিয় করা নেই। Authentication > Sign-in method-এ এটি অন করুন।';
+  }
+  if(code === 'auth/popup-blocked'){
+    return 'ব্রাউজারে পপ-আপ ব্লক করা হয়েছে। ব্রাউজার সেটিংসে পপ-আপ অন করুন অথবা অতিথি হিসেবে প্রবেশ করুন।';
+  }
+  if(code === 'auth/network-request-failed'){
+    return 'ইন্টারনেট সংযোগে সমস্যা হচ্ছে। আপনার ইন্টারনেট কানেকশন চেক করুন।';
+  }
+  if(code === 'auth/too-many-requests'){
+    return 'অনেকবার ভুল চেষ্টা করার কারণে সাময়িক বিরতি দেওয়া হয়েছে। কিছুক্ষণ পর চেষ্টা করুন।';
+  }
+  if(code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request'){
+    return '';
+  }
   const map = {
     'auth/email-already-in-use':'err_auth_email_in_use',
     'auth/invalid-email':'err_auth_invalid_email',
@@ -1820,7 +1868,7 @@ function translateAuthError(code){
     'auth/user-not-found':'err_auth_user_not_found',
     'auth/weak-password':'err_auth_weak_password'
   };
-  return t(map[code] || 'err_auth_generic');
+  return t(map[code] || 'err_auth_generic') || rawMsg || 'লগইনে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।';
 }
 function handleLogout(){ auth.signOut(); }
 
@@ -2702,8 +2750,8 @@ function speakSmart(text, opts, audioKey){
 }
 window.speakSmart = speakSmart;
 
-function getSubjectLessons(key){
-  if(typeof LESSON_CONTENT === 'undefined') return [];
+function getSubjectLessons(key, level){
+  const targetLevel = level || window.currentSyllabusLevel || (childData && childData.level) || 'class1';
   const map = {
     bangla: 'bangla',
     english: 'english',
@@ -2725,7 +2773,14 @@ function getSubjectLessons(key){
     art: 'drawing'
   };
   const normalizedKey = map[key] || key;
-  return LESSON_CONTENT[normalizedKey] || [];
+  if(typeof LESSON_CONTENT_BY_LEVEL !== 'undefined' && LESSON_CONTENT_BY_LEVEL[targetLevel]){
+    const lvlList = LESSON_CONTENT_BY_LEVEL[targetLevel][normalizedKey];
+    if(lvlList && lvlList.length) return lvlList;
+  }
+  if(targetLevel === 'class1' && typeof LESSON_CONTENT !== 'undefined'){
+    return LESSON_CONTENT[normalizedKey] || [];
+  }
+  return [];
 }
 window.getSubjectLessons = getSubjectLessons;
 
@@ -3177,8 +3232,9 @@ function buildScienceExtra(body){
    General Knowledge/Social Studies, Science, Computer, Moral Education, and Drawing.
    Features full interactive reader with smart multilingual voice synthesis (speakSmart),
    vocabulary pronunciation cards, fun facts, interactive quizzes, and navigation. ---------- */
-function buildLessonModule(body, subjectKey, targetLessonIndex){
-  const items = getSubjectLessons(subjectKey);
+function buildLessonModule(body, subjectKey, targetLessonIndex, overrideLevel){
+  const activeLevel = overrideLevel || window.currentSyllabusLevel || (childData && childData.level) || 'class1';
+  const items = getSubjectLessons(subjectKey, activeLevel);
   if(!items.length){
     body.innerHTML = `
       <div style="text-align:center; padding:30px 16px; width:100%; max-width:500px;">
@@ -3192,16 +3248,24 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
   const visited = new Set();
   updateLessonProgress(0, items.length);
 
+  const levelLabels = {
+    class1: 'ক্লাস ১',
+    kg: 'কেজি (KG)',
+    nursery: 'নার্সারি',
+    playgroup: 'প্লে-গ্রুপ'
+  };
+  const activeLevelLabel = levelLabels[activeLevel] || 'ক্লাস ১';
+
   const subjectNames = {
-    bangla: 'আমার বাংলা পাঠ (Class 1 Bangla)',
-    english: 'English First & Second Paper',
-    math: 'Elementary Mathematics (গণিত)',
-    islam: 'Islamic Studies (ইসলাম শিক্ষা)',
-    gk: 'General Knowledge & Social Studies (সাধারণ জ্ঞান)',
-    science: 'Primary Science & Environment (বিজ্ঞান)',
-    computer: 'Computer Studies (কম্পিউটার)',
-    moral: 'Moral & Value Education (নৈতিক শিক্ষা)',
-    drawing: 'Art & Drawing (আঁকা ও শিল্প)'
+    bangla: `আমার বাংলা পাঠ (${activeLevelLabel})`,
+    english: `English Lessons (${activeLevelLabel})`,
+    math: `গণিত / Mathematics (${activeLevelLabel})`,
+    islam: `ইসলাম শিক্ষা (${activeLevelLabel})`,
+    gk: `সাধারণ জ্ঞান (${activeLevelLabel})`,
+    science: `বিজ্ঞান ও পরিবেশ (${activeLevelLabel})`,
+    computer: `কম্পিউটার শিক্ষা (${activeLevelLabel})`,
+    moral: `নৈতিক শিক্ষা (${activeLevelLabel})`,
+    drawing: `আঁকাআঁকি ও শিল্প (${activeLevelLabel})`
   };
   const subjDisplayName = subjectNames[subjectKey] || (t('m_' + subjectKey) || subjectKey);
 
@@ -3223,7 +3287,7 @@ function buildLessonModule(body, subjectKey, targetLessonIndex){
           </div>
           <div style="display:flex; gap:8px;">
             <span style="font-size:12px; background:rgba(255,255,255,0.1); color:#fff; padding:4px 10px; border-radius:12px; font-weight:700; border:1px solid rgba(255,255,255,0.15);">
-              হিড স্কুল ও ক্লাস ১ সিলেবাস
+              হিড স্কুল ও ${activeLevelLabel} সিলেবাস
             </span>
           </div>
         </div>
@@ -4313,7 +4377,7 @@ function openSyllabusTopic(route, text){
 
 /* ---------- My Class (Digital Classroom & Syllabus Explorer) ---------- */
 function buildSyllabusModule(body, initialSubjKey){
-  let curLevel = (childData && childData.level) || 'class1';
+  let curLevel = window.currentSyllabusLevel || (childData && childData.level) || 'class1';
   let curTerm = (childData && childData.term) || 'midTerm';
   let curSubjFilter = initialSubjKey || 'all';
   let curSearchQuery = '';
@@ -4331,23 +4395,37 @@ function buildSyllabusModule(body, initialSubjKey){
     { key: 'drawing', name: '🎨 আঁকাআঁকি', nameEn: 'Drawing & Art', icon: '🎨' }
   ];
 
+  const levelDisplayMeta = {
+    class1: { label: 'ক্লাস ১ (Class 1)', bannerTitle: 'হিড ইন্টারন্যাশনাল স্কুল ও ক্লাস ১ সিলেবাস ভিত্তিক ১১৫টি সম্পূর্ণ পাঠ, অডিও ও কুইজ' },
+    kg: { label: 'কেজি (KG)', bannerTitle: 'হিড ইন্টারন্যাশনাল স্কুল ও কেজি (KG) সিলেবাস ভিত্তিক সম্পূর্ণ পাঠ, অডিও ও কুইজ' },
+    nursery: { label: 'নার্সারি (Nursery)', bannerTitle: 'হিড ইন্টারন্যাশনাল স্কুল ও নার্সারি সিলেবাস ভিত্তিক সম্পূর্ণ পাঠ, অডিও ও কুইজ' },
+    playgroup: { label: 'প্লে-গ্রুপ (Playgroup)', bannerTitle: 'হিড ইন্টারন্যাশনাল স্কুল ও প্লে-গ্রুপ সিলেবাস ভিত্তিক সম্পূর্ণ পাঠ, অডিও ও কুইজ' }
+  };
+
+  const subjectsByLevel = {
+    playgroup: ['bangla', 'english', 'math', 'science', 'drawing'],
+    nursery: ['bangla', 'english', 'math', 'science', 'drawing'],
+    kg: ['bangla', 'english', 'math', 'science', 'islam', 'drawing'],
+    class1: ['bangla', 'english', 'math', 'islam', 'gk', 'science', 'computer', 'moral', 'drawing']
+  };
+
   function render(){
     const allLessonList = [];
-    const subjectsToCollect = ['bangla','english','math','islam','gk','science','computer','moral','drawing'];
+    const subjectsToCollect = subjectsByLevel[curLevel] || subjectsByLevel.class1;
     
     subjectsToCollect.forEach(sk=>{
-      const list = getSubjectLessons(sk);
+      const list = getSubjectLessons(sk, curLevel);
       list.forEach((it, idx)=>{
         allLessonList.push({
           subjectKey: sk,
           lessonIndex: idx,
           data: it,
-          term: (it.title.toLowerCase().includes('final') || it.title.includes('ফাইনাল') || (sk==='bangla' && idx>=7) || (sk==='english' && idx>=18) || (sk==='math' && idx>=11) || (sk==='islam' && idx>=2) || (sk==='gk' && idx>=8) || (sk==='science' && idx>=4) || (sk==='computer' && idx>=2) || (sk==='moral' && idx>=4) || (sk==='drawing' && idx>=3)) ? 'finalTerm' : 'midTerm'
+          term: it.term || ((it.title.toLowerCase().includes('final') || it.title.includes('ফাইনাল') || (sk==='bangla' && idx>=7) || (sk==='english' && idx>=18) || (sk==='math' && idx>=11) || (sk==='islam' && idx>=2) || (sk==='gk' && idx>=8) || (sk==='science' && idx>=4) || (sk==='computer' && idx>=2) || (sk==='moral' && idx>=4) || (sk==='drawing' && idx>=3)) ? 'finalTerm' : 'midTerm')
         });
       });
     });
 
-    const isClass1OrContent = (curLevel === 'class1') || allLessonList.length > 0;
+    const currentLvlInfo = levelDisplayMeta[curLevel] || levelDisplayMeta.class1;
 
     let filteredLessons = allLessonList.filter(item=>{
       if(curSubjFilter !== 'all' && item.subjectKey !== curSubjFilter) return false;
@@ -4364,6 +4442,8 @@ function buildSyllabusModule(body, initialSubjKey){
 
     updateLessonProgress(filteredLessons.length, allLessonList.length || 1);
 
+    const availableSubjectMeta = subjectMeta.filter(s => s.key === 'all' || subjectsToCollect.includes(s.key));
+
     body.innerHTML = `
       <div class="syllabus-dashboard">
         
@@ -4375,12 +4455,12 @@ function buildSyllabusModule(body, initialSubjKey){
                 🏫 আমার ক্লাস (My Class)
               </h2>
               <div class="word-sub" style="font-size:13.5px; opacity:0.95;">
-                হিড ইন্টারন্যাশনাল স্কুল ও ক্লাস ১ সিলেবাস ভিত্তিক ১১৫টি সম্পূর্ণ পাঠ, অডিও ও কুইজ
+                ${escapeHtml(currentLvlInfo.bannerTitle)}
               </div>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
               <span style="font-size:12px; background:rgba(139,195,74,0.25); color:#C6FF00; padding:4px 10px; border-radius:12px; font-weight:700; border:1px solid rgba(139,195,74,0.4);">
-                ✓ ১১৫টি পাঠ সক্রিয়
+                ✓ ${allLessonList.length}টি পাঠ সক্রিয়
               </span>
             </div>
           </div>
@@ -4389,7 +4469,7 @@ function buildSyllabusModule(body, initialSubjKey){
           <div class="syl-filter-row">
             <div class="syl-filter-col">
               <select id="sylLevelSelect" style="width:100%; padding:8px 12px; border-radius:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:13.5px; font-family:'Baloo Da 2', sans-serif;">
-                <option value="class1" ${curLevel==='class1'?'selected':''}>🎓 ক্লাস ১ (Class 1 - ১১৫ পাঠ)</option>
+                <option value="class1" ${curLevel==='class1'?'selected':''}>🎓 ক্লাস ১ (Class 1)</option>
                 <option value="kg" ${curLevel==='kg'?'selected':''}>🌱 কেজি (KG)</option>
                 <option value="nursery" ${curLevel==='nursery'?'selected':''}>🌿 নার্সারি (Nursery)</option>
                 <option value="playgroup" ${curLevel==='playgroup'?'selected':''}>👶 প্লে-গ্রুপ (Playgroup)</option>
@@ -4410,8 +4490,8 @@ function buildSyllabusModule(body, initialSubjKey){
 
         <!-- Subject Tabs Scrollable Bar -->
         <div class="syllabus-tabs-bar">
-          ${subjectMeta.map(s=>{
-            const count = (s.key==='all') ? allLessonList.length : (getSubjectLessons(s.key).length);
+          ${availableSubjectMeta.map(s=>{
+            const count = (s.key==='all') ? allLessonList.length : (getSubjectLessons(s.key, curLevel).length);
             const isActive = (curSubjFilter === s.key);
             return `
               <button class="syl-tab-btn ${isActive ? 'active' : ''}" data-subj="${s.key}">
@@ -4425,7 +4505,7 @@ function buildSyllabusModule(body, initialSubjKey){
         <!-- Results Counter -->
         <div style="display:flex; justify-content:space-between; align-items:center; padding:0 4px; flex-wrap:wrap; gap:6px;">
           <div style="font-size:13.5px; color:var(--ink-dim);">
-            প্রদর্শিত হচ্ছে <strong>${filteredLessons.length}</strong> টি পাঠ ${curSubjFilter!=='all' ? `(${subjectMeta.find(m=>m.key===curSubjFilter)?.name || ''})` : ''}
+            প্রদর্শিত হচ্ছে <strong>${filteredLessons.length}</strong> টি পাঠ ${curSubjFilter!=='all' ? `(${availableSubjectMeta.find(m=>m.key===curSubjFilter)?.name || ''})` : ''}
           </div>
           ${curSearchQuery ? `<button id="btnClearSylSearch" style="background:none; border:none; color:var(--sun); font-size:12px; cursor:pointer; text-decoration:underline;">সার্চ মুছুন</button>` : ''}
         </div>
@@ -4442,7 +4522,7 @@ function buildSyllabusModule(body, initialSubjKey){
             const it = item.data;
             const isRich = Array.isArray(it.mainContent);
             const snippet = isRich ? (it.learningObjective || (it.mainContent[0] && it.mainContent[0].text) || '') : (it.note || '');
-            const subjLabel = subjectMeta.find(m=>m.key===item.subjectKey)?.name || item.subjectKey;
+            const subjLabel = availableSubjectMeta.find(m=>m.key===item.subjectKey)?.name || item.subjectKey;
             const termBadge = item.term === 'midTerm' ? 'মিড টার্ম' : 'ফাইনাল টার্ম';
 
             return `
@@ -4480,14 +4560,14 @@ function buildSyllabusModule(body, initialSubjKey){
         </div>
 
         <!-- Lower Grades Fallback Syllabus Topics from CURRICULUM -->
-        ${(curLevel !== 'class1' && CURRICULUM[curLevel] && CURRICULUM[curLevel][curTerm]) ? `
-          <div class="dash-card" style="margin-top:10px; background:rgba(255,255,255,0.04);">
-            <h3 style="margin:0 0 10px; font-size:16px; color:var(--sun);">${curLevel.toUpperCase()} সিলেবাস টপিকসমূহ</h3>
+        ${(curLevel !== 'class1' && typeof CURRICULUM !== 'undefined' && CURRICULUM[curLevel] && CURRICULUM[curLevel][curTerm]) ? `
+          <div class="dash-card" style="margin-top:14px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:14px;">
+            <h3 style="margin:0 0 10px; font-size:15px; color:var(--sun);">${currentLvlInfo.label} সিলেবাস টপিকসমূহ (সারসংক্ষেপ)</h3>
             <div id="lowerGradeTopics">
               ${Object.keys(CURRICULUM[curLevel][curTerm]).map(subKey=>{
                 const items = flattenSubjectFields(CURRICULUM[curLevel][curTerm][subKey], '');
                 if(!items.length) return '';
-                const label = SUBJECT_LABELS[subKey] || labelizeKey(subKey);
+                const label = (typeof SUBJECT_LABELS !== 'undefined' && SUBJECT_LABELS[subKey]) || labelizeKey(subKey);
                 return `
                   <div style="margin-bottom:12px;">
                     <div style="font-size:13px; font-weight:700; color:var(--leaf-dark); margin-bottom:6px;">${escapeHtml(label)}</div>
@@ -4510,7 +4590,12 @@ function buildSyllabusModule(body, initialSubjKey){
 
     // Event listeners
     const levelEl = document.getElementById('sylLevelSelect');
-    if(levelEl) levelEl.onchange = (e)=>{ curLevel = e.target.value; render(); };
+    if(levelEl) levelEl.onchange = (e)=>{ 
+      curLevel = e.target.value; 
+      window.currentSyllabusLevel = curLevel;
+      curSubjFilter = 'all';
+      render(); 
+    };
 
     const termEl = document.getElementById('sylTermSelect');
     if(termEl) termEl.onchange = (e)=>{ curTerm = e.target.value; render(); };
@@ -4537,6 +4622,7 @@ function buildSyllabusModule(body, initialSubjKey){
       card.onclick = ()=>{
         const sk = card.dataset.subj;
         const lIdx = Number(card.dataset.idx);
+        window.currentSyllabusLevel = curLevel;
         openActivity(sk, lIdx);
       };
     });
